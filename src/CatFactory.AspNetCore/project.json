@@ -1,0 +1,24 @@
+﻿{
+  "version": "1.0.0-alpha-build00",
+  "title": "CatFactory.AspNetCore",
+  "description": "CatFactory package for AspNet Core code generation (C#)",
+  "packOptions": {
+    "repository": {
+      "url": "https://github.com/hherzl/CatFactory.AspNetCore"
+    }
+  },
+  "authors": [
+    "C. Herzl"
+  ],
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.1",
+    "CatFactory.EfCore": "2.0.0-alpha-build13"
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  }
+}
