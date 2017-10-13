@@ -1,4 +1,5 @@
 ﻿using CatFactory.EfCore;
+using CatFactory.SqlServer;
 using Xunit;
 
 namespace CatFactory.AspNetCore.Tests
@@ -6,12 +7,17 @@ namespace CatFactory.AspNetCore.Tests
     public class CodeGenerationTests
     {
         [Fact]
-        public void TestControllerGeneration()
+        public void TestControllerGenerationFromExistingDatabase()
         {
+            var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
+
+            var database = SqlServerDatabaseFactory
+                .Import(logger, "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
+
             var project = new EfCoreProject
             {
                 Name = "Store",
-                Database = StoreDatabase.Mock,
+                Database = database,
                 OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.AspNetCore\\src\\Store.Core"
             };
 
@@ -24,7 +30,11 @@ namespace CatFactory.AspNetCore.Tests
             project
                 .GenerateEntityLayer()
                 .GenerateDataLayer()
-                .GenerateAspNetCoreProject();
+                .GenerateAspNetCoreProject(new AspNetCoreProjectSettings
+                {
+                    ProjectName = "Store.AspNetCore",
+                    OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.AspNetCore\\src\\Store.AspNetCore"
+                });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using CatFactory.EfCore;
 
 namespace CatFactory.AspNetCore
 {
