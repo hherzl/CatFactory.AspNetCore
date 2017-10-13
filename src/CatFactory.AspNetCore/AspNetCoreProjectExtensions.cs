@@ -5,12 +5,20 @@ using CatFactory.CodeFactory;
 using CatFactory.Collections;
 using CatFactory.DotNetCore;
 using CatFactory.EfCore;
+using CatFactory.Mapping;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore
 {
     public static class AspNetCoreProjectExtensions
     {
+        private static ClrTypeResolver resolver;
+
+        static AspNetCoreProjectExtensions()
+        {
+            resolver = new ClrTypeResolver();
+        }
+
         public static String GetResponsesNamespace(this EfCoreProject project)
             => String.Format("{0}.{1}", project.Name, "Responses");
 
@@ -80,7 +88,14 @@ namespace CatFactory.AspNetCore
             definition.Methods.Add(new MethodDefinition("void", "SetError", new ParameterDefinition("IResponse", "response"), new ParameterDefinition("Exception", "ex"), new ParameterDefinition("ILogger", "logger"))
             {
                 IsStatic = true,
-                IsExtension = true
+                IsExtension = true,
+                Lines = new List<ILine>()
+                {
+                    new CodeLine("response.DidError = true;"),
+                    new CodeLine("response.ErrorMessage = ex.Message;"),
+                    new CodeLine(),
+                    new CodeLine("logger?.LogError(ex.ToString());")
+                }
             });
 
             definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResponse", new ParameterDefinition("IResponse", "response"))
@@ -106,8 +121,6 @@ namespace CatFactory.AspNetCore
 
         internal static void GenerateViewModels(this EfCoreProject project, AspNetCoreProjectSettings settings)
         {
-            var resolver = new ClrTypeResolver();
-
             foreach (var table in project.Database.Tables)
             {
                 var viewModelClassDefinition = new CSharpClassDefinition
@@ -133,7 +146,10 @@ namespace CatFactory.AspNetCore
 
                 codeBuilder.CreateFile(subdirectory: "ViewModels");
             }
+        }
 
+        internal static void GenerateViewModelsExtensions(this EfCoreProject project, AspNetCoreProjectSettings settings)
+        {
             foreach (var table in project.Database.Tables)
             {
                 var viewModelClassExtensionDefinition = new CSharpClassDefinition
@@ -147,7 +163,7 @@ namespace CatFactory.AspNetCore
                     IsStatic = true
                 };
 
-                if (table.HasDefaultSchema())
+                if (CatFactory.EfCore.DbObjectsExtensions.HasDefaultSchema(table))
                 {
                     viewModelClassExtensionDefinition.Namespaces.AddUnique(project.GetEntityLayerNamespace());
                 }
@@ -156,25 +172,8 @@ namespace CatFactory.AspNetCore
                     viewModelClassExtensionDefinition.Namespaces.AddUnique(project.GetEntityLayerNamespace(table.Schema));
                 }
 
-                viewModelClassExtensionDefinition.Methods.Add(new MethodDefinition(table.GetEntityName(), "ToEntity", new ParameterDefinition(table.GetViewModelName(), "viewModel"))
-                {
-                    IsStatic = true,
-                    IsExtension = true,
-                    Lines = new List<ILine>()
-                    {
-                        new CodeLine("return new {0}();", table.GetEntityName())
-                    }
-                });
-
-                viewModelClassExtensionDefinition.Methods.Add(new MethodDefinition(table.GetViewModelName(), "ToViewModel", new ParameterDefinition(table.GetEntityName(), "entity"))
-                {
-                    IsStatic = true,
-                    IsExtension = true,
-                    Lines = new List<ILine>()
-                    {
-                        new CodeLine("return new {0}();", table.GetViewModelName())
-                    }
-                });
+                viewModelClassExtensionDefinition.Methods.Add(GetToEntityMethod(table));
+                viewModelClassExtensionDefinition.Methods.Add(GetToViewModelMethod(table));
 
                 var codeBuilder = new CSharpClassBuilder
                 {
@@ -184,6 +183,54 @@ namespace CatFactory.AspNetCore
 
                 codeBuilder.CreateFile(subdirectory: "ViewModels");
             }
+        }
+
+        private static MethodDefinition GetToEntityMethod(ITable table)
+        {
+            var lines = new List<ILine>();
+
+            lines.Add(new CodeLine("return new {0}", table.GetEntityName()));
+            lines.Add(new CodeLine("{"));
+
+            for (var i = 0; i < table.Columns.Count; i++)
+            {
+                var column = table.Columns[i];
+
+                lines.Add(new CodeLine(1, "{0} = viewModel.{0}{1}", column.GetPropertyName(), i < table.Columns.Count - 1 ? "," : String.Empty));
+            }
+
+            lines.Add(new CodeLine("};"));
+
+            return new MethodDefinition(table.GetEntityName(), "ToEntity", new ParameterDefinition(table.GetViewModelName(), "viewModel"))
+            {
+                IsStatic = true,
+                IsExtension = true,
+                Lines = lines
+            };
+        }
+
+        private static MethodDefinition GetToViewModelMethod(ITable table)
+        {
+            var lines = new List<ILine>();
+
+            lines.Add(new CodeLine("return new {0}", table.GetViewModelName()));
+            lines.Add(new CodeLine("{"));
+
+            for (var i = 0; i < table.Columns.Count; i++)
+            {
+                var column = table.Columns[i];
+
+                lines.Add(new CodeLine(1, "{0} = entity.{0}{1}", column.GetPropertyName(), i < table.Columns.Count - 1 ? "," : String.Empty));
+            }
+
+            lines.Add(new CodeLine("};"));
+
+            return new MethodDefinition(table.GetViewModelName(), "ToViewModel", new ParameterDefinition(table.GetEntityName(), "entity"))
+            {
+                IsStatic = true,
+                IsExtension = true,
+                Lines = lines
+            };
         }
     }
 }

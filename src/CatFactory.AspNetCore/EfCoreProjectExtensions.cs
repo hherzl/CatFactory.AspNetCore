@@ -11,6 +11,7 @@ namespace CatFactory.AspNetCore
             project.GenerateResponses(settings);
             project.GenerateResponsesExtensions(settings);
             project.GenerateViewModels(settings);
+            project.GenerateViewModelsExtensions(settings);
 
             foreach (var feature in project.Features)
             {

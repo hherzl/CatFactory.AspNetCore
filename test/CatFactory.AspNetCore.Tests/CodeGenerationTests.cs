@@ -27,14 +27,16 @@ namespace CatFactory.AspNetCore.Tests
 
             project.BuildFeatures();
 
+            var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
+            {
+                ProjectName = "Store.AspNetCore",
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.AspNetCore\\src\\Store.AspNetCore"
+            };
+
             project
                 .GenerateEntityLayer()
                 .GenerateDataLayer()
-                .GenerateAspNetCoreProject(new AspNetCoreProjectSettings
-                {
-                    ProjectName = "Store.AspNetCore",
-                    OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.AspNetCore\\src\\Store.AspNetCore"
-                });
+                .GenerateAspNetCoreProject(aspNetCoreProjectSettings);
         }
     }
 }
