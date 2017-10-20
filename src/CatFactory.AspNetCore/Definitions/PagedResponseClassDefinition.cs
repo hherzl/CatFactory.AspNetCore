@@ -1,35 +1,31 @@
 ﻿using System.Collections.Generic;
 using CatFactory.CodeFactory;
 using CatFactory.DotNetCore;
+using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public class PagedResponseClassDefinition : CSharpClassDefinition
+    public static class PagedResponseClassDefinition
     {
-        public PagedResponseClassDefinition()
-            : base()
+        public static CSharpClassDefinition GetPagedResponseClassDefinition(this EfCoreProject project)
         {
-            Init();
-        }
+            var definition = new CSharpClassDefinition();
 
-        public void Init()
-        {
-            Name = "PagedResponse<TModel>";
-
-            Implements.Add("IListResponse<TModel>");
-
-            Namespaces.Add("System");
-            Namespaces.Add("System.Collections.Generic");
-
-            Properties.Add(new PropertyDefinition("String", "Message"));
-            Properties.Add(new PropertyDefinition("Boolean", "DidError"));
-            Properties.Add(new PropertyDefinition("String", "ErrorMessage"));
-            Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
-            Properties.Add(new PropertyDefinition("Int32", "PageSize"));
-            Properties.Add(new PropertyDefinition("Int32", "PageNumber"));
-            Properties.Add(new PropertyDefinition("Int32", "ItemsCount"));
-            Properties.Add(new PropertyDefinition("Int32", "PageCount")
+            definition.Namespaces.Add("System");
+            definition.Namespaces.Add("System.Collections.Generic");
+            definition.Namespace = project.GetResponsesNamespace();
+            definition.Name = "PagedResponse";
+            definition.GenericType = "TModel";
+            definition.Implements.Add("IListResponse<TModel>");
+            definition.Properties.Add(new PropertyDefinition("String", "Message"));
+            definition.Properties.Add(new PropertyDefinition("Boolean", "DidError"));
+            definition.Properties.Add(new PropertyDefinition("String", "ErrorMessage"));
+            definition.Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
+            definition.Properties.Add(new PropertyDefinition("Int32", "PageSize"));
+            definition.Properties.Add(new PropertyDefinition("Int32", "PageNumber"));
+            definition.Properties.Add(new PropertyDefinition("Int32", "ItemsCount"));
+            definition.Properties.Add(new PropertyDefinition("Int32", "PageCount")
             {
                 IsReadOnly = true,
                 GetBody = new List<ILine>()
@@ -37,6 +33,8 @@ namespace CatFactory.AspNetCore.Definitions
                     new CodeLine("PageSize == 0 ? 0 : ItemsCount / PageSize;")
                 }
             });
+
+            return definition;
         }
     }
 }

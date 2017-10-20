@@ -1,29 +1,27 @@
 ﻿using CatFactory.DotNetCore;
+using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public class ListResponseClassDefinition : CSharpClassDefinition
+    public static class ListResponseClassDefinition
     {
-        public ListResponseClassDefinition()
-            : base()
+        public static CSharpClassDefinition GetListResponseClassDefinition(this EfCoreProject project)
         {
-            Init();
-        }
+            var definition = new CSharpClassDefinition();
 
-        public void Init()
-        {
-            Name = "ListResponse<TModel>";
+            definition.Namespaces.Add("System");
+            definition.Namespaces.Add("System.Collections.Generic");
+            definition.Namespace = project.GetResponsesNamespace();
+            definition.Name = "ListResponse";
+            definition.GenericType = "TModel";
+            definition.Implements.Add("IListResponse<TModel>");
+            definition.Properties.Add(new PropertyDefinition("String", "Message"));
+            definition.Properties.Add(new PropertyDefinition("Boolean", "DidError"));
+            definition.Properties.Add(new PropertyDefinition("String", "ErrorMessage"));
+            definition.Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
 
-            Implements.Add("IListResponse<TModel>");
-
-            Namespaces.Add("System");
-            Namespaces.Add("System.Collections.Generic");
-
-            Properties.Add(new PropertyDefinition("String", "Message"));
-            Properties.Add(new PropertyDefinition("Boolean", "DidError"));
-            Properties.Add(new PropertyDefinition("String", "ErrorMessage"));
-            Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
+            return definition;
         }
     }
 }

@@ -1,25 +1,23 @@
 ﻿using CatFactory.DotNetCore;
+using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public class ListResponseInterfaceDefinition : CSharpInterfaceDefinition
+    public static class ListResponseInterfaceDefinition
     {
-        public ListResponseInterfaceDefinition()
-            : base()
+        public static CSharpInterfaceDefinition GetListResponseInterfaceDefinition(this EfCoreProject project)
         {
-            Init();
-        }
+            var definition = new CSharpInterfaceDefinition();
 
-        public void Init()
-        {
-            Name = "IListResponse<TModel>";
+            definition.Namespaces.Add("System.Collections.Generic");
+            definition.Namespace = project.GetResponsesNamespace();
+            definition.Name = "IListResponse";
+            definition.GenericType = "TModel";
+            definition.Implements.Add("IResponse");
+            definition.Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
 
-            Implements.Add("IResponse");
-
-            Namespaces.Add("System.Collections.Generic");
-
-            Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
+            return definition;
         }
     }
 }

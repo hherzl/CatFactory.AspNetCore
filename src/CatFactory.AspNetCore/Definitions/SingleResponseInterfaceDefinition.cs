@@ -1,23 +1,22 @@
 ﻿using CatFactory.DotNetCore;
+using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public class SingleResponseInterfaceDefinition : CSharpInterfaceDefinition
+    public static class SingleResponseInterfaceDefinition
     {
-        public SingleResponseInterfaceDefinition()
-            : base()
+        public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this EfCoreProject project)
         {
-            Init();
-        }
+            var definition = new CSharpInterfaceDefinition();
 
-        public void Init()
-        {
-            Name = "ISingleResponse<TModel>";
+            definition.Namespace = project.GetResponsesNamespace();
+            definition.Name = "ISingleResponse";
+            definition.GenericType = "TModel";
+            definition.Implements.Add("IResponse");
+            definition.Properties.Add(new PropertyDefinition("TModel", "Model"));
 
-            Implements.Add("IResponse");
-
-            Properties.Add(new PropertyDefinition("TModel", "Model"));
+            return definition;
         }
     }
 }

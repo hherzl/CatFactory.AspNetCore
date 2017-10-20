@@ -1,26 +1,24 @@
 ﻿using CatFactory.DotNetCore;
+using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public class PagedResponseInterfaceDefinition : CSharpInterfaceDefinition
+    public static class PagedResponseInterfaceDefinition
     {
-        public PagedResponseInterfaceDefinition()
-            : base()
+        public static CSharpInterfaceDefinition GetPagedResponseInterfaceDefinition(this EfCoreProject project)
         {
-            Init();
-        }
+            var definition = new CSharpInterfaceDefinition();
 
-        public void Init()
-        {
-            Name = "PagedResponse<TModel>";
+            definition.Namespaces.Add("System");
+            definition.Namespace = project.GetResponsesNamespace();
+            definition.Name = "PagedResponse";
+            definition.GenericType = "TModel";
+            definition.Implements.Add("IListResponse");
+            definition.Properties.Add(new PropertyDefinition("Int32", "ItemsCount"));
+            definition.Properties.Add(new PropertyDefinition("Int32", "PageCount"));
 
-            Implements.Add("IListResponse");
-
-            Namespaces.Add("System");
-
-            Properties.Add(new PropertyDefinition("Int32", "ItemsCount"));
-            Properties.Add(new PropertyDefinition("Int32", "PageCount"));
+            return definition;
         }
     }
 }

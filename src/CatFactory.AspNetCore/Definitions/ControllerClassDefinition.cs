@@ -10,58 +10,48 @@ using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public class ControllerClassDefinition : CSharpClassDefinition
+    public static class ControllerClassDefinition
     {
-        public ControllerClassDefinition(ProjectFeature projectFeature)
-            : base()
+        public static CSharpClassDefinition GetControllerClassDefinition(this ProjectFeature projectFeature, bool useLogger = true)
         {
-            ProjectFeature = projectFeature;
+            var definition = new CSharpClassDefinition();
 
-            Init();
-        }
+            definition.Namespaces.Add("System");
+            definition.Namespaces.Add("System.Linq");
+            definition.Namespaces.Add("System.Threading.Tasks");
+            definition.Namespaces.Add("Microsoft.AspNetCore.Mvc");
+            definition.Namespaces.Add("Microsoft.EntityFrameworkCore");
+            definition.Namespaces.Add("Microsoft.Extensions.Logging");
 
-        public Boolean UseLogger { get; set; } = true;
+            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetDataLayerContractsNamespace());
+            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetDataLayerRepositoriesNamespace());
+            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetResponsesNamespace());
+            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetViewModelsNamespace());
 
-        public ProjectFeature ProjectFeature { get; set; }
+            definition.Namespace = "Controllers";
 
-        public void Init()
-        {
-            Namespaces.Add("System");
-            Namespaces.Add("System.Linq");
-            Namespaces.Add("System.Threading.Tasks");
-            Namespaces.Add("Microsoft.AspNetCore.Mvc");
-            Namespaces.Add("Microsoft.EntityFrameworkCore");
-            Namespaces.Add("Microsoft.Extensions.Logging");
-
-            Namespaces.Add(ProjectFeature.GetEfCoreProject().GetDataLayerContractsNamespace());
-            Namespaces.Add(ProjectFeature.GetEfCoreProject().GetDataLayerRepositoriesNamespace());
-            Namespaces.Add(ProjectFeature.GetEfCoreProject().GetResponsesNamespace());
-            Namespaces.Add(ProjectFeature.GetEfCoreProject().GetViewModelsNamespace());
-
-            Namespace = "Controllers";
-
-            Attributes = new List<MetadataAttribute>()
+            definition.Attributes = new List<MetadataAttribute>()
             {
                 new MetadataAttribute("Route", "\"api/[controller]\"")
             };
 
-            Name = ProjectFeature.GetControllerName();
+            definition.Name = projectFeature.GetControllerName();
 
-            BaseClass = "Controller";
+            definition.BaseClass = "Controller";
 
-            Fields.Add(new FieldDefinition(AccessModifier.Protected, ProjectFeature.GetInterfaceRepositoryName(), "Repository")
+            definition.Fields.Add(new FieldDefinition(AccessModifier.Protected, projectFeature.GetInterfaceRepositoryName(), "Repository")
             {
                 IsReadOnly = true
             });
 
-            if (UseLogger)
+            if (useLogger)
             {
-                Fields.Add(new FieldDefinition(AccessModifier.Protected, "ILogger", "Logger"));
+                definition.Fields.Add(new FieldDefinition(AccessModifier.Protected, "ILogger", "Logger"));
             }
 
-            Constructors.Add(GetConstructor(ProjectFeature));
+            definition.Constructors.Add(GetConstructor(projectFeature));
 
-            Methods.Add(new MethodDefinition(AccessModifier.Protected, "void", "Dispose", new ParameterDefinition("Boolean", "disposing"))
+            definition.Methods.Add(new MethodDefinition(AccessModifier.Protected, "void", "Dispose", new ParameterDefinition("Boolean", "disposing"))
             {
                 IsOverride = true,
                 Lines = new List<ILine>()
@@ -72,24 +62,26 @@ namespace CatFactory.AspNetCore.Definitions
                 }
             });
 
-            var dbos = ProjectFeature.DbObjects.Select(dbo => dbo.FullName).ToList();
-            var tables = ProjectFeature.Database.Tables.Where(t => dbos.Contains(t.FullName)).ToList();
+            var dbos = projectFeature.DbObjects.Select(dbo => dbo.FullName).ToList();
+            var tables = projectFeature.Project.Database.Tables.Where(t => dbos.Contains(t.FullName)).ToList();
 
             foreach (var table in tables)
             {
-                Methods.Add(GetGetAllMethod(table));
+                definition.Methods.Add(GetGetAllMethod(projectFeature, definition, table, useLogger));
 
-                Methods.Add(GetGetMethod(table));
+                definition.Methods.Add(GetGetMethod(table, useLogger));
 
-                Methods.Add(GetPostMethod(table));
+                definition.Methods.Add(GetPostMethod(table, useLogger));
 
-                Methods.Add(GetPutMethod(table));
+                definition.Methods.Add(GetPutMethod(projectFeature, table, useLogger));
 
-                Methods.Add(GetDeleteMethod(table));
+                definition.Methods.Add(GetDeleteMethod(table, useLogger));
             }
+
+            return definition;
         }
 
-        public ClassConstructorDefinition GetConstructor(ProjectFeature projectFeature)
+        private static ClassConstructorDefinition GetConstructor(ProjectFeature projectFeature, bool useLogger = true)
         {
             var parameters = new List<ParameterDefinition>()
             {
@@ -101,9 +93,9 @@ namespace CatFactory.AspNetCore.Definitions
                 new CodeLine("Repository = repository;")
             };
 
-            if (UseLogger)
+            if (useLogger)
             {
-                parameters.Add(new ParameterDefinition(String.Format("ILogger<{0}>", ProjectFeature.GetControllerName()), "logger"));
+                parameters.Add(new ParameterDefinition(String.Format("ILogger<{0}>", projectFeature.GetControllerName()), "logger"));
 
                 lines.Add(new CodeLine("Logger = logger;"));
             }
@@ -114,20 +106,20 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        public MethodDefinition GetGetAllMethod(ITable table)
+        private static MethodDefinition GetGetAllMethod(ProjectFeature projectFeature, CSharpClassDefinition definition, ITable table, bool useLogger = true)
         {
             if (EfCore.DbObjectsExtensions.HasDefaultSchema(table))
             {
-                Namespaces.AddUnique(ProjectFeature.GetEfCoreProject().GetEntityLayerNamespace());
+                definition.Namespaces.AddUnique(projectFeature.GetEfCoreProject().GetEntityLayerNamespace());
             }
             else
             {
-                Namespaces.AddUnique(ProjectFeature.GetEfCoreProject().GetEntityLayerNamespace(table.Schema));
+                definition.Namespaces.AddUnique(projectFeature.GetEfCoreProject().GetEntityLayerNamespace(table.Schema));
             }
 
             var lines = new List<ILine>();
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", table.GetControllerGetAllAsyncMethodName()));
                 lines.Add(new CodeLine());
@@ -141,7 +133,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine(1, "var query = Repository.{0}();", table.GetGetAllRepositoryMethodName()));
             lines.Add(new CodeLine());
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine(1, "response.PageSize = (Int32)pageSize;"));
                 lines.Add(new CodeLine(1, "response.PageNumber = (Int32)pageNumber;"));
@@ -158,7 +150,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("catch (Exception ex)"));
             lines.Add(new CodeLine("{"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
             }
@@ -183,7 +175,7 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        public MethodDefinition GetGetMethod(ITable table)
+        private static MethodDefinition GetGetMethod(ITable table, bool useLogger = true)
         {
             var parameters = new List<ParameterDefinition>();
 
@@ -193,12 +185,12 @@ namespace CatFactory.AspNetCore.Definitions
 
                 var resolver = new ClrTypeResolver { UseNullableTypes = false };
 
-                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), NamingConvention.GetParameterName("id")));
+                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), (new DotNetNamingConvention()).GetParameterName("id")));
             }
 
             var lines = new List<ILine>();
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", table.GetControllerGetAsyncMethodName()));
                 lines.Add(new CodeLine());
@@ -212,7 +204,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine(1, "response.Model = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
@@ -222,7 +214,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("catch (Exception ex)"));
             lines.Add(new CodeLine("{"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
             }
@@ -248,11 +240,11 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        public MethodDefinition GetPostMethod(ITable table)
+        private static MethodDefinition GetPostMethod(ITable table, bool useLogger = true)
         {
             var lines = new List<ILine>();
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", table.GetControllerPostAsyncMethodName()));
                 lines.Add(new CodeLine());
@@ -272,7 +264,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine(1, "response.Model = entity.ToViewModel();"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
@@ -282,7 +274,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("catch (Exception ex)"));
             lines.Add(new CodeLine("{"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
             }
@@ -308,11 +300,11 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        public MethodDefinition GetPutMethod(ITable table)
+        private static MethodDefinition GetPutMethod(ProjectFeature projectFeature, ITable table, bool useLogger = true)
         {
             var lines = new List<ILine>();
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", table.GetControllerPutAsyncMethodName()));
                 lines.Add(new CodeLine());
@@ -330,7 +322,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
 
-            foreach (var column in table.GetUpdateColumns(ProjectFeature.GetEfCoreProject().Settings))
+            foreach (var column in table.GetUpdateColumns(projectFeature.GetEfCoreProject().Settings))
             {
                 lines.Add(new CodeLine(2, "entity.{0} = value.{0};", column.GetPropertyName()));
             }
@@ -344,7 +336,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine(1, "}"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
@@ -354,7 +346,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("catch (Exception ex)"));
             lines.Add(new CodeLine("{"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
             }
@@ -380,11 +372,11 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        public MethodDefinition GetDeleteMethod(ITable table)
+        private static MethodDefinition GetDeleteMethod(ITable table, bool useLogger = true)
         {
             var lines = new List<ILine>();
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", table.GetControllerDeleteAsyncMethodName()));
                 lines.Add(new CodeLine());
@@ -409,7 +401,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine(1, "}"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
@@ -419,7 +411,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("catch (Exception ex)"));
             lines.Add(new CodeLine("{"));
 
-            if (UseLogger)
+            if (useLogger)
             {
                 lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
             }
@@ -438,7 +430,7 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 Attributes = new List<MetadataAttribute>()
                 {
-                    new MetadataAttribute("HttpPut", String.Format("\"{0}\"", table.GetEntityName())),
+                    new MetadataAttribute("HttpDelete", String.Format("\"{0}\"", table.GetEntityName())),
                 },
                 IsAsync = true,
                 Lines = lines

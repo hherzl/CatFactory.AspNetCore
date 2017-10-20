@@ -21,6 +21,8 @@ namespace CatFactory.AspNetCore.Tests
                 OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.AspNetCore\\src\\Store.Core"
             };
 
+            project.Settings.ForceOverwrite = true;
+
             project.Settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
 
             project.Settings.ConcurrencyToken = "Timestamp";
