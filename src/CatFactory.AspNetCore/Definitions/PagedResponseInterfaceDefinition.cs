@@ -6,7 +6,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class PagedResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetPagedResponseInterfaceDefinition(this EfCoreProject project)
+        public static CSharpInterfaceDefinition GetPagedResponseInterfaceDefinition(this EntityFrameworkCoreProject project)
         {
             var definition = new CSharpInterfaceDefinition();
 

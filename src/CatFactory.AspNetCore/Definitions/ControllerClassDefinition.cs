@@ -108,7 +108,7 @@ namespace CatFactory.AspNetCore.Definitions
 
         private static MethodDefinition GetGetAllMethod(ProjectFeature projectFeature, CSharpClassDefinition definition, ITable table, bool useLogger = true)
         {
-            if (EfCore.DbObjectsExtensions.HasDefaultSchema(table))
+            if (table.HasDefaultSchema())
             {
                 definition.Namespaces.AddUnique(projectFeature.GetEfCoreProject().GetEntityLayerNamespace());
             }

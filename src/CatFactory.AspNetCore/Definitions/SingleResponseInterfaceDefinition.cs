@@ -6,7 +6,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class SingleResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this EfCoreProject project)
+        public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this EntityFrameworkCoreProject project)
         {
             var definition = new CSharpInterfaceDefinition();
 

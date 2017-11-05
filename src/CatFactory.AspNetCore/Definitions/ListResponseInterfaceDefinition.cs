@@ -6,7 +6,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class ListResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetListResponseInterfaceDefinition(this EfCoreProject project)
+        public static CSharpInterfaceDefinition GetListResponseInterfaceDefinition(this EntityFrameworkCoreProject project)
         {
             var definition = new CSharpInterfaceDefinition();
 

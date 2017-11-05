@@ -37,7 +37,7 @@ namespace CatFactory.AspNetCore
         public static string GetViewModelExtensionName(this ITable table)
             => string.Format("{0}Extensions", NamingConvention.GetPascalCase(table.Name));
 
-        public static IEnumerable<Column> GetUpdateColumns(this ITable table, EfCoreProjectSettings settings)
+        public static IEnumerable<Column> GetUpdateColumns(this ITable table, EntityFrameworkCoreProjectSettings settings)
         {
             var list = new List<Column>();
 

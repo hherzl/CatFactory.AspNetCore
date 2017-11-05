@@ -6,7 +6,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class ListResponseClassDefinition
     {
-        public static CSharpClassDefinition GetListResponseClassDefinition(this EfCoreProject project)
+        public static CSharpClassDefinition GetListResponseClassDefinition(this EntityFrameworkCoreProject project)
         {
             var definition = new CSharpClassDefinition();
 

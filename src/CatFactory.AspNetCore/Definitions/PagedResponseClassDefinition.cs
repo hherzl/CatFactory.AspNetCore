@@ -8,7 +8,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class PagedResponseClassDefinition
     {
-        public static CSharpClassDefinition GetPagedResponseClassDefinition(this EfCoreProject project)
+        public static CSharpClassDefinition GetPagedResponseClassDefinition(this EntityFrameworkCoreProject project)
         {
             var definition = new CSharpClassDefinition();
 

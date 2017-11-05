@@ -9,17 +9,17 @@ using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore
 {
-    public static class EfCoreProjectExtensions
+    public static class EntityFrameworkCoreProjectExtensions
     {
-        public static string GetResponsesNamespace(this EfCoreProject project)
+        public static string GetResponsesNamespace(this EntityFrameworkCoreProject project)
             => string.Format("{0}.{1}", project.Name, "Responses");
 
-        public static string GetViewModelsNamespace(this EfCoreProject project)
+        public static string GetViewModelsNamespace(this EntityFrameworkCoreProject project)
             => string.Format("{0}.{1}", project.Name, "ViewModels");
 
-        internal static void GenerateResponses(this EfCoreProject project, AspNetCoreProjectSettings settings)
+        internal static void GenerateResponses(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
-            CSharpInterfaceBuilder.Create(
+            CSharpInterfaceBuilder.CreateFiles(
                 settings.OutputDirectory,
                 "Responses",
                 project.Settings.ForceOverwrite,
@@ -29,7 +29,7 @@ namespace CatFactory.AspNetCore
                 project.GetPagedResponseInterfaceDefinition()
             );
 
-            CSharpClassBuilder.Create(
+            CSharpClassBuilder.CreateFiles(
                 settings.OutputDirectory,
                 "Responses",
                 project.Settings.ForceOverwrite,
@@ -39,7 +39,7 @@ namespace CatFactory.AspNetCore
             );
         }
 
-        internal static void GenerateResponsesExtensions(this EfCoreProject project, AspNetCoreProjectSettings settings)
+        internal static void GenerateResponsesExtensions(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             var classDefinition = new CSharpClassDefinition
             {
@@ -80,10 +80,10 @@ namespace CatFactory.AspNetCore
                 }
             });
 
-            CSharpClassBuilder.Create(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite, classDefinition);
+            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite, classDefinition);
         }
 
-        internal static void GenerateViewModels(this EfCoreProject project, AspNetCoreProjectSettings settings)
+        internal static void GenerateViewModels(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             var resolver = new ClrTypeResolver();
 
@@ -104,7 +104,7 @@ namespace CatFactory.AspNetCore
                     classDefinition.Properties.Add(new PropertyDefinition(resolver.Resolve(column.Type), column.GetPropertyName()));
                 }
 
-                CSharpClassBuilder.Create(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
             }
         }
 
@@ -156,7 +156,7 @@ namespace CatFactory.AspNetCore
             };
         }
 
-        internal static void GenerateViewModelsExtensions(this EfCoreProject project, AspNetCoreProjectSettings settings)
+        internal static void GenerateViewModelsExtensions(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             foreach (var table in project.Database.Tables)
             {
@@ -183,11 +183,11 @@ namespace CatFactory.AspNetCore
                 classDefinition.Methods.Add(GetToEntityMethod(table));
                 classDefinition.Methods.Add(GetToViewModelMethod(table));
 
-                CSharpClassBuilder.Create(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
             }
         }
 
-        public static EfCoreProject GenerateAspNetCoreProject(this EfCoreProject project, AspNetCoreProjectSettings settings)
+        public static EntityFrameworkCoreProject ScaffoldAspNetCoreProject(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             project.GenerateResponses(settings);
             project.GenerateResponsesExtensions(settings);
@@ -196,7 +196,8 @@ namespace CatFactory.AspNetCore
 
             foreach (var feature in project.Features)
             {
-                CSharpClassBuilder.Create(settings.OutputDirectory, "Controllers", feature.GetEfCoreProject().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
+                CSharpClassBuilder
+                    .CreateFiles(settings.OutputDirectory, "Controllers", feature.GetEfCoreProject().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
             }
 
             return project;

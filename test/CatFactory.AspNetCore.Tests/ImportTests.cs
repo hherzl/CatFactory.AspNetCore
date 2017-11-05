@@ -4,7 +4,7 @@ using Xunit;
 
 namespace CatFactory.AspNetCore.Tests
 {
-    public class CodeGenerationTests
+    public class ImportTests
     {
         [Fact]
         public void TestControllerGenerationFromExistingDatabase()
@@ -14,7 +14,7 @@ namespace CatFactory.AspNetCore.Tests
             var database = SqlServerDatabaseFactory
                 .Import(logger, "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
 
-            var project = new EfCoreProject
+            var project = new EntityFrameworkCoreProject
             {
                 Name = "Store",
                 Database = database,
@@ -22,10 +22,8 @@ namespace CatFactory.AspNetCore.Tests
             };
 
             project.Settings.ForceOverwrite = true;
-
-            project.Settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
-
             project.Settings.ConcurrencyToken = "Timestamp";
+            project.Settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
 
             project.BuildFeatures();
 
@@ -36,9 +34,9 @@ namespace CatFactory.AspNetCore.Tests
             };
 
             project
-                .GenerateEntityLayer()
-                .GenerateDataLayer()
-                .GenerateAspNetCoreProject(aspNetCoreProjectSettings);
+                .ScaffoldEntityLayer()
+                .ScaffoldDataLayer()
+                .ScaffoldAspNetCoreProject(aspNetCoreProjectSettings);
         }
     }
 }
