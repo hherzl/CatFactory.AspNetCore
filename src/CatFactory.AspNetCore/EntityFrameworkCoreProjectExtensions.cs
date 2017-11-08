@@ -197,7 +197,7 @@ namespace CatFactory.AspNetCore
             foreach (var feature in project.Features)
             {
                 CSharpClassBuilder
-                    .CreateFiles(settings.OutputDirectory, "Controllers", feature.GetEfCoreProject().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
+                    .CreateFiles(settings.OutputDirectory, "Controllers", feature.GetEntityFrameworkCoreProject().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
             }
 
             return project;

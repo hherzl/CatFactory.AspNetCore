@@ -23,10 +23,10 @@ namespace CatFactory.AspNetCore.Definitions
             definition.Namespaces.Add("Microsoft.EntityFrameworkCore");
             definition.Namespaces.Add("Microsoft.Extensions.Logging");
 
-            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetDataLayerContractsNamespace());
-            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetDataLayerRepositoriesNamespace());
-            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetResponsesNamespace());
-            definition.Namespaces.Add(projectFeature.GetEfCoreProject().GetViewModelsNamespace());
+            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerContractsNamespace());
+            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerRepositoriesNamespace());
+            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetResponsesNamespace());
+            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetViewModelsNamespace());
 
             definition.Namespace = "Controllers";
 
@@ -110,11 +110,11 @@ namespace CatFactory.AspNetCore.Definitions
         {
             if (table.HasDefaultSchema())
             {
-                definition.Namespaces.AddUnique(projectFeature.GetEfCoreProject().GetEntityLayerNamespace());
+                definition.Namespaces.AddUnique(projectFeature.GetEntityFrameworkCoreProject().GetEntityLayerNamespace());
             }
             else
             {
-                definition.Namespaces.AddUnique(projectFeature.GetEfCoreProject().GetEntityLayerNamespace(table.Schema));
+                definition.Namespaces.AddUnique(projectFeature.GetEntityFrameworkCoreProject().GetEntityLayerNamespace(table.Schema));
             }
 
             var lines = new List<ILine>();
@@ -322,7 +322,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
 
-            foreach (var column in table.GetUpdateColumns(projectFeature.GetEfCoreProject().Settings))
+            foreach (var column in table.GetUpdateColumns(projectFeature.GetEntityFrameworkCoreProject().Settings))
             {
                 lines.Add(new CodeLine(2, "entity.{0} = value.{0};", column.GetPropertyName()));
             }
