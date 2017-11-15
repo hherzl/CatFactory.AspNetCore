@@ -69,13 +69,19 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 definition.Methods.Add(GetGetAllMethod(projectFeature, definition, table, useLogger));
 
-                definition.Methods.Add(GetGetMethod(table, useLogger));
+                if (table.PrimaryKey != null)
+                {
+                    definition.Methods.Add(GetGetMethod(table, useLogger));
+                }
 
                 definition.Methods.Add(GetPostMethod(table, useLogger));
 
-                definition.Methods.Add(GetPutMethod(projectFeature, table, useLogger));
+                if (table.PrimaryKey != null)
+                {
+                    definition.Methods.Add(GetPutMethod(projectFeature, table, useLogger));
 
-                definition.Methods.Add(GetDeleteMethod(table, useLogger));
+                    definition.Methods.Add(GetDeleteMethod(table, useLogger));
+                }
             }
 
             return definition;
@@ -256,7 +262,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CodeLine(1, "var entity = value.ToEntity();", table.GetAddRepositoryMethodName()));
+            lines.Add(new CodeLine(1, "var entity = request.ToEntity();", table.GetAddRepositoryMethodName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "await Repository.{0}(entity);", table.GetAddRepositoryMethodName()));
@@ -289,7 +295,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine("return response.ToHttpResponse();"));
 
-            return new MethodDefinition("Task<IActionResult>", table.GetControllerPostAsyncMethodName(), new ParameterDefinition(table.GetViewModelName(), "value", new MetadataAttribute("FromBody")))
+            return new MethodDefinition("Task<IActionResult>", table.GetControllerPostAsyncMethodName(), new ParameterDefinition(table.GetViewModelName(), "request", new MetadataAttribute("FromBody")))
             {
                 Attributes = new List<MetadataAttribute>()
                 {
@@ -316,7 +322,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(value.ToEntity());", table.GetGetRepositoryMethodName()));
+            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(request.ToEntity());", table.GetGetRepositoryMethodName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
@@ -324,17 +330,18 @@ namespace CatFactory.AspNetCore.Definitions
 
             foreach (var column in table.GetUpdateColumns(projectFeature.GetEntityFrameworkCoreProject().Settings))
             {
-                lines.Add(new CodeLine(2, "entity.{0} = value.{0};", column.GetPropertyName()));
+                lines.Add(new CodeLine(2, "entity.{0} = request.{0};", column.GetPropertyName()));
             }
 
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetUpdateRepositoryMethodName()));
-            lines.Add(new CodeLine());
-
-            lines.Add(new CodeLine(2, "response.Model = entity.ToViewModel();"));
 
             lines.Add(new CodeLine(1, "}"));
+
+            lines.Add(new CodeLine());
+
+            lines.Add(new CodeLine(1, "response.Model = entity?.ToViewModel();"));
 
             if (useLogger)
             {
@@ -361,7 +368,20 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine("return response.ToHttpResponse();"));
 
-            return new MethodDefinition("Task<IActionResult>", table.GetControllerPutAsyncMethodName(), new ParameterDefinition("Int32", "id"), new ParameterDefinition(table.GetViewModelName(), "value", new MetadataAttribute("FromBody")))
+            var parameters = new List<ParameterDefinition>();
+
+            if (table.PrimaryKey?.Key.Count == 1)
+            {
+                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
+
+                var resolver = new ClrTypeResolver { UseNullableTypes = false };
+
+                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), (new DotNetNamingConvention()).GetParameterName("id")));
+            }
+
+            parameters.Add(new ParameterDefinition(table.GetViewModelName(), "request", new MetadataAttribute("FromBody")));
+
+            return new MethodDefinition("Task<IActionResult>", table.GetControllerPutAsyncMethodName(), parameters.ToArray())
             {
                 Attributes = new List<MetadataAttribute>()
                 {
@@ -388,18 +408,19 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(value.ToEntity());", table.GetGetRepositoryMethodName(), table.GetEntityName()));
+            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
 
             lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetRemoveRepositoryMethodName()));
-            lines.Add(new CodeLine());
-
-            lines.Add(new CodeLine(2, "response.Model = entity.ToViewModel();"));
 
             lines.Add(new CodeLine(1, "}"));
+
+            lines.Add(new CodeLine());
+
+            lines.Add(new CodeLine(1, "response.Model = entity?.ToViewModel();"));
 
             if (useLogger)
             {
@@ -426,7 +447,18 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine("return response.ToHttpResponse();"));
 
-            return new MethodDefinition("Task<IActionResult>", table.GetControllerDeleteAsyncMethodName(), new ParameterDefinition("Int32", "id"), new ParameterDefinition(table.GetViewModelName(), "value", new MetadataAttribute("FromBody")))
+            var parameters = new List<ParameterDefinition>();
+
+            if (table.PrimaryKey?.Key.Count == 1)
+            {
+                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
+
+                var resolver = new ClrTypeResolver { UseNullableTypes = false };
+
+                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), (new DotNetNamingConvention()).GetParameterName("id")));
+            }
+
+            return new MethodDefinition("Task<IActionResult>", table.GetControllerDeleteAsyncMethodName(), parameters.ToArray())
             {
                 Attributes = new List<MetadataAttribute>()
                 {

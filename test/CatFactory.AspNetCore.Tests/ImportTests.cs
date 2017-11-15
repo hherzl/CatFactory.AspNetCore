@@ -18,7 +18,7 @@ namespace CatFactory.AspNetCore.Tests
             {
                 Name = "Store",
                 Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.AspNetCore\\src\\Store.Core"
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.Core"
             };
 
             project.Settings.ForceOverwrite = true;
@@ -30,7 +30,7 @@ namespace CatFactory.AspNetCore.Tests
             var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
             {
                 ProjectName = "Store.AspNetCore",
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.AspNetCore\\src\\Store.AspNetCore"
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore"
             };
 
             project
