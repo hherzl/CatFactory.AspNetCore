@@ -158,19 +158,19 @@ namespace CatFactory.AspNetCore
 
         internal static void GenerateViewModelsExtensions(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
-            foreach (var table in project.Database.Tables)
+            var classDefinition = new CSharpClassDefinition
             {
-                var classDefinition = new CSharpClassDefinition
-                {
-                    Namespaces = new List<string>()
+                Namespaces = new List<string>()
                     {
                         "System"
                     },
-                    Namespace = project.GetViewModelsNamespace(),
-                    Name = table.GetViewModelExtensionName(),
-                    IsStatic = true
-                };
+                Namespace = project.GetViewModelsNamespace(),
+                Name = "Extensions",//table.GetViewModelExtensionName(),
+                IsStatic = true
+            };
 
+            foreach (var table in project.Database.Tables)
+            {
                 if (table.HasDefaultSchema())
                 {
                     classDefinition.Namespaces.AddUnique(project.GetEntityLayerNamespace());
@@ -182,9 +182,9 @@ namespace CatFactory.AspNetCore
 
                 classDefinition.Methods.Add(GetToEntityMethod(table));
                 classDefinition.Methods.Add(GetToViewModelMethod(table));
-
-                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
             }
+
+            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
         }
 
         public static EntityFrameworkCoreProject ScaffoldAspNetCoreProject(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)

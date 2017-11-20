@@ -136,7 +136,45 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
-            lines.Add(new CodeLine(1, "var query = Repository.{0}();", table.GetGetAllRepositoryMethodName()));
+
+            var parameters = new List<ParameterDefinition>
+            {
+                new ParameterDefinition("Int32?", "pageSize", "10"),
+                new ParameterDefinition("Int32?", "pageNumber", "1")
+            };
+
+            var foreignKeys = new List<string>();
+
+            foreach (var foreignKey in table.ForeignKeys)
+            {
+                var parentTable = projectFeature.Project.Database.FindTableByFullName(foreignKey.References);
+
+                if (parentTable == null)
+                {
+                    continue;
+                }
+
+                if (parentTable.PrimaryKey?.Key.Count == 1)
+                {
+                    var column = parentTable.PrimaryKey.GetColumns(parentTable).First();
+
+                    var resolver = new ClrTypeResolver();
+
+                    parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), column.GetParameterName(), "null"));
+
+                    foreignKeys.Add(column.GetParameterName());
+                }
+            }
+
+            if (foreignKeys.Count == 0)
+            {
+                lines.Add(new CodeLine(1, "var query = Repository.{0}();", table.GetGetAllRepositoryMethodName()));
+            }
+            else
+            {
+                lines.Add(new CodeLine(1, "var query = Repository.{0}({1});", table.GetGetAllRepositoryMethodName(), string.Join(", ", foreignKeys)));
+            }
+
             lines.Add(new CodeLine());
 
             if (useLogger)
@@ -149,7 +187,7 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine(1, "response.Model = await query.Paging(response.PageSize, response.PageNumber).ToListAsync();"));
                 lines.Add(new CodeLine());
 
-                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
+                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"Page {0} of {1}, Total of rows: {2}\", response.PageNumber, response.PageCount, response.ItemsCount);"));
             }
 
             lines.Add(new CodeLine("}"));
@@ -170,7 +208,9 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine());
             lines.Add(new CodeLine("return response.ToHttpResponse();"));
 
-            return new MethodDefinition("Task<IActionResult>", table.GetControllerGetAllAsyncMethodName(), new ParameterDefinition("Int32?", "pageSize", "10"), new ParameterDefinition("Int32?", "pageNumber", "1"))
+            
+
+            return new MethodDefinition("Task<IActionResult>", table.GetControllerGetAllAsyncMethodName(), parameters.ToArray())
             {
                 Attributes = new List<MetadataAttribute>()
                 {
@@ -322,7 +362,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(request.ToEntity());", table.GetGetRepositoryMethodName()));
+            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
@@ -337,17 +377,17 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetUpdateRepositoryMethodName()));
 
+            if (useLogger)
+            {
+                lines.Add(new CodeLine());
+                lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The data was updated successfully\");"));
+            }
+
             lines.Add(new CodeLine(1, "}"));
 
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "response.Model = entity?.ToViewModel();"));
-
-            if (useLogger)
-            {
-                lines.Add(new CodeLine());
-                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
-            }
 
             lines.Add(new CodeLine("}"));
             lines.Add(new CodeLine("catch (Exception ex)"));
@@ -416,17 +456,17 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetRemoveRepositoryMethodName()));
 
+            if (useLogger)
+            {
+                lines.Add(new CodeLine());
+                lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The entity was deleted successfully\");"));
+            }
+
             lines.Add(new CodeLine(1, "}"));
 
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "response.Model = entity?.ToViewModel();"));
-
-            if (useLogger)
-            {
-                lines.Add(new CodeLine());
-                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
-            }
 
             lines.Add(new CodeLine("}"));
             lines.Add(new CodeLine("catch (Exception ex)"));
