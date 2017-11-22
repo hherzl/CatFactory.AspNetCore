@@ -1,8 +1,18 @@
-﻿namespace CatFactory.AspNetCore
+﻿using CatFactory.CodeFactory;
+using CatFactory.DotNetCore;
+
+namespace CatFactory.AspNetCore
 {
     public static class ProjectFeaturetExtensions
     {
+        private static ICodeNamingConvention namingConvention;
+
+        static ProjectFeaturetExtensions()
+        {
+            namingConvention = new DotNetNamingConvention();
+        }
+
         public static string GetControllerName(this ProjectFeature projectFeature)
-            => string.Format("{0}Controller", NamingConvention.GetPascalCase(projectFeature.Name));
+            => namingConvention.GetClassName(string.Format("{0}{1}", projectFeature.Name, "Controller"));
     }
 }

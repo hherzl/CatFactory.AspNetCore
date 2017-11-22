@@ -19,20 +19,14 @@ namespace CatFactory.AspNetCore
 
         internal static void GenerateResponses(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
-            CSharpInterfaceBuilder.CreateFiles(
-                settings.OutputDirectory,
-                "Responses",
-                project.Settings.ForceOverwrite,
+            CSharpInterfaceBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite,
                 project.GetResponseInterfaceDefinition(),
                 project.GetSingleResponseInterfaceDefinition(),
                 project.GetListResponseInterfaceDefinition(),
                 project.GetPagedResponseInterfaceDefinition()
             );
 
-            CSharpClassBuilder.CreateFiles(
-                settings.OutputDirectory,
-                "Responses",
-                project.Settings.ForceOverwrite,
+            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite,
                 project.GetSingleResponseClassDefinition(),
                 project.GetListResponseClassDefinition(),
                 project.GetPagedResponseClassDefinition()
@@ -165,7 +159,7 @@ namespace CatFactory.AspNetCore
                         "System"
                     },
                 Namespace = project.GetViewModelsNamespace(),
-                Name = "Extensions",//table.GetViewModelExtensionName(),
+                Name = "Extensions",
                 IsStatic = true
             };
 
@@ -196,8 +190,7 @@ namespace CatFactory.AspNetCore
 
             foreach (var feature in project.Features)
             {
-                CSharpClassBuilder
-                    .CreateFiles(settings.OutputDirectory, "Controllers", feature.GetEntityFrameworkCoreProject().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
+                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Controllers", feature.GetEntityFrameworkCoreProject().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
             }
 
             return project;

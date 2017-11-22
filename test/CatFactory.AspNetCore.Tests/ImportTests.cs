@@ -24,6 +24,7 @@ namespace CatFactory.AspNetCore.Tests
             project.Settings.ForceOverwrite = true;
             project.Settings.ConcurrencyToken = "Timestamp";
             project.Settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
+            project.Settings.EntitiesWithDataContracts.Add("Sales.Order");
 
             project.BuildFeatures();
 

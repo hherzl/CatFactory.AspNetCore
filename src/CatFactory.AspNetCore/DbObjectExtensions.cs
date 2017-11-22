@@ -39,8 +39,6 @@ namespace CatFactory.AspNetCore
 
         public static IEnumerable<Column> GetUpdateColumns(this ITable table, EntityFrameworkCoreProjectSettings settings)
         {
-            var list = new List<Column>();
-
             foreach (var column in table.Columns)
             {
                 if (table.PrimaryKey != null && table.PrimaryKey.Key.Contains(column.Name))
@@ -58,10 +56,8 @@ namespace CatFactory.AspNetCore
                     continue;
                 }
 
-                list.Add(column);
+                yield return column;
             }
-
-            return list;
         }
     }
 }
