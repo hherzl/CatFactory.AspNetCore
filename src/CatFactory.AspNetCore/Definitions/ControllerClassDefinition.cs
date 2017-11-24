@@ -26,7 +26,7 @@ namespace CatFactory.AspNetCore.Definitions
             definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerContractsNamespace());
             definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerRepositoriesNamespace());
             definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetResponsesNamespace());
-            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetViewModelsNamespace());
+            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetRequestModelsNamespace());
 
             definition.Namespace = "Controllers";
 
@@ -249,7 +249,7 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetViewModelName()));
+            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
@@ -259,12 +259,12 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine());
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
-            lines.Add(new CodeLine(2, "response.Model = entity.ToViewModel();"));
+            lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
 
             if (useLogger)
             {
                 lines.Add(new CodeLine());
-                lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
+                lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The entity was retrieved successfully\");"));
             }
 
             lines.Add(new CodeLine(1, "}"));
@@ -309,13 +309,17 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetViewModelName()));
+            lines.Add(new CodeLine("if (!ModelState.IsValid)", table.GetRequestModelName()));
+            lines.Add(new CodeLine(1, "return BadRequest(requestModel);"));
+            lines.Add(new CodeLine());
+
+            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CodeLine(1, "var entity = request.ToEntity();", table.GetAddRepositoryMethodName()));
+            lines.Add(new CodeLine(1, "var entity = requestModel.ToEntity();", table.GetAddRepositoryMethodName()));
             lines.Add(new CodeLine());
 
             foreach (var unique in table.Uniques)
@@ -330,12 +334,12 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine(1, "await Repository.{0}(entity);", table.GetAddRepositoryMethodName()));
             lines.Add(new CodeLine());
 
-            lines.Add(new CodeLine(1, "response.Model = entity.ToViewModel();"));
+            lines.Add(new CodeLine(1, "response.Model = entity.ToRequestModel();"));
 
             if (useLogger)
             {
                 lines.Add(new CodeLine());
-                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The data was retrieved successfully\");"));
+                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"The entity was created successfully\");"));
             }
 
             lines.Add(new CodeLine("}"));
@@ -357,11 +361,11 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine("return response.ToHttpResponse();"));
 
-            return new MethodDefinition("Task<IActionResult>", table.GetControllerPostAsyncMethodName(), new ParameterDefinition(table.GetViewModelName(), "request", new MetadataAttribute("FromBody")))
+            return new MethodDefinition("Task<IActionResult>", table.GetControllerPostAsyncMethodName(), new ParameterDefinition(table.GetRequestModelName(), "requestModel", new MetadataAttribute("FromBody")))
             {
-                Attributes = new List<MetadataAttribute>()
+                Attributes = new List<MetadataAttribute>
                 {
-                    new MetadataAttribute("HttpPost", String.Format("\"{0}\"", table.GetEntityName())),
+                    new MetadataAttribute("HttpPost", string.Format("\"{0}\"", table.GetEntityName())),
                 },
                 IsAsync = true,
                 Lines = lines
@@ -378,7 +382,11 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetViewModelName()));
+            lines.Add(new CodeLine("if (!ModelState.IsValid)", table.GetRequestModelName()));
+            lines.Add(new CodeLine(1, "return BadRequest(requestModel);"));
+            lines.Add(new CodeLine());
+
+            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
@@ -392,7 +400,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             foreach (var column in table.GetUpdateColumns(projectFeature.GetEntityFrameworkCoreProject().Settings))
             {
-                lines.Add(new CodeLine(2, "entity.{0} = request.{0};", column.GetPropertyName()));
+                lines.Add(new CodeLine(2, "entity.{0} = requestModel.{0};", column.GetPropertyName()));
             }
 
             lines.Add(new CodeLine());
@@ -402,11 +410,11 @@ namespace CatFactory.AspNetCore.Definitions
             if (useLogger)
             {
                 lines.Add(new CodeLine());
-                lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The data was updated successfully\");"));
+                lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The entity was updated successfully\");"));
 
                 lines.Add(new CodeLine());
 
-                lines.Add(new CodeLine(2, "response.Model = entity.ToViewModel();"));
+                lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
             }
 
             lines.Add(new CodeLine(1, "}"));
@@ -438,16 +446,16 @@ namespace CatFactory.AspNetCore.Definitions
 
                 var resolver = new ClrTypeResolver { UseNullableTypes = false };
 
-                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), (new DotNetNamingConvention()).GetParameterName("id")));
+                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), "id"));
             }
 
-            parameters.Add(new ParameterDefinition(table.GetViewModelName(), "request", new MetadataAttribute("FromBody")));
+            parameters.Add(new ParameterDefinition(table.GetRequestModelName(), "requestModel", new MetadataAttribute("FromBody")));
 
             return new MethodDefinition("Task<IActionResult>", table.GetControllerPutAsyncMethodName(), parameters.ToArray())
             {
-                Attributes = new List<MetadataAttribute>()
+                Attributes = new List<MetadataAttribute>
                 {
-                    new MetadataAttribute("HttpPut", String.Format("\"{0}\"", table.GetEntityName())),
+                    new MetadataAttribute("HttpPut", string.Format("\"{0}\"", table.GetEntityName())),
                 },
                 IsAsync = true,
                 Lines = lines
@@ -464,7 +472,7 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetViewModelName()));
+            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
@@ -488,7 +496,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine());
 
-            lines.Add(new CodeLine(1, "response.Model = entity?.ToViewModel();"));
+            lines.Add(new CodeLine(1, "response.Model = entity?.ToRequestModel();"));
 
             lines.Add(new CodeLine("}"));
             lines.Add(new CodeLine("catch (Exception ex)"));
@@ -517,14 +525,14 @@ namespace CatFactory.AspNetCore.Definitions
 
                 var resolver = new ClrTypeResolver { UseNullableTypes = false };
 
-                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), (new DotNetNamingConvention()).GetParameterName("id")));
+                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), "id"));
             }
 
             return new MethodDefinition("Task<IActionResult>", table.GetControllerDeleteAsyncMethodName(), parameters.ToArray())
             {
-                Attributes = new List<MetadataAttribute>()
+                Attributes = new List<MetadataAttribute>
                 {
-                    new MetadataAttribute("HttpDelete", String.Format("\"{0}\"", table.GetEntityName())),
+                    new MetadataAttribute("HttpDelete", string.Format("\"{0}\"", table.GetEntityName())),
                 },
                 IsAsync = true,
                 Lines = lines

@@ -31,8 +31,8 @@ namespace CatFactory.AspNetCore
         public static string GetControllerDeleteAsyncMethodName(this ITable table)
             => string.Format("{0}{1}{2}", "Delete", table.GetSingularName(), "Async");
 
-        public static string GetViewModelName(this IDbObject dbObject)
-            => string.Format("{0}ViewModel", dbObject.GetEntityName());
+        public static string GetRequestModelName(this IDbObject dbObject)
+            => string.Format("{0}RequestModel", dbObject.GetEntityName());
 
         public static string GetViewModelExtensionName(this ITable table)
             => string.Format("{0}Extensions", NamingConvention.GetPascalCase(table.Name));

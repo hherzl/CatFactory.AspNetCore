@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CatFactory.AspNetCore.Definitions;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
@@ -14,8 +15,8 @@ namespace CatFactory.AspNetCore
         public static string GetResponsesNamespace(this EntityFrameworkCoreProject project)
             => string.Format("{0}.{1}", project.Name, "Responses");
 
-        public static string GetViewModelsNamespace(this EntityFrameworkCoreProject project)
-            => string.Format("{0}.{1}", project.Name, "ViewModels");
+        public static string GetRequestModelsNamespace(this EntityFrameworkCoreProject project)
+            => string.Format("{0}.{1}", project.Name, "RequestModels");
 
         internal static void GenerateResponses(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
@@ -77,28 +78,44 @@ namespace CatFactory.AspNetCore
             CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite, classDefinition);
         }
 
-        internal static void GenerateViewModels(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
+        internal static void GenerateRequestModels(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
-            var resolver = new ClrTypeResolver();
-
             foreach (var table in project.Database.Tables)
             {
                 var classDefinition = new CSharpClassDefinition
                 {
                     Namespaces = new List<string>()
                     {
-                        "System"
+                        "System",
+                        "System.ComponentModel.DataAnnotations"
                     },
-                    Namespace = project.GetViewModelsNamespace(),
-                    Name = table.GetViewModelName()
+                    Namespace = project.GetRequestModelsNamespace(),
+                    Name = table.GetRequestModelName()
                 };
 
                 foreach (var column in table.Columns)
                 {
-                    classDefinition.Properties.Add(new PropertyDefinition(resolver.Resolve(column.Type), column.GetPropertyName()));
+                    var property = new PropertyDefinition(column.GetClrType(), column.GetPropertyName());
+
+                    if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
+                    {
+                        property.Attributes.Add(new MetadataAttribute("Key"));
+                    }
+
+                    if (!column.Nullable && table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() != column.Name)
+                    {
+                        property.Attributes.Add(new MetadataAttribute("Required"));
+                    }
+
+                    if (column.IsString() && column.Length > 0)
+                    {
+                        property.Attributes.Add(new MetadataAttribute("StringLength", column.Length.ToString()));
+                    }
+
+                    classDefinition.Properties.Add(property);
                 }
 
-                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "RequestModels", project.Settings.ForceOverwrite, classDefinition);
             }
         }
 
@@ -113,12 +130,12 @@ namespace CatFactory.AspNetCore
             {
                 var column = table.Columns[i];
 
-                lines.Add(new CodeLine(1, "{0} = viewModel.{0}{1}", column.GetPropertyName(), i < table.Columns.Count - 1 ? "," : string.Empty));
+                lines.Add(new CodeLine(1, "{0} = requestModel.{0}{1}", column.GetPropertyName(), i < table.Columns.Count - 1 ? "," : string.Empty));
             }
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition(table.GetEntityName(), "ToEntity", new ParameterDefinition(table.GetViewModelName(), "viewModel"))
+            return new MethodDefinition(table.GetEntityName(), "ToEntity", new ParameterDefinition(table.GetRequestModelName(), "requestModel"))
             {
                 IsStatic = true,
                 IsExtension = true,
@@ -130,7 +147,7 @@ namespace CatFactory.AspNetCore
         {
             var lines = new List<ILine>();
 
-            lines.Add(new CodeLine("return new {0}", table.GetViewModelName()));
+            lines.Add(new CodeLine("return new {0}", table.GetRequestModelName()));
             lines.Add(new CodeLine("{"));
 
             for (var i = 0; i < table.Columns.Count; i++)
@@ -142,7 +159,7 @@ namespace CatFactory.AspNetCore
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition(table.GetViewModelName(), "ToViewModel", new ParameterDefinition(table.GetEntityName(), "entity"))
+            return new MethodDefinition(table.GetRequestModelName(), "ToRequestModel", new ParameterDefinition(table.GetEntityName(), "entity"))
             {
                 IsStatic = true,
                 IsExtension = true,
@@ -150,7 +167,7 @@ namespace CatFactory.AspNetCore
             };
         }
 
-        internal static void GenerateViewModelsExtensions(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
+        internal static void GenerateRequestModelsExtensions(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             var classDefinition = new CSharpClassDefinition
             {
@@ -158,7 +175,7 @@ namespace CatFactory.AspNetCore
                     {
                         "System"
                     },
-                Namespace = project.GetViewModelsNamespace(),
+                Namespace = project.GetRequestModelsNamespace(),
                 Name = "Extensions",
                 IsStatic = true
             };
@@ -178,15 +195,15 @@ namespace CatFactory.AspNetCore
                 classDefinition.Methods.Add(GetToViewModelMethod(table));
             }
 
-            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "ViewModels", project.Settings.ForceOverwrite, classDefinition);
+            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "RequestModels", project.Settings.ForceOverwrite, classDefinition);
         }
 
         public static EntityFrameworkCoreProject ScaffoldAspNetCoreProject(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             project.GenerateResponses(settings);
             project.GenerateResponsesExtensions(settings);
-            project.GenerateViewModels(settings);
-            project.GenerateViewModelsExtensions(settings);
+            project.GenerateRequestModels(settings);
+            project.GenerateRequestModelsExtensions(settings);
 
             foreach (var feature in project.Features)
             {
