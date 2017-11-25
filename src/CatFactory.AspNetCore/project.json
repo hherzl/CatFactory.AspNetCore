@@ -1,7 +1,7 @@
 ﻿{
   "version": "3.0.0-alpha-build00",
   "title": "CatFactory.AspNetCore",
-  "description": "CatFactory package for AspNet Core code generation (C#)",
+  "description": "CatFactory package for AspNet Core scaffolding (C#)",
   "packOptions": {
     "repository": {
       "url": "https://github.com/hherzl/CatFactory.AspNetCore"
@@ -13,7 +13,7 @@
 
   "dependencies": {
     "NETStandard.Library": "1.6.1",
-    "CatFactory.EfCore": "3.0.0-alpha-build10"
+    "CatFactory.EfCore": "3.0.0-alpha-build11"
   },
 
   "frameworks": {

@@ -7,13 +7,15 @@ namespace CatFactory.AspNetCore.Tests
     public class ImportTests
     {
         [Fact]
-        public void TestControllerGenerationFromExistingDatabase()
+        public void TestControllerGenerationFromStoreDatabase()
         {
             var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
 
+            // Import database
             var database = SqlServerDatabaseFactory
                 .Import(logger, "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
 
+            // Create instance of Entity Framework Core Project
             var project = new EntityFrameworkCoreProject
             {
                 Name = "Store",
@@ -21,19 +23,61 @@ namespace CatFactory.AspNetCore.Tests
                 OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.Core"
             };
 
+            // Apply settings for project
             project.Settings.ForceOverwrite = true;
             project.Settings.ConcurrencyToken = "Timestamp";
             project.Settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
             project.Settings.EntitiesWithDataContracts.Add("Sales.Order");
 
+            // Build features for project, group all entities by schema into a feature
             project.BuildFeatures();
 
+            // Create settings for AspNetCore project
             var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
             {
                 ProjectName = "Store.AspNetCore",
                 OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore"
             };
 
+            // Scaffolding =^^=
+            project
+                .ScaffoldEntityLayer()
+                .ScaffoldDataLayer()
+                .ScaffoldAspNetCoreProject(aspNetCoreProjectSettings);
+        }
+
+        [Fact]
+        public void TestControllerGenerationFromNorthwindDatabase()
+        {
+            var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
+
+            // Import database
+            var database = SqlServerDatabaseFactory
+                .Import(logger, "server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
+
+            // Create instance of Entity Framework Core Project
+            var project = new EntityFrameworkCoreProject
+            {
+                Name = "Northwind",
+                Database = database,
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Northwind.Core"
+            };
+
+            // Apply settings for project
+            project.Settings.ForceOverwrite = true;
+            project.Settings.EntitiesWithDataContracts.Add("Orders");
+
+            // Build features for project, group all entities by schema into a feature
+            project.BuildFeatures();
+
+            // Create settings for AspNetCore project
+            var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
+            {
+                ProjectName = "Northwind.AspNetCore",
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Northwind.AspNetCore"
+            };
+
+            // Scaffolding =^^=
             project
                 .ScaffoldEntityLayer()
                 .ScaffoldDataLayer()
