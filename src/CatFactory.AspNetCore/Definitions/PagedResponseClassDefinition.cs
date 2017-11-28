@@ -16,7 +16,12 @@ namespace CatFactory.AspNetCore.Definitions
             definition.Namespaces.Add("System.Collections.Generic");
             definition.Namespace = project.GetResponsesNamespace();
             definition.Name = "PagedResponse";
-            definition.GenericType = "TModel";
+
+            definition.GenericTypes = new List<GenericTypeDefinition>
+            {
+                new GenericTypeDefinition { Name = "TModel", Constraint = "TModel : class" }
+            };
+
             definition.Implements.Add("IListResponse<TModel>");
             definition.Properties.Add(new PropertyDefinition("String", "Message"));
             definition.Properties.Add(new PropertyDefinition("Boolean", "DidError"));
@@ -28,7 +33,7 @@ namespace CatFactory.AspNetCore.Definitions
             definition.Properties.Add(new PropertyDefinition("Int32", "PageCount")
             {
                 IsReadOnly = true,
-                GetBody = new List<ILine>()
+                GetBody = new List<ILine>
                 {
                     new CodeLine("PageSize == 0 ? 0 : ItemsCount / PageSize;")
                 }

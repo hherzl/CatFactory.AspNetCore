@@ -1,19 +1,24 @@
 ﻿{
   "version": "3.0.0-alpha-build00",
   "title": "CatFactory.AspNetCore",
-  "description": "CatFactory package for AspNet Core scaffolding (C#)",
+  "description": "CatFactory package for Asp.Net Core scaffolding (C#)",
   "packOptions": {
+    "summary": "CatFactory package for Asp.Net Core scaffolding (C#)",
+    "tags": [ "Asp.Net Core", "Web API" ],
+    "releaseNotes": "Package update and code fixes for generic types in responses",
+    "requireLicenseAcceptance": false,
     "repository": {
+      "type": "git",
       "url": "https://github.com/hherzl/CatFactory.AspNetCore"
     }
   },
   "authors": [
-    "C. Herzl"
+    "H. Herzl"
   ],
 
   "dependencies": {
     "NETStandard.Library": "1.6.1",
-    "CatFactory.EfCore": "3.0.0-alpha-build11"
+    "CatFactory.EfCore": "3.0.0-alpha-build12"
   },
 
   "frameworks": {

@@ -1,4 +1,5 @@
-﻿using CatFactory.DotNetCore;
+﻿using System.Collections.Generic;
+using CatFactory.DotNetCore;
 using CatFactory.EfCore;
 using CatFactory.OOP;
 
@@ -13,7 +14,12 @@ namespace CatFactory.AspNetCore.Definitions
             definition.Namespaces.Add("System.Collections.Generic");
             definition.Namespace = project.GetResponsesNamespace();
             definition.Name = "IListResponse";
-            definition.GenericType = "TModel";
+
+            definition.GenericTypes = new List<GenericTypeDefinition>
+            {
+                new GenericTypeDefinition { Name = "TModel", Constraint = "TModel : class" }
+            };
+
             definition.Implements.Add("IResponse");
             definition.Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
 
