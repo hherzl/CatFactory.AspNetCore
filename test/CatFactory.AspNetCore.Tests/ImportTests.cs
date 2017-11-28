@@ -7,7 +7,7 @@ namespace CatFactory.AspNetCore.Tests
     public class ImportTests
     {
         [Fact]
-        public void TestControllerGenerationFromStoreDatabase()
+        public void TestControllerScaffoldingFromStoreDatabase()
         {
             var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
 
@@ -47,7 +47,7 @@ namespace CatFactory.AspNetCore.Tests
         }
 
         [Fact]
-        public void TestControllerGenerationFromNorthwindDatabase()
+        public void TestControllerScaffoldingFromNorthwindDatabase()
         {
             var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
 
@@ -75,6 +75,43 @@ namespace CatFactory.AspNetCore.Tests
             {
                 ProjectName = "Northwind.AspNetCore",
                 OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Northwind.AspNetCore"
+            };
+
+            // Scaffolding =^^=
+            project
+                .ScaffoldEntityLayer()
+                .ScaffoldDataLayer()
+                .ScaffoldAspNetCoreProject(aspNetCoreProjectSettings);
+        }
+
+        [Fact]
+        public void TestSimpleControllerScaffoldingFromStoreDatabase()
+        {
+            var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
+
+            // Import database
+            var database = SqlServerDatabaseFactory
+                .Import(logger, "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
+
+            // Create instance of Entity Framework Core Project
+            var project = new EntityFrameworkCoreProject
+            {
+                Name = "Store.Simple",
+                Database = database,
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.Core.Simple"
+            };
+
+            // Apply settings for project
+            project.Settings.ForceOverwrite = true;
+
+            // Build features for project, group all entities by schema into a feature
+            project.BuildFeatures();
+
+            // Create settings for AspNetCore project
+            var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
+            {
+                ProjectName = "Store.AspNetCore.Simple",
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore.Simple"
             };
 
             // Scaffolding =^^=

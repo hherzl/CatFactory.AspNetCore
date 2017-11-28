@@ -38,7 +38,7 @@ namespace CatFactory.AspNetCore
         {
             var classDefinition = new CSharpClassDefinition
             {
-                Namespaces = new List<string>()
+                Namespaces = new List<string>
                 {
                     "System",
                     "System.Net",
@@ -54,7 +54,7 @@ namespace CatFactory.AspNetCore
             {
                 IsStatic = true,
                 IsExtension = true,
-                Lines = new List<ILine>()
+                Lines = new List<ILine>
                 {
                     new CodeLine("response.DidError = true;"),
                     new CodeLine("response.ErrorMessage = ex.Message;"),
@@ -67,7 +67,7 @@ namespace CatFactory.AspNetCore
             {
                 IsStatic = true,
                 IsExtension = true,
-                Lines = new List<ILine>()
+                Lines = new List<ILine>
                 {
                     new CodeLine("var status = HttpStatusCode.OK;"),
                     new CodeLine(),
@@ -84,7 +84,7 @@ namespace CatFactory.AspNetCore
             {
                 var classDefinition = new CSharpClassDefinition
                 {
-                    Namespaces = new List<string>()
+                    Namespaces = new List<string>
                     {
                         "System",
                         "System.ComponentModel.DataAnnotations"
@@ -93,7 +93,7 @@ namespace CatFactory.AspNetCore
                     Name = table.GetRequestModelName()
                 };
 
-                foreach (var column in table.Columns)
+                foreach (var column in table.Columns.Where(item => project.Settings.ConcurrencyToken != item.Name).ToList())
                 {
                     var property = new PropertyDefinition(column.GetClrType(), column.GetPropertyName());
 
@@ -119,18 +119,20 @@ namespace CatFactory.AspNetCore
             }
         }
 
-        private static MethodDefinition GetToEntityMethod(ITable table)
+        private static MethodDefinition GetToEntityMethod(EntityFrameworkCoreProject project, ITable table)
         {
             var lines = new List<ILine>();
 
             lines.Add(new CodeLine("return new {0}", table.GetEntityName()));
             lines.Add(new CodeLine("{"));
 
-            for (var i = 0; i < table.Columns.Count; i++)
-            {
-                var column = table.Columns[i];
+            var columns = table.Columns.Where(item => item.Name != project.Settings.ConcurrencyToken).ToList();
 
-                lines.Add(new CodeLine(1, "{0} = requestModel.{0}{1}", column.GetPropertyName(), i < table.Columns.Count - 1 ? "," : string.Empty));
+            for (var i = 0; i < columns.Count; i++)
+            {
+                var column = columns[i];
+
+                lines.Add(new CodeLine(1, "{0} = requestModel.{0}{1}", column.GetPropertyName(), i < columns.Count - 1 ? "," : string.Empty));
             }
 
             lines.Add(new CodeLine("};"));
@@ -143,18 +145,20 @@ namespace CatFactory.AspNetCore
             };
         }
 
-        private static MethodDefinition GetToViewModelMethod(ITable table)
+        private static MethodDefinition GetToViewModelMethod(EntityFrameworkCoreProject project, ITable table)
         {
             var lines = new List<ILine>();
 
             lines.Add(new CodeLine("return new {0}", table.GetRequestModelName()));
             lines.Add(new CodeLine("{"));
 
-            for (var i = 0; i < table.Columns.Count; i++)
-            {
-                var column = table.Columns[i];
+            var columns = table.Columns.Where(item => item.Name != project.Settings.ConcurrencyToken).ToList();
 
-                lines.Add(new CodeLine(1, "{0} = entity.{0}{1}", column.GetPropertyName(), i < table.Columns.Count - 1 ? "," : string.Empty));
+            for (var i = 0; i < columns.Count; i++)
+            {
+                var column = columns[i];
+
+                lines.Add(new CodeLine(1, "{0} = entity.{0}{1}", column.GetPropertyName(), i < columns.Count - 1 ? "," : string.Empty));
             }
 
             lines.Add(new CodeLine("};"));
@@ -171,10 +175,10 @@ namespace CatFactory.AspNetCore
         {
             var classDefinition = new CSharpClassDefinition
             {
-                Namespaces = new List<string>()
-                    {
-                        "System"
-                    },
+                Namespaces = new List<string>
+                {
+                    "System"
+                },
                 Namespace = project.GetRequestModelsNamespace(),
                 Name = "Extensions",
                 IsStatic = true
@@ -191,8 +195,8 @@ namespace CatFactory.AspNetCore
                     classDefinition.Namespaces.AddUnique(project.GetEntityLayerNamespace(table.Schema));
                 }
 
-                classDefinition.Methods.Add(GetToEntityMethod(table));
-                classDefinition.Methods.Add(GetToViewModelMethod(table));
+                classDefinition.Methods.Add(GetToEntityMethod(project, table));
+                classDefinition.Methods.Add(GetToViewModelMethod(project, table));
             }
 
             CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "RequestModels", project.Settings.ForceOverwrite, classDefinition);

@@ -34,7 +34,7 @@ namespace CatFactory.AspNetCore
         public static string GetRequestModelName(this IDbObject dbObject)
             => string.Format("{0}RequestModel", dbObject.GetEntityName());
 
-        public static string GetViewModelExtensionName(this ITable table)
+        public static string GetRequestModelExtensionName(this ITable table)
             => string.Format("{0}Extensions", NamingConvention.GetPascalCase(table.Name));
 
         public static IEnumerable<Column> GetUpdateColumns(this ITable table, EntityFrameworkCoreProjectSettings settings)
