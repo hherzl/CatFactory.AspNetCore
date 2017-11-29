@@ -7,11 +7,11 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class SingleResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this EntityFrameworkCoreProject project)
+        public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             var definition = new CSharpInterfaceDefinition();
 
-            definition.Namespace = project.GetResponsesNamespace();
+            definition.Namespace = settings.GetResponsesNamespace();
             definition.Name = "ISingleResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

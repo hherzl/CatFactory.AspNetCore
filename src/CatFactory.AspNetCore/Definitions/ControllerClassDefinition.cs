@@ -12,7 +12,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class ControllerClassDefinition
     {
-        public static CSharpClassDefinition GetControllerClassDefinition(this ProjectFeature projectFeature, bool useLogger = true)
+        public static CSharpClassDefinition GetControllerClassDefinition(this ProjectFeature projectFeature, AspNetCoreProjectSettings settings, bool useLogger = true)
         {
             var definition = new CSharpClassDefinition();
 
@@ -25,10 +25,10 @@ namespace CatFactory.AspNetCore.Definitions
 
             definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerContractsNamespace());
             definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerRepositoriesNamespace());
-            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetResponsesNamespace());
-            definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetRequestModelsNamespace());
+            definition.Namespaces.Add(settings.GetResponsesNamespace());
+            definition.Namespaces.Add(settings.GetRequestModelsNamespace());
 
-            definition.Namespace = "Controllers";
+            definition.Namespace = string.Format("{0}.{1}", settings.ProjectName, "Controllers");
 
             definition.Attributes = new List<MetadataAttribute>()
             {
@@ -167,13 +167,13 @@ namespace CatFactory.AspNetCore.Definitions
                 {
                     var column = parentTable.PrimaryKey.GetColumns(parentTable).First();
 
-                    var resolver = new ClrTypeResolver();
-
-                    parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), column.GetParameterName(), "null"));
+                    parameters.Add(new ParameterDefinition(column.GetClrType(), column.GetParameterName(), "null"));
 
                     foreignKeys.Add(column.GetParameterName());
                 }
             }
+
+            lines.Add(new CommentLine(1, " Get query from repository"));
 
             if (foreignKeys.Count == 0)
             {
@@ -188,11 +188,13 @@ namespace CatFactory.AspNetCore.Definitions
 
             if (useLogger)
             {
+                lines.Add(new CommentLine(1, " Set paging's information"));
                 lines.Add(new CodeLine(1, "response.PageSize = (Int32)pageSize;"));
                 lines.Add(new CodeLine(1, "response.PageNumber = (Int32)pageNumber;"));
                 lines.Add(new CodeLine(1, "response.ItemsCount = await query.CountAsync();"));
                 lines.Add(new CodeLine());
 
+                lines.Add(new CommentLine(1, " Retrieve items by page size and page number, set model for response"));
                 lines.Add(new CodeLine(1, "response.Model = await query.Paging(response.PageSize, response.PageNumber).ToListAsync();"));
                 lines.Add(new CodeLine());
 
@@ -255,6 +257,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
+            lines.Add(new CommentLine(1, " Retrieve entity by id"));
             lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
             lines.Add(new CodeLine());
             lines.Add(new CodeLine(1, "if (entity != null)"));
@@ -309,6 +312,7 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
+            lines.Add(new CommentLine(" Validate request model"));
             lines.Add(new CodeLine("if (!ModelState.IsValid)", table.GetRequestModelName()));
             lines.Add(new CodeLine(1, "return BadRequest(requestModel);"));
             lines.Add(new CodeLine());
@@ -324,6 +328,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             foreach (var unique in table.Uniques)
             {
+                lines.Add(new CommentLine(1, " Check if entity exists"));
                 lines.Add(new CodeLine(1, "if ((await Repository.{0}(entity)) != null)", table.GetGetByUniqueRepositoryMethodName(unique)));
                 lines.Add(new CodeLine(1, "{"));
                 lines.Add(new CodeLine(2, "return BadRequest();"));
@@ -331,6 +336,7 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
+            lines.Add(new CommentLine(1, " Add entity to database"));
             lines.Add(new CodeLine(1, "await Repository.{0}(entity);", table.GetAddRepositoryMethodName()));
             lines.Add(new CodeLine());
 
@@ -382,6 +388,7 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
+            lines.Add(new CommentLine(" Validate request model"));
             lines.Add(new CodeLine("if (!ModelState.IsValid)", table.GetRequestModelName()));
             lines.Add(new CodeLine(1, "return BadRequest(requestModel);"));
             lines.Add(new CodeLine());
@@ -392,11 +399,15 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
+            lines.Add(new CommentLine(1, " Retrieve entity by id"));
             lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
+
+            lines.Add(new TodoLine(2, " Check properties to update"));
+            lines.Add(new CommentLine(2, " Apply changes on entity"));
 
             foreach (var column in table.GetUpdateColumns(projectFeature.GetEntityFrameworkCoreProject().Settings))
             {
@@ -405,6 +416,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             lines.Add(new CodeLine());
 
+            lines.Add(new CommentLine(2, " Save changes for entity in database"));
             lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetUpdateRepositoryMethodName()));
 
             if (useLogger)
@@ -478,12 +490,14 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
+            lines.Add(new CommentLine(1, " Retrieve entity by id"));
             lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
 
+            lines.Add(new CommentLine(2, " Remove entity from database"));
             lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetRemoveRepositoryMethodName()));
 
             if (useLogger)
@@ -492,11 +506,11 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The entity was deleted successfully\");"));
             }
 
-            lines.Add(new CodeLine(1, "}"));
-
             lines.Add(new CodeLine());
 
-            lines.Add(new CodeLine(1, "response.Model = entity?.ToRequestModel();"));
+            lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+
+            lines.Add(new CodeLine(1, "}"));
 
             lines.Add(new CodeLine("}"));
             lines.Add(new CodeLine("catch (Exception ex)"));

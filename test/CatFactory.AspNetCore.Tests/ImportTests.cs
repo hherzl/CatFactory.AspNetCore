@@ -43,7 +43,7 @@ namespace CatFactory.AspNetCore.Tests
             project
                 .ScaffoldEntityLayer()
                 .ScaffoldDataLayer()
-                .ScaffoldAspNetCoreProject(aspNetCoreProjectSettings);
+                .ScaffoldAspNetCore(aspNetCoreProjectSettings);
         }
 
         [Fact]
@@ -81,7 +81,7 @@ namespace CatFactory.AspNetCore.Tests
             project
                 .ScaffoldEntityLayer()
                 .ScaffoldDataLayer()
-                .ScaffoldAspNetCoreProject(aspNetCoreProjectSettings);
+                .ScaffoldAspNetCore(aspNetCoreProjectSettings);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace CatFactory.AspNetCore.Tests
             project
                 .ScaffoldEntityLayer()
                 .ScaffoldDataLayer()
-                .ScaffoldAspNetCoreProject(aspNetCoreProjectSettings);
+                .ScaffoldAspNetCore(aspNetCoreProjectSettings);
         }
     }
 }

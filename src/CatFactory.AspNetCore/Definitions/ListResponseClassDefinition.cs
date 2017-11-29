@@ -7,13 +7,13 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class ListResponseClassDefinition
     {
-        public static CSharpClassDefinition GetListResponseClassDefinition(this EntityFrameworkCoreProject project)
+        public static CSharpClassDefinition GetListResponseClassDefinition(this AspNetCoreProjectSettings settings)
         {
             var definition = new CSharpClassDefinition();
 
             definition.Namespaces.Add("System");
             definition.Namespaces.Add("System.Collections.Generic");
-            definition.Namespace = project.GetResponsesNamespace();
+            definition.Namespace = settings.GetResponsesNamespace();
             definition.Name = "ListResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

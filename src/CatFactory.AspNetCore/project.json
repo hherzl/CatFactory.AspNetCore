@@ -1,10 +1,10 @@
 ﻿{
   "version": "3.0.0-alpha-build00",
   "title": "CatFactory.AspNetCore",
-  "description": "CatFactory package for Asp.Net Core scaffolding (C#)",
+  "description": "CatFactory package for ASP.NET Core scaffolding (C#)",
   "packOptions": {
-    "summary": "CatFactory package for Asp.Net Core scaffolding (C#)",
-    "tags": [ "Asp.Net Core", "Web API" ],
+    "summary": "CatFactory package for ASP.NET Core scaffolding (C#)",
+    "tags": [ "ASP.NET Core", "Web API" ],
     "releaseNotes": "Package update and code fixes for generic types in responses",
     "requireLicenseAcceptance": false,
     "repository": {

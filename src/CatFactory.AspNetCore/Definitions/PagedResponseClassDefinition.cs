@@ -8,13 +8,13 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class PagedResponseClassDefinition
     {
-        public static CSharpClassDefinition GetPagedResponseClassDefinition(this EntityFrameworkCoreProject project)
+        public static CSharpClassDefinition GetPagedResponseClassDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             var definition = new CSharpClassDefinition();
 
             definition.Namespaces.Add("System");
             definition.Namespaces.Add("System.Collections.Generic");
-            definition.Namespace = project.GetResponsesNamespace();
+            definition.Namespace = settings.GetResponsesNamespace();
             definition.Name = "PagedResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

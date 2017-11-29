@@ -7,12 +7,12 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class SingleResponseClassDefinition
     {
-        public static CSharpClassDefinition GetSingleResponseClassDefinition(this EntityFrameworkCoreProject project)
+        public static CSharpClassDefinition GetSingleResponseClassDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
             var definition = new CSharpClassDefinition();
 
             definition.Namespaces.Add("System");
-            definition.Namespace = project.GetResponsesNamespace();
+            definition.Namespace = settings.GetResponsesNamespace();
             definition.Name = "SingleResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

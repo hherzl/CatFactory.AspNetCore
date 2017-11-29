@@ -7,12 +7,12 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class PagedResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetPagedResponseInterfaceDefinition(this EntityFrameworkCoreProject project)
+        public static CSharpInterfaceDefinition GetPagedResponseInterfaceDefinition(this AspNetCoreProjectSettings settings)
         {
             var definition = new CSharpInterfaceDefinition();
 
             definition.Namespaces.Add("System");
-            definition.Namespace = project.GetResponsesNamespace();
+            definition.Namespace = settings.GetResponsesNamespace();
             definition.Name = "PagedResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>
