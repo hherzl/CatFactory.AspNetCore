@@ -9,11 +9,9 @@ namespace CatFactory.AspNetCore.Tests
         [Fact]
         public void TestControllerScaffoldingFromStoreDatabase()
         {
-            var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
-
             // Import database
             var database = SqlServerDatabaseFactory
-                .Import(logger, "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
+                .Import(LoggerMocker.GetLogger<SqlServerDatabaseFactory>(), "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
             var project = new EntityFrameworkCoreProject
@@ -49,11 +47,9 @@ namespace CatFactory.AspNetCore.Tests
         [Fact]
         public void TestControllerScaffoldingFromNorthwindDatabase()
         {
-            var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
-
             // Import database
             var database = SqlServerDatabaseFactory
-                .Import(logger, "server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
+                .Import(LoggerMocker.GetLogger<SqlServerDatabaseFactory>(), "server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
             var project = new EntityFrameworkCoreProject
