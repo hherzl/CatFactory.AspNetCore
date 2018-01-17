@@ -14,14 +14,14 @@ namespace CatFactory.AspNetCore
 
         internal static void ScaffoldResponses(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
-            CSharpInterfaceBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite,
+            CSharpInterfaceBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.GlobalSelection().Settings.ForceOverwrite,
                 project.GetResponseInterfaceDefinition(settings),
                 project.GetSingleResponseInterfaceDefinition(settings),
                 project.GetListResponseInterfaceDefinition(settings),
                 settings.GetPagedResponseInterfaceDefinition()
             );
 
-            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite,
+            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.GlobalSelection().Settings.ForceOverwrite,
                 project.GetSingleResponseClassDefinition(settings),
                 settings.GetListResponseClassDefinition(),
                 project.GetPagedResponseClassDefinition(settings)
@@ -30,7 +30,7 @@ namespace CatFactory.AspNetCore
 
         internal static void ScaffoldResponsesExtensions(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
         {
-            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.Settings.ForceOverwrite, project.GetResponsesExtensionsClassDefinition(settings));
+            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Responses", project.GlobalSelection().Settings.ForceOverwrite, project.GetResponsesExtensionsClassDefinition(settings));
         }
 
         internal static void ScaffoldRequestModels(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
@@ -39,7 +39,7 @@ namespace CatFactory.AspNetCore
             {
                 var classDefinition = project.GetResponsesExtensionsClassDefinition(table, settings);
 
-                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "RequestModels", project.Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "RequestModels", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
             }
         }
 
@@ -47,7 +47,7 @@ namespace CatFactory.AspNetCore
         {
             var classDefinition = project.GetRequestModelExtensionsClassDefinition(settings);
 
-            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "RequestModels", project.Settings.ForceOverwrite, classDefinition);
+            CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "RequestModels", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
         }
 
         public static EntityFrameworkCoreProject ScaffoldAspNetCore(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
@@ -59,7 +59,7 @@ namespace CatFactory.AspNetCore
 
             foreach (var feature in project.Features)
             {
-                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Controllers", project.Settings.ForceOverwrite, feature.GetControllerClassDefinition(settings));
+                CSharpClassBuilder.CreateFiles(settings.OutputDirectory, "Controllers", project.GlobalSelection().Settings.ForceOverwrite, feature.GetControllerClassDefinition(settings));
             }
 
             return project;

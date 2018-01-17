@@ -1,5 +1,6 @@
 ﻿using CatFactory.CodeFactory;
 using CatFactory.DotNetCore;
+using CatFactory.EfCore;
 
 namespace CatFactory.AspNetCore
 {
@@ -12,7 +13,7 @@ namespace CatFactory.AspNetCore
             namingConvention = new DotNetNamingConvention();
         }
 
-        public static string GetControllerName(this ProjectFeature projectFeature)
+        public static string GetControllerName(this ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature)
             => namingConvention.GetClassName(string.Format("{0}{1}", projectFeature.Name, "Controller"));
     }
 }

@@ -22,7 +22,9 @@ namespace CatFactory.AspNetCore.Definitions
                 Name = table.GetRequestModelName()
             };
 
-            foreach (var column in table.Columns.Where(item => project.Settings.ConcurrencyToken != item.Name).ToList())
+            var selection = project.GetSelection(table);
+
+            foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {
                 var property = new PropertyDefinition(column.GetClrType(), column.GetPropertyName());
 

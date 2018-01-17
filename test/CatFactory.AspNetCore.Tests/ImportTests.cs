@@ -22,10 +22,20 @@ namespace CatFactory.AspNetCore.Tests
             };
 
             // Apply settings for project
-            project.Settings.ForceOverwrite = true;
-            project.Settings.ConcurrencyToken = "Timestamp";
-            project.Settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
-            project.Settings.EntitiesWithDataContracts.Add("Sales.Order");
+            project.GlobalSelection(settings =>
+            {
+                settings.ForceOverwrite = true;
+                settings.ConcurrencyToken = "Timestamp";
+                settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
+            });
+
+            project.Select("Sales.Order", settings =>
+            {
+                settings.ForceOverwrite = true;
+                settings.ConcurrencyToken = "Timestamp";
+                settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
+                settings.EntitiesWithDataContracts = true;
+            });
 
             // Build features for project, group all entities by schema into a feature
             project.BuildFeatures();
@@ -60,8 +70,16 @@ namespace CatFactory.AspNetCore.Tests
             };
 
             // Apply settings for project
-            project.Settings.ForceOverwrite = true;
-            project.Settings.EntitiesWithDataContracts.Add("Orders");
+            project.GlobalSelection(settings =>
+            {
+                settings.ForceOverwrite = true;
+            });
+
+            project.Select("Sales.Order", settings =>
+            {
+                settings.ForceOverwrite = true;
+                settings.EntitiesWithDataContracts = true;
+            });
 
             // Build features for project, group all entities by schema into a feature
             project.BuildFeatures();
@@ -98,7 +116,10 @@ namespace CatFactory.AspNetCore.Tests
             };
 
             // Apply settings for project
-            project.Settings.ForceOverwrite = true;
+            project.GlobalSelection(settings =>
+            {
+                settings.ForceOverwrite = true;
+            });
 
             // Build features for project, group all entities by schema into a feature
             project.BuildFeatures();

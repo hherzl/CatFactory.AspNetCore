@@ -12,7 +12,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class ControllerClassDefinition
     {
-        public static CSharpClassDefinition GetControllerClassDefinition(this ProjectFeature projectFeature, AspNetCoreProjectSettings settings, bool useLogger = true)
+        public static CSharpClassDefinition GetControllerClassDefinition(this ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, AspNetCoreProjectSettings settings, bool useLogger = true)
         {
             var definition = new CSharpClassDefinition();
 
@@ -25,6 +25,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerContractsNamespace());
             definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerRepositoriesNamespace());
+
             definition.Namespaces.Add(settings.GetResponsesNamespace());
             definition.Namespaces.Add(settings.GetRequestModelsNamespace());
 
@@ -87,7 +88,7 @@ namespace CatFactory.AspNetCore.Definitions
             return definition;
         }
 
-        private static ClassConstructorDefinition GetConstructor(ProjectFeature projectFeature, bool useLogger = true)
+        private static ClassConstructorDefinition GetConstructor(ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, bool useLogger = true)
         {
             var parameters = new List<ParameterDefinition>()
             {
@@ -112,7 +113,7 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        private static MethodDefinition GetGetAllMethod(ProjectFeature projectFeature, CSharpClassDefinition definition, ITable table, bool useLogger = true)
+        private static MethodDefinition GetGetAllMethod(ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, CSharpClassDefinition definition, ITable table, bool useLogger = true)
         {
             if (table.HasDefaultSchema())
             {
@@ -131,7 +132,9 @@ namespace CatFactory.AspNetCore.Definitions
                 lines.Add(new CodeLine());
             }
 
-            if (projectFeature.GetEntityFrameworkCoreProject().Settings.EntitiesWithDataContracts.Contains(table.FullName))
+            var selection = projectFeature.GetEntityFrameworkCoreProject().GetSelection(table);
+
+            if (selection.Settings.EntitiesWithDataContracts)
             {
                 definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerDataContractsNamespace());
                 lines.Add(new CodeLine("var response = new PagedResponse<{0}>();", table.GetDataContractName()));
@@ -156,7 +159,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             foreach (var foreignKey in table.ForeignKeys)
             {
-                var parentTable = projectFeature.Project.Database.FindTableByFullName(foreignKey.References);
+                var parentTable = projectFeature.Project.Database.FindTable(foreignKey.References);
 
                 if (parentTable == null)
                 {
@@ -165,7 +168,8 @@ namespace CatFactory.AspNetCore.Definitions
 
                 if (parentTable.PrimaryKey?.Key.Count == 1)
                 {
-                    var column = parentTable.PrimaryKey.GetColumns(parentTable).First();
+                    // todo: add logic for multiple columns in key
+                    var column = parentTable.GetColumnsFromConstraint(parentTable.PrimaryKey).First();
 
                     parameters.Add(new ParameterDefinition(column.GetClrType(), column.GetParameterName(), "null"));
 
@@ -218,7 +222,7 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("}"));
             lines.Add(new CodeLine());
             lines.Add(new CodeLine("return response.ToHttpResponse();"));
-            
+
             return new MethodDefinition("Task<IActionResult>", table.GetControllerGetAllAsyncMethodName(), parameters.ToArray())
             {
                 Attributes = new List<MetadataAttribute>()
@@ -378,7 +382,7 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        private static MethodDefinition GetPutMethod(ProjectFeature projectFeature, ITable table, bool useLogger = true)
+        private static MethodDefinition GetPutMethod(ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, ITable table, bool useLogger = true)
         {
             var lines = new List<ILine>();
 
@@ -409,7 +413,9 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new TodoLine(2, " Check properties to update"));
             lines.Add(new CommentLine(2, " Apply changes on entity"));
 
-            foreach (var column in table.GetUpdateColumns(projectFeature.GetEntityFrameworkCoreProject().Settings))
+            var selection = projectFeature.GetEntityFrameworkCoreProject().GetSelection(table);
+
+            foreach (var column in table.GetUpdateColumns(selection.Settings))
             {
                 lines.Add(new CodeLine(2, "entity.{0} = requestModel.{0};", column.GetPropertyName()));
             }

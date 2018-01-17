@@ -49,7 +49,9 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("return new {0}", table.GetEntityName()));
             lines.Add(new CodeLine("{"));
 
-            var columns = table.Columns.Where(item => item.Name != project.Settings.ConcurrencyToken).ToList();
+            var selection = project.GetSelection(table);
+
+            var columns = table.Columns.Where(item => item.Name != selection.Settings.ConcurrencyToken).ToList();
 
             for (var i = 0; i < columns.Count; i++)
             {
@@ -75,7 +77,9 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine("return new {0}", table.GetRequestModelName()));
             lines.Add(new CodeLine("{"));
 
-            var columns = table.Columns.Where(item => item.Name != project.Settings.ConcurrencyToken).ToList();
+            var selection = project.GetSelection(table);
+
+            var columns = table.Columns.Where(item => item.Name != selection.Settings.ConcurrencyToken).ToList();
 
             for (var i = 0; i < columns.Count; i++)
             {
