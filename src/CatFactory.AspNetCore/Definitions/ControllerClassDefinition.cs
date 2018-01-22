@@ -72,7 +72,7 @@ namespace CatFactory.AspNetCore.Definitions
 
                 if (table.PrimaryKey != null)
                 {
-                    definition.Methods.Add(GetGetMethod(table, useLogger));
+                    definition.Methods.Add(GetGetMethod(projectFeature, table, useLogger));
                 }
 
                 definition.Methods.Add(GetPostMethod(table, useLogger));
@@ -81,7 +81,7 @@ namespace CatFactory.AspNetCore.Definitions
                 {
                     definition.Methods.Add(GetPutMethod(projectFeature, table, useLogger));
 
-                    definition.Methods.Add(GetDeleteMethod(table, useLogger));
+                    definition.Methods.Add(GetDeleteMethod(projectFeature, table, useLogger));
                 }
             }
 
@@ -171,7 +171,7 @@ namespace CatFactory.AspNetCore.Definitions
                     // todo: add logic for multiple columns in key
                     var column = parentTable.GetColumnsFromConstraint(parentTable.PrimaryKey).First();
 
-                    parameters.Add(new ParameterDefinition(column.GetClrType(), column.GetParameterName(), "null"));
+                    parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), column.GetParameterName(), "null"));
 
                     foreignKeys.Add(column.GetParameterName());
                 }
@@ -234,7 +234,7 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        private static MethodDefinition GetGetMethod(ITable table, bool useLogger = true)
+        private static MethodDefinition GetGetMethod(ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, ITable table, bool useLogger = true)
         {
             var parameters = new List<ParameterDefinition>();
 
@@ -242,9 +242,7 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
 
-                var resolver = new ClrTypeResolver { UseNullableTypes = false };
-
-                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), "id"));
+                parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
 
             var lines = new List<ILine>();
@@ -462,9 +460,7 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
 
-                var resolver = new ClrTypeResolver { UseNullableTypes = false };
-
-                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), "id"));
+                parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
 
             parameters.Add(new ParameterDefinition(table.GetRequestModelName(), "requestModel", new MetadataAttribute("FromBody")));
@@ -480,7 +476,7 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        private static MethodDefinition GetDeleteMethod(ITable table, bool useLogger = true)
+        private static MethodDefinition GetDeleteMethod(ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, ITable table, bool useLogger = true)
         {
             var lines = new List<ILine>();
 
@@ -543,9 +539,7 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
 
-                var resolver = new ClrTypeResolver { UseNullableTypes = false };
-
-                parameters.Add(new ParameterDefinition(resolver.Resolve(column.Type), "id"));
+                parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
 
             return new MethodDefinition("Task<IActionResult>", table.GetControllerDeleteAsyncMethodName(), parameters.ToArray())

@@ -26,7 +26,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {
-                var property = new PropertyDefinition(column.GetClrType(), column.GetPropertyName());
+                var property = new PropertyDefinition(EfCore.DatabaseExtensions.ResolveType(project.Database, column), column.GetPropertyName());
 
                 if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
                 {
@@ -38,7 +38,7 @@ namespace CatFactory.AspNetCore.Definitions
                     property.Attributes.Add(new MetadataAttribute("Required"));
                 }
 
-                if (column.IsString() && column.Length > 0)
+                if (project.Database.ColumnIsString(column) && column.Length > 0)
                 {
                     property.Attributes.Add(new MetadataAttribute("StringLength", column.Length.ToString()));
                 }

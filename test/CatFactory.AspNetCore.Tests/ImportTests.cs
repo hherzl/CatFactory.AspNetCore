@@ -29,13 +29,7 @@ namespace CatFactory.AspNetCore.Tests
                 settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
             });
 
-            project.Select("Sales.Order", settings =>
-            {
-                settings.ForceOverwrite = true;
-                settings.ConcurrencyToken = "Timestamp";
-                settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
-                settings.EntitiesWithDataContracts = true;
-            });
+            project.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
 
             // Build features for project, group all entities by schema into a feature
             project.BuildFeatures();
@@ -75,11 +69,7 @@ namespace CatFactory.AspNetCore.Tests
                 settings.ForceOverwrite = true;
             });
 
-            project.Select("Sales.Order", settings =>
-            {
-                settings.ForceOverwrite = true;
-                settings.EntitiesWithDataContracts = true;
-            });
+            project.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
 
             // Build features for project, group all entities by schema into a feature
             project.BuildFeatures();
