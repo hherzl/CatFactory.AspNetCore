@@ -1,11 +1,11 @@
 ﻿{
-  "version": "3.0.0-alpha-build06",
+  "version": "3.0.0-alpha-build07",
   "title": "CatFactory.AspNetCore",
   "description": "CatFactory package for ASP.NET Core scaffolding (C#)",
   "packOptions": {
     "summary": "CatFactory package for ASP.NET Core scaffolding (C#)",
     "tags": [ "ASP.NET Core", "Web API", "REST API" ],
-    "releaseNotes": "3.0.0-alpha-build06 version: EntityFrameworkCore Package update",
+    "releaseNotes": "3.0.0-alpha-build07 version: EntityFrameworkCore Package update",
     "requireLicenseAcceptance": false,
     "repository": {
       "type": "git",
@@ -18,7 +18,7 @@
 
   "dependencies": {
     "NETStandard.Library": "1.6.1",
-    "CatFactory.EfCore": "3.0.0-alpha-build18"
+    "CatFactory.EfCore": "3.0.0-alpha-build19"
   },
 
   "frameworks": {

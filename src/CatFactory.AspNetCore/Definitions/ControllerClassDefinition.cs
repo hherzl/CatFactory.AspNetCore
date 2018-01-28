@@ -136,7 +136,8 @@ namespace CatFactory.AspNetCore.Definitions
 
             if (selection.Settings.EntitiesWithDataContracts)
             {
-                definition.Namespaces.Add(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerDataContractsNamespace());
+                definition.Namespaces.AddUnique(projectFeature.GetEntityFrameworkCoreProject().GetDataLayerDataContractsNamespace());
+
                 lines.Add(new CodeLine("var response = new PagedResponse<{0}>();", table.GetDataContractName()));
             }
             else
