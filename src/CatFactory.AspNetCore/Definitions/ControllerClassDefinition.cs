@@ -12,7 +12,7 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class ControllerClassDefinition
     {
-        public static CSharpClassDefinition GetControllerClassDefinition(this ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, AspNetCoreProjectSettings settings, bool useLogger = true)
+        public static CSharpClassDefinition GetControllerClassDefinition(this ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, AspNetCoreProjectSettings settings)
         {
             var definition = new CSharpClassDefinition();
 
@@ -45,7 +45,7 @@ namespace CatFactory.AspNetCore.Definitions
                 IsReadOnly = true
             });
 
-            if (useLogger)
+            if (settings.UseLogger)
             {
                 definition.Fields.Add(new FieldDefinition(AccessModifier.Protected, "ILogger", "Logger"));
             }
@@ -68,20 +68,20 @@ namespace CatFactory.AspNetCore.Definitions
 
             foreach (var table in tables)
             {
-                definition.Methods.Add(GetGetAllMethod(projectFeature, definition, table, useLogger));
+                definition.Methods.Add(GetGetAllMethod(projectFeature, definition, table, settings.UseLogger));
 
                 if (table.PrimaryKey != null)
                 {
-                    definition.Methods.Add(GetGetMethod(projectFeature, table, useLogger));
+                    definition.Methods.Add(GetGetMethod(projectFeature, table, settings.UseLogger));
                 }
 
-                definition.Methods.Add(GetPostMethod(table, useLogger));
+                definition.Methods.Add(GetPostMethod(table, settings.UseLogger));
 
                 if (table.PrimaryKey != null)
                 {
-                    definition.Methods.Add(GetPutMethod(projectFeature, table, useLogger));
+                    definition.Methods.Add(GetPutMethod(projectFeature, table, settings.UseLogger));
 
-                    definition.Methods.Add(GetDeleteMethod(projectFeature, table, useLogger));
+                    definition.Methods.Add(GetDeleteMethod(projectFeature, table, settings.UseLogger));
                 }
             }
 

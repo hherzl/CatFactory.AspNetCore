@@ -1,11 +1,11 @@
 ﻿{
-  "version": "3.0.0-alpha-build08",
+  "version": "3.0.0-alpha-build09",
   "title": "CatFactory.AspNetCore",
   "description": "CatFactory package for ASP.NET Core scaffolding (C#)",
   "packOptions": {
     "summary": "CatFactory package for ASP.NET Core scaffolding (C#)",
     "tags": [ "ASP.NET Core", "Web API", "REST API" ],
-    "releaseNotes": "3.0.0-alpha-build08 version: EntityFrameworkCore Package update: code fix for project selections, clone settings for specific selection from global settings",
+    "releaseNotes": "3.0.0-alpha-build09 version: Code refactor for use logger flag, move flag to settings for AspNetCoreProject settings",
     "requireLicenseAcceptance": false,
     "repository": {
       "type": "git",
