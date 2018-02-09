@@ -1,4 +1,6 @@
-﻿namespace CatFactory.AspNetCore
+﻿using CatFactory.CodeFactory;
+
+namespace CatFactory.AspNetCore
 {
     public class AspNetCoreProjectSettings : ProjectSettings
     {
