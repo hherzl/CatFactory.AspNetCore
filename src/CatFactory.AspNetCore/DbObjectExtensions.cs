@@ -20,16 +20,16 @@ namespace CatFactory.AspNetCore
             => string.Format("{0}{1}{2}", "Get", table.GetPluralName(), "Async");
 
         public static string GetControllerGetAsyncMethodName(this ITable table)
-            => string.Format("{0}{1}{2}", "Get", table.GetSingularName(), "Async");
+            => string.Format("{0}{1}{2}", "Get", table.GetEntityName(), "Async");
 
         public static string GetControllerPostAsyncMethodName(this ITable table)
-            => string.Format("{0}{1}{2}", "Post", table.GetSingularName(), "Async");
+            => string.Format("{0}{1}{2}", "Post", table.GetEntityName(), "Async");
 
         public static string GetControllerPutAsyncMethodName(this ITable table)
-            => string.Format("{0}{1}{2}", "Put", table.GetSingularName(), "Async");
+            => string.Format("{0}{1}{2}", "Put", table.GetEntityName(), "Async");
 
         public static string GetControllerDeleteAsyncMethodName(this ITable table)
-            => string.Format("{0}{1}{2}", "Delete", table.GetSingularName(), "Async");
+            => string.Format("{0}{1}{2}", "Delete", table.GetEntityName(), "Async");
 
         public static string GetRequestModelName(this IDbObject dbObject)
             => string.Format("{0}RequestModel", dbObject.GetEntityName());
@@ -42,19 +42,13 @@ namespace CatFactory.AspNetCore
             foreach (var column in table.Columns)
             {
                 if (table.PrimaryKey != null && table.PrimaryKey.Key.Contains(column.Name))
-                {
                     continue;
-                }
 
                 if (settings.AuditEntity != null && settings.AuditEntity.Names.Contains(column.Name))
-                {
                     continue;
-                }
 
                 if (!string.IsNullOrEmpty(settings.ConcurrencyToken) && string.Compare(settings.ConcurrencyToken, column.Name) == 0)
-                {
                     continue;
-                }
 
                 yield return column;
             }

@@ -46,9 +46,7 @@ namespace CatFactory.AspNetCore.Definitions
             });
 
             if (settings.UseLogger)
-            {
                 definition.Fields.Add(new FieldDefinition(AccessModifier.Protected, "ILogger", "Logger"));
-            }
 
             definition.Constructors.Add(GetConstructor(projectFeature));
 
@@ -71,9 +69,7 @@ namespace CatFactory.AspNetCore.Definitions
                 definition.Methods.Add(GetGetAllMethod(projectFeature, definition, table, settings.UseLogger));
 
                 if (table.PrimaryKey != null)
-                {
                     definition.Methods.Add(GetGetMethod(projectFeature, table, settings.UseLogger));
-                }
 
                 definition.Methods.Add(GetPostMethod(table, settings.UseLogger));
 
@@ -116,13 +112,9 @@ namespace CatFactory.AspNetCore.Definitions
         private static MethodDefinition GetGetAllMethod(ProjectFeature<EntityFrameworkCoreProjectSettings> projectFeature, CSharpClassDefinition definition, ITable table, bool useLogger = true)
         {
             if (table.HasDefaultSchema())
-            {
                 definition.Namespaces.AddUnique(projectFeature.GetEntityFrameworkCoreProject().GetEntityLayerNamespace());
-            }
             else
-            {
                 definition.Namespaces.AddUnique(projectFeature.GetEntityFrameworkCoreProject().GetEntityLayerNamespace(table.Schema));
-            }
 
             var lines = new List<ILine>();
 
@@ -163,9 +155,7 @@ namespace CatFactory.AspNetCore.Definitions
                 var parentTable = projectFeature.Project.Database.FindTable(foreignKey.References);
 
                 if (parentTable == null)
-                {
                     continue;
-                }
 
                 if (parentTable.PrimaryKey?.Key.Count == 1)
                 {
@@ -181,13 +171,9 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CommentLine(1, " Get query from repository"));
 
             if (foreignKeys.Count == 0)
-            {
                 lines.Add(new CodeLine(1, "var query = Repository.{0}();", table.GetGetAllRepositoryMethodName()));
-            }
             else
-            {
                 lines.Add(new CodeLine(1, "var query = Repository.{0}({1});", table.GetGetAllRepositoryMethodName(), string.Join(", ", foreignKeys)));
-            }
 
             lines.Add(new CodeLine());
 
@@ -241,7 +227,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             if (table.PrimaryKey?.Key.Count == 1)
             {
-                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
+                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
                 parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
@@ -459,7 +445,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             if (table.PrimaryKey?.Key.Count == 1)
             {
-                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
+                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
                 parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
@@ -538,7 +524,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             if (table.PrimaryKey?.Key.Count == 1)
             {
-                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key[0]);
+                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
                 parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }

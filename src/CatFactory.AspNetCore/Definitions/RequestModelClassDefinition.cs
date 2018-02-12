@@ -29,19 +29,13 @@ namespace CatFactory.AspNetCore.Definitions
                 var property = new PropertyDefinition(EfCore.DatabaseExtensions.ResolveType(project.Database, column), column.GetPropertyName());
 
                 if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
-                {
                     property.Attributes.Add(new MetadataAttribute("Key"));
-                }
 
                 if (!column.Nullable && table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() != column.Name)
-                {
                     property.Attributes.Add(new MetadataAttribute("Required"));
-                }
 
                 if (project.Database.ColumnIsString(column) && column.Length > 0)
-                {
                     property.Attributes.Add(new MetadataAttribute("StringLength", column.Length.ToString()));
-                }
 
                 classDefinition.Properties.Add(property);
             }
