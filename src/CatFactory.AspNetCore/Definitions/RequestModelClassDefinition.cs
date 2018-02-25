@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CatFactory.DotNetCore;
-using CatFactory.EfCore;
 using CatFactory.Mapping;
 using CatFactory.OOP;
 
@@ -9,16 +8,18 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class RequestModelClassDefinition
     {
-        public static CSharpClassDefinition GetResponsesExtensionsClassDefinition(this EntityFrameworkCoreProject project, ITable table, AspNetCoreProjectSettings settings)
+        public static CSharpClassDefinition GetResponsesExtensionsClassDefinition(this AspNetCoreProject project, ITable table)
         {
             var classDefinition = new CSharpClassDefinition
             {
                 Namespaces = new List<string>
                 {
                     "System",
-                    "System.ComponentModel.DataAnnotations"
-                },
-                Namespace = settings.GetRequestModelsNamespace(),
+                    "System.ComponentModel.DataAnnotations",
+                    table.HasDefaultSchema() ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema),
+                    table.HasDefaultSchema() ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
+        },
+                Namespace = project.GetRequestModelsNamespace(),
                 Name = table.GetRequestModelName()
             };
 

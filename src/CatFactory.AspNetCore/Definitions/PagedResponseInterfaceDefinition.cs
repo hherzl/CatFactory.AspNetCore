@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using CatFactory.DotNetCore;
-using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
     public static class PagedResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetPagedResponseInterfaceDefinition(this AspNetCoreProjectSettings settings)
+        public static CSharpInterfaceDefinition GetPagedResponseInterfaceDefinition(this AspNetCoreProject project)
         {
             var definition = new CSharpInterfaceDefinition();
 
             definition.Namespaces.Add("System");
-            definition.Namespace = settings.GetResponsesNamespace();
+            definition.Namespace = project.GetResponsesNamespace();
             definition.Name = "PagedResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

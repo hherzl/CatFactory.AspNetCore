@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using CatFactory.CodeFactory;
 using CatFactory.DotNetCore;
-using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
     public static class ResponsesExtensionClassDefinition
     {
-        public static CSharpClassDefinition GetResponsesExtensionsClassDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
+        public static CSharpClassDefinition GetResponsesExtensionsClassDefinition(this AspNetCoreProject project)
         {
             var classDefinition = new CSharpClassDefinition
             {
@@ -19,7 +18,7 @@ namespace CatFactory.AspNetCore.Definitions
                     "Microsoft.AspNetCore.Mvc",
                     "Microsoft.Extensions.Logging"
                 },
-                Namespace = settings.GetResponsesNamespace(),
+                Namespace = project.GetResponsesNamespace(),
                 Name = "ResponsesExtensions",
                 IsStatic = true
             };

@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using CatFactory.CodeFactory;
 using CatFactory.DotNetCore;
-using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
     public static class PagedResponseClassDefinition
     {
-        public static CSharpClassDefinition GetPagedResponseClassDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
+        public static CSharpClassDefinition GetPagedResponseClassDefinition(this AspNetCoreProject project)
         {
             var definition = new CSharpClassDefinition();
 
             definition.Namespaces.Add("System");
             definition.Namespaces.Add("System.Collections.Generic");
-            definition.Namespace = settings.GetResponsesNamespace();
+            definition.Namespace = project.GetResponsesNamespace();
             definition.Name = "PagedResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

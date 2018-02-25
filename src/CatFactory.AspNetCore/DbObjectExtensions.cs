@@ -16,6 +16,9 @@ namespace CatFactory.AspNetCore
             namingConvention = new DotNetNamingConvention();
         }
 
+        public static bool HasDefaultSchema(this IDbObject table)
+            => string.IsNullOrEmpty(table.Schema) || string.Compare(table.Schema, "dbo", true) == 0;
+
         public static string GetControllerGetAllAsyncMethodName(this ITable table)
             => string.Format("{0}{1}{2}", "Get", table.GetPluralName(), "Async");
 
@@ -37,8 +40,10 @@ namespace CatFactory.AspNetCore
         public static string GetRequestModelExtensionName(this ITable table)
             => string.Format("{0}Extensions", NamingConvention.GetPascalCase(table.Name));
 
-        public static IEnumerable<Column> GetUpdateColumns(this ITable table, EntityFrameworkCoreProjectSettings settings)
+        public static IEnumerable<Column> GetUpdateColumns(this ProjectFeature<AspNetCoreProjectSettings> projectFeature, ITable table)
         {
+            var settings = projectFeature.GetAspNetCoreProject().GetSelection(table).Settings;
+
             foreach (var column in table.Columns)
             {
                 if (table.PrimaryKey != null && table.PrimaryKey.Key.Contains(column.Name))

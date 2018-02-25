@@ -1,11 +1,11 @@
 ﻿{
-  "version": "3.0.0-alpha-build11",
+  "version": "3.0.0-alpha-build12",
   "title": "CatFactory.AspNetCore",
   "description": "CatFactory package for ASP.NET Core scaffolding (C#)",
   "packOptions": {
     "summary": "CatFactory package for ASP.NET Core scaffolding (C#)",
     "tags": [ "ASP.NET Core", "Web API", "REST API" ],
-    "releaseNotes": "3.0.0-alpha-build11 version: Core package update",
+    "releaseNotes": "3.0.0-alpha-build12 version: Core package update and using of project selections to scaffold, remove of settings in asp net core project level.\r\n\r\nQuick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory",
     "requireLicenseAcceptance": false,
     "repository": {
       "type": "git",

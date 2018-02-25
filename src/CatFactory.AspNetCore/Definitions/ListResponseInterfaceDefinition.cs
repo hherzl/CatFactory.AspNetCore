@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using CatFactory.DotNetCore;
-using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
     public static class ListResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetListResponseInterfaceDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
+        public static CSharpInterfaceDefinition GetListResponseInterfaceDefinition(this AspNetCoreProject project)
         {
             var definition = new CSharpInterfaceDefinition();
 
             definition.Namespaces.Add("System.Collections.Generic");
-            definition.Namespace = settings.GetResponsesNamespace();
+            definition.Namespace = project.GetResponsesNamespace();
             definition.Name = "IListResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

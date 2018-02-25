@@ -14,7 +14,7 @@ namespace CatFactory.AspNetCore.Tests
                 .Import(LoggerMocker.GetLogger<SqlServerDatabaseFactory>(), "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
-            var project = new EntityFrameworkCoreProject
+            var entityFrameworkProject = new EntityFrameworkCoreProject
             {
                 Name = "Store",
                 Database = database,
@@ -22,110 +22,96 @@ namespace CatFactory.AspNetCore.Tests
             };
 
             // Apply settings for project
-            project.GlobalSelection(settings =>
+            entityFrameworkProject.GlobalSelection(settings =>
             {
                 settings.ForceOverwrite = true;
                 settings.ConcurrencyToken = "Timestamp";
                 settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
             });
 
-            project.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
+            entityFrameworkProject.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
 
             // Build features for project, group all entities by schema into a feature
-            project.BuildFeatures();
-
-            // Create settings for AspNetCore project
-            var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
-            {
-                ProjectName = "Store.AspNetCore",
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore"
-            };
+            entityFrameworkProject.BuildFeatures();
 
             // Scaffolding =^^=
-            project
+            entityFrameworkProject
                 .ScaffoldEntityLayer()
-                .ScaffoldDataLayer()
-                .ScaffoldAspNetCore(aspNetCoreProjectSettings);
+                .ScaffoldDataLayer();
+
+            entityFrameworkProject
+                .ScaffoldAspNetCore("Store", "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore", entityFrameworkProject.Database);
         }
 
-        [Fact]
-        public void TestControllerScaffoldingFromNorthwindDatabase()
-        {
-            // Import database
-            var database = SqlServerDatabaseFactory
-                .Import(LoggerMocker.GetLogger<SqlServerDatabaseFactory>(), "server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
+        //[Fact]
+        //public void TestControllerScaffoldingFromNorthwindDatabase()
+        //{
+        //    // Import database
+        //    var database = SqlServerDatabaseFactory
+        //        .Import(LoggerMocker.GetLogger<SqlServerDatabaseFactory>(), "server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
 
-            // Create instance of Entity Framework Core Project
-            var project = new EntityFrameworkCoreProject
-            {
-                Name = "Northwind",
-                Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Northwind.Core"
-            };
+        //    // Create instance of Entity Framework Core Project
+        //    var entityFrameworkProject = new EntityFrameworkCoreProject
+        //    {
+        //        Name = "Northwind",
+        //        Database = database,
+        //        OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Northwind.Core"
+        //    };
 
-            // Apply settings for project
-            project.GlobalSelection(settings =>
-            {
-                settings.ForceOverwrite = true;
-            });
+        //    // Apply settings for project
+        //    entityFrameworkProject.GlobalSelection(settings => settings.ForceOverwrite = true);
 
-            project.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
+        //    entityFrameworkProject.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
 
-            // Build features for project, group all entities by schema into a feature
-            project.BuildFeatures();
+        //    // Build features for project, group all entities by schema into a feature
+        //    entityFrameworkProject.BuildFeatures();
 
-            // Create settings for AspNetCore project
-            var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
-            {
-                ProjectName = "Northwind.AspNetCore",
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Northwind.AspNetCore"
-            };
+        //    // Scaffolding =^^=
+        //    entityFrameworkProject
+        //        .ScaffoldEntityLayer()
+        //        .ScaffoldDataLayer();
 
-            // Scaffolding =^^=
-            project
-                .ScaffoldEntityLayer()
-                .ScaffoldDataLayer()
-                .ScaffoldAspNetCore(aspNetCoreProjectSettings);
-        }
+        //    entityFrameworkProject
+        //        .ScaffoldAspNetCore("Northwind.AspNetCore", "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Northwind.AspNetCore", entityFrameworkProject.Database);
+        //}
 
-        [Fact]
-        public void TestSimpleControllerScaffoldingFromStoreDatabase()
-        {
-            var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
+        //[Fact]
+        //public void TestSimpleControllerScaffoldingFromStoreDatabase()
+        //{
+        //    var logger = LoggerMocker.GetLogger<SqlServerDatabaseFactory>();
 
-            // Import database
-            var database = SqlServerDatabaseFactory
-                .Import(logger, "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
+        //    // Import database
+        //    var database = SqlServerDatabaseFactory
+        //        .Import(logger, "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
 
-            // Create instance of Entity Framework Core Project
-            var project = new EntityFrameworkCoreProject
-            {
-                Name = "Store.Simple",
-                Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.Core.Simple"
-            };
+        //    // Create instance of Entity Framework Core Project
+        //    var entityFrameworkProject = new EntityFrameworkCoreProject
+        //    {
+        //        Name = "Store.Simple",
+        //        Database = database,
+        //        OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.Core.Simple"
+        //    };
 
-            // Apply settings for project
-            project.GlobalSelection(settings =>
-            {
-                settings.ForceOverwrite = true;
-            });
+        //    // Apply settings for project
+        //    entityFrameworkProject.GlobalSelection(settings => settings.ForceOverwrite = true);
 
-            // Build features for project, group all entities by schema into a feature
-            project.BuildFeatures();
+        //    // Build features for project, group all entities by schema into a feature
+        //    entityFrameworkProject.BuildFeatures();
 
-            // Create settings for AspNetCore project
-            var aspNetCoreProjectSettings = new AspNetCoreProjectSettings
-            {
-                ProjectName = "Store.AspNetCore.Simple",
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore.Simple"
-            };
+        //    // Create settings for AspNetCore project
+        //    var aspNetCoreProjectSettings = new AspNetCoreProject
+        //    {
+        //        Name = "Store.AspNetCore.Simple",
+        //        OutputDirectory = ""
+        //    };
 
-            // Scaffolding =^^=
-            project
-                .ScaffoldEntityLayer()
-                .ScaffoldDataLayer()
-                .ScaffoldAspNetCore(aspNetCoreProjectSettings);
-        }
+        //    // Scaffolding =^^=
+        //    entityFrameworkProject
+        //        .ScaffoldEntityLayer()
+        //        .ScaffoldDataLayer();
+
+        //    entityFrameworkProject
+        //        .ScaffoldAspNetCore("Store.AspNetCore.Simple", "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore.Simple", entityFrameworkProject.Database);
+        //}
     }
 }

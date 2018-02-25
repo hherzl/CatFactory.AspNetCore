@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using CatFactory.DotNetCore;
-using CatFactory.EfCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
 {
     public static class SingleResponseInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
+        public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this AspNetCoreProject project)
         {
             var definition = new CSharpInterfaceDefinition();
 
-            definition.Namespace = settings.GetResponsesNamespace();
+            definition.Namespace = project.GetResponsesNamespace();
             definition.Name = "ISingleResponse";
 
             definition.GenericTypes = new List<GenericTypeDefinition>

@@ -3,7 +3,6 @@ using System.Linq;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
 using CatFactory.DotNetCore;
-using CatFactory.EfCore;
 using CatFactory.Mapping;
 using CatFactory.OOP;
 
@@ -11,29 +10,24 @@ namespace CatFactory.AspNetCore.Definitions
 {
     public static class RequestModelExtensionsClassDefinition
     {
-        public static CSharpClassDefinition GetRequestModelExtensionsClassDefinition(this EntityFrameworkCoreProject project, AspNetCoreProjectSettings settings)
+        public static CSharpClassDefinition GetRequestModelExtensionsClassDefinition(this AspNetCoreProject project)
         {
             var classDefinition = new CSharpClassDefinition
             {
                 Namespaces = new List<string>
                 {
-                    "System"
+                    "System",
+                    project.GetEntityLayerNamespace()
                 },
-                Namespace = settings.GetRequestModelsNamespace(),
+                Namespace = project.GetRequestModelsNamespace(),
                 Name = "Extensions",
                 IsStatic = true
             };
 
             foreach (var table in project.Database.Tables)
             {
-                if (table.HasDefaultSchema())
-                {
-                    classDefinition.Namespaces.AddUnique(project.GetEntityLayerNamespace());
-                }
-                else
-                {
+                if (!table.HasDefaultSchema())
                     classDefinition.Namespaces.AddUnique(project.GetEntityLayerNamespace(table.Schema));
-                }
 
                 classDefinition.Methods.Add(GetToEntityMethod(project, table));
                 classDefinition.Methods.Add(GetToRequestModelMethod(project, table));
@@ -42,7 +36,7 @@ namespace CatFactory.AspNetCore.Definitions
             return classDefinition;
         }
 
-        private static MethodDefinition GetToEntityMethod(EntityFrameworkCoreProject project, ITable table)
+        private static MethodDefinition GetToEntityMethod(AspNetCoreProject project, ITable table)
         {
             var lines = new List<ILine>();
 
@@ -70,7 +64,7 @@ namespace CatFactory.AspNetCore.Definitions
             };
         }
 
-        private static MethodDefinition GetToRequestModelMethod(EntityFrameworkCoreProject project, ITable table)
+        private static MethodDefinition GetToRequestModelMethod(AspNetCoreProject project, ITable table)
         {
             var lines = new List<ILine>();
 
