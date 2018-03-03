@@ -39,8 +39,10 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldEntityLayer()
                 .ScaffoldDataLayer();
 
-            entityFrameworkProject
-                .ScaffoldAspNetCore("Store", "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore", entityFrameworkProject.Database);
+            var aspNetCoreProject = entityFrameworkProject
+                .CreateAspNetCore("Store", "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\src\\Store.AspNetCore", entityFrameworkProject.Database);
+
+            aspNetCoreProject.ScaffoldAspNetCore();
         }
 
         //[Fact]
