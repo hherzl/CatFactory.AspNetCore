@@ -191,7 +191,7 @@ namespace CatFactory.AspNetCore
             TextFileHelper.CreateFile(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.txt"), lines.ToStringBuilder().ToString());
         }
 
-        public static AspNetCoreProject CreateAspNetCore(this EntityFrameworkCoreProject entityFrameworkProject, string name, string outputDirectory, Database database)
+        public static AspNetCoreProject CreateAspNetCoreProject(this EntityFrameworkCoreProject entityFrameworkProject, string name, string outputDirectory, Database database)
         {
             var aspNetCoreProject = new AspNetCoreProject
             {
