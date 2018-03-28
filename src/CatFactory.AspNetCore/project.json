@@ -1,11 +1,11 @@
 ﻿{
-  "version": "3.0.0-alpha-build14",
+  "version": "3.0.0-alpha-build15",
   "title": "CatFactory.AspNetCore",
   "description": "CatFactory package for ASP.NET Core scaffolding (C#)",
   "packOptions": {
     "summary": "CatFactory package for ASP.NET Core scaffolding (C#)",
     "tags": [ "ASP.NET Core", "Web API", "REST API" ],
-    "releaseNotes": "3.0.0-alpha-build14 version: Code fix for project selections without audit entity.\r\n\r\nQuick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory",
+    "releaseNotes": "3.0.0-alpha-build15 version: Addition of translate feature for code builders.\r\n\r\nQuick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory",
     "requireLicenseAcceptance": false,
     "repository": {
       "type": "git",
@@ -18,7 +18,7 @@
 
   "dependencies": {
     "NETStandard.Library": "1.6.1",
-    "CatFactory.EfCore": "3.0.0-alpha-build24"
+    "CatFactory.EfCore": "3.0.0-alpha-build25"
   },
 
   "frameworks": {
