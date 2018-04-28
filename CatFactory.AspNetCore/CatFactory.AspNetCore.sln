@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatFactory.AspNetCore", "CatFactory.AspNetCore\CatFactory.AspNetCore.csproj", "{ABC0D698-5D86-4DE8-9898-1419B8B8569D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatFactory.AspNetCore.Tests", "CatFactory.AspNetCore.Tests\CatFactory.AspNetCore.Tests.csproj", "{A14069AE-C248-46DD-965D-F181D29E0008}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABC0D698-5D86-4DE8-9898-1419B8B8569D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABC0D698-5D86-4DE8-9898-1419B8B8569D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABC0D698-5D86-4DE8-9898-1419B8B8569D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABC0D698-5D86-4DE8-9898-1419B8B8569D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A14069AE-C248-46DD-965D-F181D29E0008}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A14069AE-C248-46DD-965D-F181D29E0008}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A14069AE-C248-46DD-965D-F181D29E0008}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A14069AE-C248-46DD-965D-F181D29E0008}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D8735706-7807-42B8-AB5D-B97315F55C0E}
+	EndGlobalSection
+EndGlobal
