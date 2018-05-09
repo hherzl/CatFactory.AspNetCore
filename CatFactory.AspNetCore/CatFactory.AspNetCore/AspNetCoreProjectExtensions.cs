@@ -5,8 +5,8 @@ using System.Linq;
 using CatFactory.AspNetCore.Definitions;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
-using CatFactory.DotNetCore;
-using CatFactory.EfCore;
+using CatFactory.NetCore;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
 
 namespace CatFactory.AspNetCore

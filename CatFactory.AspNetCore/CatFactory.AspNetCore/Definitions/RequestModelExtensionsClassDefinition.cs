@@ -2,9 +2,9 @@
 using System.Linq;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
-using CatFactory.DotNetCore;
-using CatFactory.EfCore;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
+using CatFactory.NetCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
@@ -39,10 +39,11 @@ namespace CatFactory.AspNetCore.Definitions
 
         private static MethodDefinition GetToEntityMethod(AspNetCoreProject project, ITable table)
         {
-            var lines = new List<ILine>();
-
-            lines.Add(new CodeLine("return new {0}", table.GetEntityName()));
-            lines.Add(new CodeLine("{"));
+            var lines = new List<ILine>
+            {
+                new CodeLine("return new {0}", table.GetEntityName()),
+                new CodeLine("{")
+            };
 
             var selection = project.GetSelection(table);
 
@@ -67,10 +68,11 @@ namespace CatFactory.AspNetCore.Definitions
 
         private static MethodDefinition GetToRequestModelMethod(AspNetCoreProject project, ITable table)
         {
-            var lines = new List<ILine>();
-
-            lines.Add(new CodeLine("return new {0}", table.GetRequestModelName()));
-            lines.Add(new CodeLine("{"));
+            var lines = new List<ILine>
+            {
+                new CodeLine("return new {0}", table.GetRequestModelName()),
+                new CodeLine("{")
+            };
 
             var selection = project.GetSelection(table);
 

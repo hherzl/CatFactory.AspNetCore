@@ -1,5 +1,5 @@
 ﻿using CatFactory.CodeFactory;
-using CatFactory.DotNetCore;
+using CatFactory.NetCore;
 using CatFactory.Mapping;
 
 namespace CatFactory.AspNetCore

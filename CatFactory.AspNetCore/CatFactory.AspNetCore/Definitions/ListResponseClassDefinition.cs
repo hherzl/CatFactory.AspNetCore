@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CatFactory.DotNetCore;
+using CatFactory.NetCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions

@@ -1,4 +1,4 @@
-﻿using CatFactory.EfCore;
+﻿using CatFactory.EntityFrameworkCore;
 using CatFactory.SqlServer;
 using Xunit;
 

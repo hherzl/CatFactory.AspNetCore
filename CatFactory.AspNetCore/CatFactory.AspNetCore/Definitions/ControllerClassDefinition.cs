@@ -2,8 +2,8 @@
 using System.Linq;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
-using CatFactory.DotNetCore;
-using CatFactory.EfCore;
+using CatFactory.NetCore;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
 using CatFactory.OOP;
 
@@ -167,7 +167,7 @@ namespace CatFactory.AspNetCore.Definitions
                     // todo: add logic for multiple columns in key
                     var column = parentTable.GetColumnsFromConstraint(parentTable.PrimaryKey).First();
 
-                    parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), column.GetParameterName(), "null"));
+                    parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), column.GetParameterName(), "null"));
 
                     foreignKeys.Add(column.GetParameterName());
                 }
@@ -234,7 +234,7 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
-                parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
 
             var selection = projectFeature.GetAspNetCoreProject().GetSelection(table);
@@ -456,7 +456,7 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
-                parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
 
             parameters.Add(new ParameterDefinition(table.GetRequestModelName(), "requestModel", new MetadataAttribute("FromBody")));
@@ -537,7 +537,7 @@ namespace CatFactory.AspNetCore.Definitions
             {
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
-                parameters.Add(new ParameterDefinition(EfCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
 
             return new MethodDefinition("Task<IActionResult>", table.GetControllerDeleteAsyncMethodName(), parameters.ToArray())

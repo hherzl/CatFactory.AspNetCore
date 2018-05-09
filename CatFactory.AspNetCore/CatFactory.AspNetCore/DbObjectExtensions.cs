@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CatFactory.CodeFactory;
-using CatFactory.DotNetCore;
-using CatFactory.EfCore;
+using CatFactory.NetCore;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
 
 namespace CatFactory.AspNetCore

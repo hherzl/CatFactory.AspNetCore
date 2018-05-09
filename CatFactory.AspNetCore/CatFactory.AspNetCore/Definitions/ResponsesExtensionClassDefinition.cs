@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using CatFactory.CodeFactory;
-using CatFactory.DotNetCore;
+using CatFactory.NetCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions

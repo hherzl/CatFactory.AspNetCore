@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CatFactory.CodeFactory;
-using CatFactory.EfCore;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
 using Microsoft.Extensions.Logging;
 

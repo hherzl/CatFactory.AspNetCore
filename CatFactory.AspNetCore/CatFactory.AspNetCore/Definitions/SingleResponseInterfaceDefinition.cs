@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CatFactory.DotNetCore;
+using CatFactory.NetCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
@@ -8,10 +8,11 @@ namespace CatFactory.AspNetCore.Definitions
     {
         public static CSharpInterfaceDefinition GetSingleResponseInterfaceDefinition(this AspNetCoreProject project)
         {
-            var definition = new CSharpInterfaceDefinition();
-
-            definition.Namespace = project.GetResponsesNamespace();
-            definition.Name = "ISingleResponse";
+            var definition = new CSharpInterfaceDefinition
+            {
+                Namespace = project.GetResponsesNamespace(),
+                Name = "ISingleResponse"
+            };
 
             definition.GenericTypes = new List<GenericTypeDefinition>
             {

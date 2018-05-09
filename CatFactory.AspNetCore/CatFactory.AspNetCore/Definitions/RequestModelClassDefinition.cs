@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CatFactory.DotNetCore;
-using CatFactory.EfCore;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
+using CatFactory.NetCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
@@ -19,7 +19,7 @@ namespace CatFactory.AspNetCore.Definitions
                     "System.ComponentModel.DataAnnotations",
                     table.HasDefaultSchema() ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema),
                     table.HasDefaultSchema() ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
-        },
+                },
                 Namespace = project.GetRequestModelsNamespace(),
                 Name = table.GetRequestModelName()
             };
@@ -28,7 +28,7 @@ namespace CatFactory.AspNetCore.Definitions
 
             foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {
-                var property = new PropertyDefinition(EfCore.DatabaseExtensions.ResolveType(project.Database, column), column.GetPropertyName());
+                var property = new PropertyDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(project.Database, column), column.GetPropertyName());
 
                 if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
                     property.Attributes.Add(new MetadataAttribute("Key"));
