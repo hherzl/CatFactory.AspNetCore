@@ -13,13 +13,13 @@ namespace CatFactory.AspNetCore.Tests
                 var db = new Database
                 {
                     Name = "Store",
-                    Tables = new List<Table>()
+                    Tables = new List<Table>
                     {
                         new Table
                         {
                             Schema = "dbo",
                             Name = "EventLog",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "EventLogID", Type = "uniqueidentifier", Nullable = false },
                                 new Column { Name = "EventType", Type = "int", Nullable = false },
@@ -33,7 +33,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "dbo",
                             Name = "ChangeLog",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "ChangeLogID", Type = "int", Nullable = false },
                                 new Column { Name = "ClassName", Type = "varchar", Length = 128, Nullable = false },
@@ -51,7 +51,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "dbo",
                             Name = "ChangeLogExclusion",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "ChangeLogExclusionID", Type = "varchar", Length = 25, Nullable = false },
                                 new Column { Name = "TableName", Type = "varchar", Length = 128, Nullable = false },
@@ -63,7 +63,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "HumanResources",
                             Name = "Employee",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "EmployeeID", Type = "int", Nullable = false },
                                 new Column { Name = "FirstName", Type = "varchar", Length = 25, Nullable = false },
@@ -78,15 +78,15 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Production",
                             Name = "ProductCategory",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "ProductCategoryID", Type = "int", Nullable = false },
                                 new Column { Name = "ProductCategoryName", Type = "varchar", Length = 100, Nullable = false },
                             },
                             Identity = new Identity { Name = "ProductCategoryID", Seed = 1, Increment = 1 },
-                            Uniques = new List<Unique>()
+                            Uniques = new List<Unique>
                             {
-                                new Unique(new String[] { "ProductCategoryName" }) { ConstraintName = "U_ProductCategoryName" }
+                                new Unique("ProductCategoryName") { ConstraintName = "U_ProductCategoryName" }
                             }
                         },
 
@@ -94,7 +94,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Production",
                             Name = "Warehouse",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "WarehouseID", Type = "varchar", Length = 5, Nullable = false },
                                 new Column { Name = "WarehouseName", Type = "varchar", Length = 100, Nullable = false }
@@ -105,7 +105,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Production",
                             Name = "Product",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "ProductID", Type = "int", Nullable = false },
                                 new Column { Name = "ProductName", Type = "varchar", Length = 100, Nullable = false },
@@ -115,9 +115,9 @@ namespace CatFactory.AspNetCore.Tests
                                 new Column { Name = "Discontinued", Type = "bit", Nullable = false }
                             },
                             Identity = new Identity { Name = "ProductID", Seed = 1, Increment = 1 },
-                            Uniques = new List<Unique>()
+                            Uniques = new List<Unique>
                             {
-                                new Unique(new String[] { "ProductName" }) { ConstraintName = "U_ProductName" }
+                                new Unique("ProductName") { ConstraintName = "U_ProductName" }
                             }
                         },
 
@@ -125,7 +125,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Production",
                             Name = "ProductInventory",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "ProductInventoryID", Type = "int", Nullable = false },
                                 new Column { Name = "ProductID", Type = "int", Nullable = false },
@@ -141,16 +141,16 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Sales",
                             Name = "Customer",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "CustomerID", Type = "int", Nullable = false },
                                 new Column { Name = "CompanyName", Type = "varchar", Length = 100, Nullable = true },
                                 new Column { Name = "ContactName", Type = "varchar", Length = 100, Nullable = true }
                             },
                             Identity = new Identity { Name = "CustomerID", Seed = 1, Increment = 1 },
-                            Uniques = new List<Unique>()
+                            Uniques = new List<Unique>
                             {
-                                new Unique(new String[] { "CompanyName" }) { ConstraintName = "U_CompanyName" }
+                                new Unique("CompanyName") { ConstraintName = "U_CompanyName" }
                             }
                         },
 
@@ -158,16 +158,16 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Sales",
                             Name = "Shipper",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "ShipperID", Type = "int", Nullable = false },
                                 new Column { Name = "CompanyName", Type = "varchar", Length = 100, Nullable = true },
                                 new Column { Name = "ContactName", Type = "varchar", Length = 100, Nullable = true }
                             },
                             Identity = new Identity { Name = "ShipperID", Seed = 1, Increment = 1 },
-                            Uniques = new List<Unique>()
+                            Uniques = new List<Unique>
                             {
-                                new Unique(new String[] { "CompanyName" }) { ConstraintName = "U_CompanyName" }
+                                new Unique("CompanyName") { ConstraintName = "U_CompanyName" }
                             }
                         },
 
@@ -175,7 +175,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Sales",
                             Name = "OrderStatus",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "OrderStatusID", Type = "smallint", Nullable = false },
                                 new Column { Name = "Description", Type = "varchar", Length = 100, Nullable = true }
@@ -186,7 +186,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Sales",
                             Name = "Order",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "OrderID", Type = "int", Nullable = false },
                                 new Column { Name = "OrderStatusID", Type = "smallint", Nullable = false },
@@ -204,7 +204,7 @@ namespace CatFactory.AspNetCore.Tests
                         {
                             Schema = "Sales",
                             Name = "OrderDetail",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "OrderDetailID", Type = "int", Nullable = false },
                                 new Column { Name = "OrderID", Type = "int", Nullable = false },
@@ -217,13 +217,13 @@ namespace CatFactory.AspNetCore.Tests
                             Identity = new Identity { Name = "OrderDetailID", Seed = 1, Increment = 1 }
                         }
                     },
-                    Views = new List<View>()
+                    Views = new List<View>
                     {
                         new View
                         {
                             Schema = "Sales",
                             Name = "OrderSummary",
-                            Columns = new List<Column>()
+                            Columns = new List<Column>
                             {
                                 new Column { Name = "OrderID", Type = "int", Nullable = false },
                                 new Column { Name = "OrderDate", Type = "datetime", Nullable = false },

@@ -17,7 +17,6 @@ namespace CatFactory.AspNetCore.Definitions
                 {
                     "System",
                     "System.ComponentModel.DataAnnotations",
-                    table.HasDefaultSchema() ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema),
                     table.HasDefaultSchema() ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
                 },
                 Namespace = project.GetRequestModelsNamespace(),

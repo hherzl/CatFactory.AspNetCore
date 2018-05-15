@@ -2,9 +2,9 @@
 using System.Linq;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
-using CatFactory.NetCore;
 using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
+using CatFactory.NetCore;
 using CatFactory.OOP;
 
 namespace CatFactory.AspNetCore.Definitions
@@ -22,21 +22,21 @@ namespace CatFactory.AspNetCore.Definitions
             definition.Namespaces.Add("Microsoft.EntityFrameworkCore");
             definition.Namespaces.Add("Microsoft.Extensions.Logging");
 
-            var project = projectFeature.GetAspNetCoreProject();
+            var aspNetCoreProject = projectFeature.GetAspNetCoreProject();
 
-            definition.Namespaces.Add(project.GetDataLayerContractsNamespace());
-            definition.Namespaces.Add(project.GetDataLayerRepositoriesNamespace());
+            definition.Namespaces.Add(aspNetCoreProject.GetDataLayerContractsNamespace());
+            definition.Namespaces.Add(aspNetCoreProject.GetDataLayerRepositoriesNamespace());
 
-            var settings = project.GlobalSelection().Settings;
+            var settings = aspNetCoreProject.GlobalSelection().Settings;
 
-            definition.Namespaces.Add(project.GetResponsesNamespace());
-            definition.Namespaces.Add(project.GetRequestModelsNamespace());
+            definition.Namespaces.Add(aspNetCoreProject.GetResponsesNamespace());
+            definition.Namespaces.Add(aspNetCoreProject.GetRequestModelsNamespace());
 
-            definition.Namespace = string.Format("{0}.{1}", project.Name, "Controllers");
+            definition.Namespace = string.Format("{0}.{1}", aspNetCoreProject.Name, "Controllers");
 
             definition.Attributes = new List<MetadataAttribute>
             {
-                new MetadataAttribute("Route", "\"api/[controller]\"")
+                new MetadataAttribute("Route", string.IsNullOrEmpty(aspNetCoreProject.Version) ? "\"api/[controller]\"" : string.Format("\"api/{0}/[controller]\"", aspNetCoreProject.Version))
             };
 
             definition.Name = projectFeature.GetControllerName();

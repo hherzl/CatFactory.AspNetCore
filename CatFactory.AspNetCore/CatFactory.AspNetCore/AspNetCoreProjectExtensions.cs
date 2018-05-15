@@ -5,9 +5,9 @@ using System.Linq;
 using CatFactory.AspNetCore.Definitions;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
-using CatFactory.NetCore;
 using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
+using CatFactory.NetCore;
 
 namespace CatFactory.AspNetCore
 {
@@ -26,26 +26,20 @@ namespace CatFactory.AspNetCore
         public static string GetRequestModelsNamespace(this AspNetCoreProject project)
             => string.Format("{0}.{1}", project.Name, "RequestModels");
 
-        public static string GetEntityLayerNamespace(this EntityFrameworkCoreProject project)
-            => string.Join(".", namingConvention.GetClassName(project.Name), namingConvention.GetNamespace(project.Namespaces.EntityLayer));
-
-        public static string GetEntityLayerNamespace(this EntityFrameworkCoreProject project, string ns)
-            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.Name, project.Namespaces.EntityLayer, ns);
-
         public static string GetEntityLayerNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetClassName(project.Name), namingConvention.GetNamespace(project.Namespaces.EntityLayer));
+            => string.Join(".", namingConvention.GetClassName(project.ReferencedProjectName), namingConvention.GetNamespace(project.Namespaces.EntityLayer));
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project, string ns)
-            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.Name, project.Namespaces.EntityLayer, ns);
+            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.ReferencedProjectName, project.Namespaces.EntityLayer, ns);
 
         public static string GetDataLayerContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetClassName(project.Name), project.Namespaces.DataLayer, project.Namespaces.Contracts);
+            => string.Join(".", namingConvention.GetClassName(project.ReferencedProjectName), project.Namespaces.DataLayer, project.Namespaces.Contracts);
 
         public static string GetDataLayerDataContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetClassName(project.Name), project.Namespaces.DataLayer, project.Namespaces.DataContracts);
+            => string.Join(".", namingConvention.GetClassName(project.ReferencedProjectName), project.Namespaces.DataLayer, project.Namespaces.DataContracts);
 
         public static string GetDataLayerRepositoriesNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetClassName(project.Name), project.Namespaces.DataLayer, project.Namespaces.Repositories);
+            => string.Join(".", namingConvention.GetClassName(project.ReferencedProjectName), project.Namespaces.DataLayer, project.Namespaces.Repositories);
 
         public static string GetInterfaceRepositoryName(this ProjectFeature<AspNetCoreProjectSettings> projectFeature)
             => namingConvention.GetInterfaceName(string.Format("{0}Repository", projectFeature.Name));
@@ -164,7 +158,7 @@ namespace CatFactory.AspNetCore
                 "How to use this code on your ASP.NET Core Application:",
                 string.Empty,
 
-                "1. Install packages for EntityFrameworkCore",
+                "1. Install EntityFrameworkCore.SqlServer package",
                 string.Empty,
 
                 "2. Register your DbContext and repositories in ConfigureServices method (Startup class):",
@@ -176,6 +170,7 @@ namespace CatFactory.AspNetCore
                 "3. Register logger instance for your controllers in ConfigureServices method (Startup class):",
                 string.Format(" services.AddScoped<ILogger<DboController>, Logger<DboController>>();"),
 
+                string.Empty,
                 "Happy scaffolding!",
                 string.Empty,
 
@@ -197,7 +192,8 @@ namespace CatFactory.AspNetCore
             {
                 Name = name,
                 OutputDirectory = outputDirectory,
-                Database = database
+                Database = database,
+                ReferencedProjectName = entityFrameworkProject.Name
             };
 
             aspNetCoreProject.BuildFeatures();
