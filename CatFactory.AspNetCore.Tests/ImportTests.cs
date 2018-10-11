@@ -88,7 +88,7 @@ namespace CatFactory.AspNetCore.Tests
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = new EntityFrameworkCoreProject
             {
-                Name = "Northwind",
+                Name = "AdventureWorks2017",
                 Database = database,
                 OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\AdventureWorks2017.Core"
             };
@@ -106,7 +106,42 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Northwind.AspNetCore", "C:\\Temp\\CatFactory.AspNetCore\\AdventureWorks2017.Api", entityFrameworkProject.Database);
+                .CreateAspNetCoreProject("AdventureWorks2017.AspNetCore", "C:\\Temp\\CatFactory.AspNetCore\\AdventureWorks2017.Api", entityFrameworkProject.Database);
+
+            aspNetCoreProject.ScaffoldAspNetCore();
+        }
+
+        [Fact]
+        public void TestControllerScaffoldingFromWideWorldImportersDatabase()
+        {
+            // Import database
+            var database = SqlServerDatabaseFactory
+                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=WideWorldImporters;integrated security=yes;", "dbo.sysdiagrams");
+
+            // Create instance of Entity Framework Core Project
+            var entityFrameworkProject = new EntityFrameworkCoreProject
+            {
+                Name = "WideWorldImporters",
+                Database = database,
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\WideWorldImporters.Core"
+            };
+
+            // Apply settings for project
+            entityFrameworkProject.GlobalSelection(settings =>
+            {
+                settings.ForceOverwrite = true;
+            });
+
+            // Build features for project, group all entities by schema into a feature
+            entityFrameworkProject.BuildFeatures();
+
+            // Scaffolding =^^=
+            entityFrameworkProject
+                .ScaffoldEntityLayer()
+                .ScaffoldDataLayer();
+
+            var aspNetCoreProject = entityFrameworkProject
+                .CreateAspNetCoreProject("WideWorldImporters.Api", "C:\\Temp\\CatFactory.AspNetCore\\WideWorldImporters.Api", entityFrameworkProject.Database);
 
             aspNetCoreProject.ScaffoldAspNetCore();
         }

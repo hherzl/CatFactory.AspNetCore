@@ -335,7 +335,9 @@ namespace CatFactory.AspNetCore.Definitions
             }
 
             lines.Add(new CommentLine(1, " Add entity to database"));
-            lines.Add(new CodeLine(1, "await Repository.{0}(entity);", table.GetAddRepositoryMethodName()));
+            lines.Add(new CodeLine(1, "Repository.Add(entity);"));
+            lines.Add(new CodeLine());
+            lines.Add(new CodeLine(1, "await Repository.CommitChangesAsync();"));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine(1, "response.Model = entity.ToRequestModel();"));
@@ -417,7 +419,9 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine());
 
             lines.Add(new CommentLine(2, " Save changes for entity in database"));
-            lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetUpdateRepositoryMethodName()));
+            lines.Add(new CodeLine(2, "Repository.Update(entity);"));
+            lines.Add(new CodeLine());
+            lines.Add(new CodeLine(2, "await Repository.CommitChangesAsync();"));
 
             if (selection.Settings.UseLogger)
             {
@@ -498,7 +502,10 @@ namespace CatFactory.AspNetCore.Definitions
             lines.Add(new CodeLine(1, "{"));
 
             lines.Add(new CommentLine(2, " Remove entity from database"));
-            lines.Add(new CodeLine(2, "await Repository.{0}(entity);", table.GetRemoveRepositoryMethodName()));
+            lines.Add(new CodeLine(2, "Repository.Remove(entity);"));
+
+            lines.Add(new CodeLine());
+            lines.Add(new CodeLine(2, "await Repository.CommitChangesAsync();"));
 
             if (selection.Settings.UseLogger)
             {
