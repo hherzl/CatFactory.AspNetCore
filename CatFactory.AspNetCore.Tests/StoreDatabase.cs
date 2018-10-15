@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CatFactory.Mapping;
+﻿using CatFactory.Mapping;
 
 namespace CatFactory.AspNetCore.Tests
 {
@@ -10,7 +9,7 @@ namespace CatFactory.AspNetCore.Tests
             {
                 Name = "Store",
                 DefaultSchema = "dbo",
-                Tables = new List<Table>
+                Tables =
                 {
                     new Table
                     {
@@ -41,7 +40,7 @@ namespace CatFactory.AspNetCore.Tests
                             new Column { Name = "UserName", Type = "varchar", Length = 25 },
                             new Column { Name = "ChangeDate", Type = "varchar", Length = 128 }
                         },
-                        Identity = new Identity { Name = "ChangeLogID", Seed = 1, Increment = 1 }
+                        Identity = new Identity("ChangeLogID", 1, 1)
                     },
 
                     new Table
@@ -68,7 +67,7 @@ namespace CatFactory.AspNetCore.Tests
                             new Column { Name = "LastName", Type = "varchar", Length = 25 },
                             new Column { Name = "BirthDate", Type = "datetime" }
                         },
-                        Identity = new Identity { Name = "EmployeeID", Seed = 1, Increment = 1 }
+                        Identity = new Identity("EmployeeID", 1, 1)
                     },
 
                     new Table
@@ -131,7 +130,7 @@ namespace CatFactory.AspNetCore.Tests
                             new Column { Name = "Quantity", Type = "int" },
                             new Column { Name = "Stocks", Type = "int" }
                         },
-                        Identity = new Identity { Name = "ProductInventoryID", Seed = 1, Increment = 1 }
+                        Identity = new Identity("ProductInventoryID", 1, 1)
                     },
 
                     new Table
@@ -144,7 +143,7 @@ namespace CatFactory.AspNetCore.Tests
                             new Column { Name = "CompanyName", Type = "varchar", Length = 100, Nullable = true },
                             new Column { Name = "ContactName", Type = "varchar", Length = 100, Nullable = true }
                         },
-                        Identity = new Identity { Name = "CustomerID", Seed = 1, Increment = 1 },
+                        Identity = new Identity("CustomerID", 1, 1),
                         Uniques =
                         {
                             new Unique("CompanyName") { ConstraintName = "U_CompanyName" }
@@ -161,7 +160,7 @@ namespace CatFactory.AspNetCore.Tests
                             new Column { Name = "CompanyName", Type = "varchar", Length = 100, Nullable = true },
                             new Column { Name = "ContactName", Type = "varchar", Length = 100, Nullable = true }
                         },
-                        Identity = new Identity { Name = "ShipperID", Seed = 1, Increment = 1 },
+                        Identity = new Identity("ShipperID", 1, 1),
                         Uniques =
                         {
                             new Unique("CompanyName") { ConstraintName = "U_CompanyName" }
@@ -194,7 +193,7 @@ namespace CatFactory.AspNetCore.Tests
                             new Column { Name = "Total", Type = "decimal", Prec = 12, Scale = 4 },
                             new Column { Name = "Comments", Type = "varchar", Length = 255, Nullable = true }
                         },
-                        Identity = new Identity { Name = "OrderID", Seed = 1, Increment = 1 }
+                        Identity = new Identity("OrderID", 1, 1)
                     },
 
                     new Table
@@ -211,7 +210,7 @@ namespace CatFactory.AspNetCore.Tests
                             new Column { Name = "Quantity", Type = "int" },
                             new Column { Name = "Total", Type = "decimal", Prec = 8, Scale = 4 }
                         },
-                        Identity = new Identity { Name = "OrderDetailID", Seed = 1, Increment = 1 }
+                        Identity = new Identity("OrderDetailID", 1, 1)
                     }
                 },
                 Views =
