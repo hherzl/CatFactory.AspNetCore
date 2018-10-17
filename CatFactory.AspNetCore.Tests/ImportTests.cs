@@ -18,7 +18,7 @@ namespace CatFactory.AspNetCore.Tests
             {
                 Name = "Store",
                 Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.Core"
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\Store.Core"
             };
 
             // Apply settings for project
@@ -40,108 +40,19 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Store.Api", "C:\\Temp\\CatFactory.AspNetCore\\Store.Api", entityFrameworkProject.Database);
+                .CreateAspNetCoreProject("Store.Api", "C:\\Temp\\CatFactory.AspNetCore\\CatFactory.AspNetCore.Demo\\Store.Api", entityFrameworkProject.Database);
 
-            aspNetCoreProject.ScaffoldAspNetCore();
-        }
+            // Add event handlers to before and after of scaffold
 
-        [Fact]
-        public void TestControllerScaffoldingFromNorthwindDatabase()
-        {
-            // Import database
-            var database = SqlServerDatabaseFactory
-                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
-
-            // Create instance of Entity Framework Core Project
-            var entityFrameworkProject = new EntityFrameworkCoreProject
+            aspNetCoreProject.ScaffoldingDefinition += (source, args) =>
             {
-                Name = "Northwind",
-                Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Northwind.Core"
+                // Add code to perform operations with code builder instance before to create code file
             };
 
-            // Apply settings for project
-            entityFrameworkProject.GlobalSelection(settings => settings.ForceOverwrite = true);
-            entityFrameworkProject.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
-
-            // Build features for project, group all entities by schema into a feature
-            entityFrameworkProject.BuildFeatures();
-
-            // Scaffolding =^^=
-            entityFrameworkProject
-                .ScaffoldEntityLayer()
-                .ScaffoldDataLayer();
-
-            var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Northwind.AspNetCore", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.Api", entityFrameworkProject.Database);
-
-            aspNetCoreProject.ScaffoldAspNetCore();
-        }
-
-        [Fact]
-        public void TestControllerScaffoldingFromAdventureWorks2017Database()
-        {
-            // Import database
-            var database = SqlServerDatabaseFactory
-                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=AdventureWorks2017;integrated security=yes;", "dbo.sysdiagrams");
-
-            // Create instance of Entity Framework Core Project
-            var entityFrameworkProject = new EntityFrameworkCoreProject
+            aspNetCoreProject.ScaffoldedDefinition += (source, args) =>
             {
-                Name = "AdventureWorks2017",
-                Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\AdventureWorks2017.Core"
+                // Add code to perform operations after of create code file
             };
-
-            // Apply settings for project
-            entityFrameworkProject.GlobalSelection(settings => settings.ForceOverwrite = true);
-            entityFrameworkProject.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
-
-            // Build features for project, group all entities by schema into a feature
-            entityFrameworkProject.BuildFeatures();
-
-            // Scaffolding =^^=
-            entityFrameworkProject
-                .ScaffoldEntityLayer()
-                .ScaffoldDataLayer();
-
-            var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("AdventureWorks2017.AspNetCore", "C:\\Temp\\CatFactory.AspNetCore\\AdventureWorks2017.Api", entityFrameworkProject.Database);
-
-            aspNetCoreProject.ScaffoldAspNetCore();
-        }
-
-        [Fact]
-        public void TestControllerScaffoldingFromWideWorldImportersDatabase()
-        {
-            // Import database
-            var database = SqlServerDatabaseFactory
-                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=WideWorldImporters;integrated security=yes;", "dbo.sysdiagrams");
-
-            // Create instance of Entity Framework Core Project
-            var entityFrameworkProject = new EntityFrameworkCoreProject
-            {
-                Name = "WideWorldImporters",
-                Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\WideWorldImporters.Core"
-            };
-
-            // Apply settings for project
-            entityFrameworkProject.GlobalSelection(settings =>
-            {
-                settings.ForceOverwrite = true;
-            });
-
-            // Build features for project, group all entities by schema into a feature
-            entityFrameworkProject.BuildFeatures();
-
-            // Scaffolding =^^=
-            entityFrameworkProject
-                .ScaffoldEntityLayer()
-                .ScaffoldDataLayer();
-
-            var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("WideWorldImporters.Api", "C:\\Temp\\CatFactory.AspNetCore\\WideWorldImporters.Api", entityFrameworkProject.Database);
 
             aspNetCoreProject.ScaffoldAspNetCore();
         }

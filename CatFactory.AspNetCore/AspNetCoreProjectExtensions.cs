@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CatFactory.AspNetCore.Definitions;
+using CatFactory.AspNetCore.Definitions.Extensions;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;

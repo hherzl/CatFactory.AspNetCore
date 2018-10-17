@@ -1,28 +1,8 @@
-﻿using System.Collections.Generic;
-using CatFactory.NetCore;
-using CatFactory.OOP;
+﻿using CatFactory.NetCore;
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public static class ListResponseInterfaceDefinition
+    public class ListResponseInterfaceDefinition : CSharpInterfaceDefinition
     {
-        public static CSharpInterfaceDefinition GetListResponseInterfaceDefinition(this AspNetCoreProject project)
-        {
-            var definition = new CSharpInterfaceDefinition();
-
-            definition.Namespaces.Add("System.Collections.Generic");
-            definition.Namespace = project.GetResponsesNamespace();
-            definition.Name = "IListResponse";
-
-            definition.GenericTypes = new List<GenericTypeDefinition>
-            {
-                new GenericTypeDefinition { Name = "TModel", Constraint = "TModel : class" }
-            };
-
-            definition.Implements.Add("IResponse");
-            definition.Properties.Add(new PropertyDefinition("IEnumerable<TModel>", "Model"));
-
-            return definition;
-        }
     }
 }
