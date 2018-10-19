@@ -9,15 +9,12 @@ namespace CatFactory.AspNetCore
 {
     public static class DbObjectExtensions
     {
-        private static ICodeNamingConvention namingConvention;
+        private static readonly ICodeNamingConvention namingConvention;
 
         static DbObjectExtensions()
         {
             namingConvention = new DotNetNamingConvention();
         }
-
-        public static bool HasDefaultSchema(this IDbObject table)
-            => string.IsNullOrEmpty(table.Schema) || string.Compare(table.Schema, "dbo", true) == 0;
 
         public static string GetControllerGetAllAsyncMethodName(this ITable table)
             => string.Format("{0}{1}{2}", "Get", table.GetPluralName(), "Async");

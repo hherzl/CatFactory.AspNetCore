@@ -27,9 +27,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Properties =
                 {
-                    new PropertyDefinition("String", "Message"),
-                    new PropertyDefinition("Boolean", "DidError"),
-                    new PropertyDefinition("String", "ErrorMessage"),
+                    new PropertyDefinition("string", "Message"),
+                    new PropertyDefinition("bool", "DidError"),
+                    new PropertyDefinition("string", "ErrorMessage"),
                     new PropertyDefinition("TModel", "Model")
                 }
             };

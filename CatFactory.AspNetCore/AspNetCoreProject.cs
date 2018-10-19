@@ -20,6 +20,10 @@ namespace CatFactory.AspNetCore
 
         public string Version { get; set; }
 
+        public string ReferencedProjectName { get; set; }
+
+        public ProjectNamespaces Namespaces { get; set; } = new ProjectNamespaces();
+
         public override void BuildFeatures()
         {
             if (Database == null)
@@ -49,9 +53,5 @@ namespace CatFactory.AspNetCore
 
             return result;
         }
-
-        public string ReferencedProjectName { get; set; }
-
-        public ProjectNamespaces Namespaces { get; set; } = new ProjectNamespaces();
     }
 }

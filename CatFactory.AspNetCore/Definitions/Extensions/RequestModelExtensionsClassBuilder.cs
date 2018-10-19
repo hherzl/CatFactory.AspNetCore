@@ -12,7 +12,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
     {
         public static RequestModelExtensionsClassDefinition GetRequestModelExtensionsClassDefinition(this AspNetCoreProject project)
         {
-            var classDefinition = new RequestModelExtensionsClassDefinition
+            var definition = new RequestModelExtensionsClassDefinition
             {
                 Namespaces =
                 {
@@ -26,14 +26,14 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var table in project.Database.Tables)
             {
-                if (!table.HasDefaultSchema())
-                    classDefinition.Namespaces.AddUnique(project.GetEntityLayerNamespace(table.Schema));
+                if (!Mapping.DatabaseExtensions.HasDefaultSchema(project.Database, table))
+                    definition.Namespaces.AddUnique(project.GetEntityLayerNamespace(table.Schema));
 
-                classDefinition.Methods.Add(GetToEntityMethod(project, table));
-                classDefinition.Methods.Add(GetToRequestModelMethod(project, table));
+                definition.Methods.Add(GetToEntityMethod(project, table));
+                definition.Methods.Add(GetToRequestModelMethod(project, table));
             }
 
-            return classDefinition;
+            return definition;
         }
 
         private static MethodDefinition GetToEntityMethod(AspNetCoreProject project, ITable table)

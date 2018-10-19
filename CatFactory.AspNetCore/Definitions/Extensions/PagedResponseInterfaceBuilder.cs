@@ -27,8 +27,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Properties =
                 {
-                    new PropertyDefinition("Int32", "ItemsCount"),
-                    new PropertyDefinition("Int32", "PageCount")
+                    new PropertyDefinition("int", "ItemsCount"),
+                    new PropertyDefinition("int", "PageCount")
                 }
             };
     }

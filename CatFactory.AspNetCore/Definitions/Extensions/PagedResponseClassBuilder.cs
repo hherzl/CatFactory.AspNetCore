@@ -29,14 +29,14 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Properties =
                 {
-                    new PropertyDefinition("String", "Message"),
-                    new PropertyDefinition("Boolean", "DidError"),
-                    new PropertyDefinition("String", "ErrorMessage"),
+                    new PropertyDefinition("string", "Message"),
+                    new PropertyDefinition("bool", "DidError"),
+                    new PropertyDefinition("string", "ErrorMessage"),
                     new PropertyDefinition("IEnumerable<TModel>", "Model"),
-                    new PropertyDefinition("Int32", "PageSize"),
-                    new PropertyDefinition("Int32", "PageNumber"),
-                    new PropertyDefinition("Int32", "ItemsCount"),
-                    new PropertyDefinition("Int32", "PageCount")
+                    new PropertyDefinition("int", "PageSize"),
+                    new PropertyDefinition("int", "PageNumber"),
+                    new PropertyDefinition("int", "ItemsCount"),
+                    new PropertyDefinition("int", "PageCount")
                     {
                         IsReadOnly = true,
                         GetBody =

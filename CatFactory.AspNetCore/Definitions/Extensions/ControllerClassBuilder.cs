@@ -13,41 +13,41 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
     {
         public static ControllerClassDefinition GetControllerClassDefinition(this ProjectFeature<AspNetCoreProjectSettings> projectFeature)
         {
-            var definition = new ControllerClassDefinition();
-
-            definition.Namespaces.Add("System");
-            definition.Namespaces.Add("System.Linq");
-            definition.Namespaces.Add("System.Threading.Tasks");
-            definition.Namespaces.Add("Microsoft.AspNetCore.Mvc");
-            definition.Namespaces.Add("Microsoft.EntityFrameworkCore");
-            definition.Namespaces.Add("Microsoft.Extensions.Logging");
-
             var aspNetCoreProject = projectFeature.GetAspNetCoreProject();
 
-            definition.Namespaces.Add(aspNetCoreProject.GetDataLayerContractsNamespace());
-            definition.Namespaces.Add(aspNetCoreProject.GetDataLayerRepositoriesNamespace());
-
-            var settings = aspNetCoreProject.GlobalSelection().Settings;
-
-            definition.Namespaces.Add(aspNetCoreProject.GetResponsesNamespace());
-            definition.Namespaces.Add(aspNetCoreProject.GetRequestModelsNamespace());
-
-            definition.Namespace = string.Format("{0}.{1}", aspNetCoreProject.Name, "Controllers");
-
-            definition.Attributes = new List<MetadataAttribute>
+            var definition = new ControllerClassDefinition
             {
-                new MetadataAttribute("Route", string.IsNullOrEmpty(aspNetCoreProject.Version) ? "\"api/[controller]\"" : string.Format("\"api/{0}/[controller]\"", aspNetCoreProject.Version)),
-                new MetadataAttribute("ApiController")
+                Namespaces =
+                {
+                    "System",
+                    "System.Linq",
+                    "System.Threading.Tasks",
+                    "Microsoft.AspNetCore.Mvc",
+                    "Microsoft.EntityFrameworkCore",
+                    "Microsoft.Extensions.Logging",
+                    aspNetCoreProject.GetDataLayerContractsNamespace(),
+                    aspNetCoreProject.GetDataLayerRepositoriesNamespace(),
+                    aspNetCoreProject.GetResponsesNamespace(),
+                    aspNetCoreProject.GetRequestModelsNamespace()
+                },
+                Namespace = string.Format("{0}.{1}", aspNetCoreProject.Name, "Controllers"),
+                Name = projectFeature.GetControllerName(),
+                Attributes = new List<MetadataAttribute>
+                {
+                    new MetadataAttribute("Route", string.IsNullOrEmpty(aspNetCoreProject.Version) ? "\"api/[controller]\"" : string.Format("\"api/{0}/[controller]\"", aspNetCoreProject.Version)),
+                    new MetadataAttribute("ApiController")
+                },
+                BaseClass = "ControllerBase",
+                Fields =
+                {
+                    new FieldDefinition(AccessModifier.Protected, projectFeature.GetInterfaceRepositoryName(), "Repository")
+                    {
+                        IsReadOnly = true
+                    }
+                }
             };
 
-            definition.Name = projectFeature.GetControllerName();
-
-            definition.BaseClass = "ControllerBase";
-
-            definition.Fields.Add(new FieldDefinition(AccessModifier.Protected, projectFeature.GetInterfaceRepositoryName(), "Repository")
-            {
-                IsReadOnly = true
-            });
+            var settings = aspNetCoreProject.GlobalSelection().Settings;
 
             if (settings.UseLogger)
                 definition.Fields.Add(new FieldDefinition(AccessModifier.Protected, "ILogger", "Logger"));
@@ -73,6 +73,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     definition.Methods.Add(GetDeleteMethod(projectFeature, table));
                 }
             }
+
+            // todo: Add views in controller
 
             return definition;
         }
@@ -106,7 +108,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
         private static MethodDefinition GetGetAllMethod(ProjectFeature<AspNetCoreProjectSettings> projectFeature, CSharpClassDefinition definition, ITable table)
         {
-            if (table.HasDefaultSchema())
+            if (Mapping.DatabaseExtensions.HasDefaultSchema(projectFeature.Project.Database, table))
                 definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetEntityLayerNamespace());
             else
                 definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetEntityLayerNamespace(table.Schema));
@@ -139,8 +141,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             var parameters = new List<ParameterDefinition>
             {
-                new ParameterDefinition("Int32?", "pageSize", "10"),
-                new ParameterDefinition("Int32?", "pageNumber", "1")
+                new ParameterDefinition("int?", "pageSize", "10"),
+                new ParameterDefinition("int?", "pageNumber", "1")
             };
 
             var foreignKeys = new List<string>();
@@ -175,8 +177,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             if (selection.Settings.UseLogger)
             {
                 lines.Add(new CommentLine(1, " Set paging's information"));
-                lines.Add(new CodeLine(1, "response.PageSize = (Int32)pageSize;"));
-                lines.Add(new CodeLine(1, "response.PageNumber = (Int32)pageNumber;"));
+                lines.Add(new CodeLine(1, "response.PageSize = (int)pageSize;"));
+                lines.Add(new CodeLine(1, "response.PageNumber = (int)pageNumber;"));
                 lines.Add(new CodeLine(1, "response.ItemsCount = await query.CountAsync();"));
                 lines.Add(new CodeLine());
 
@@ -193,7 +195,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
             }
             else
             {
@@ -220,11 +222,18 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
         {
             var parameters = new List<ParameterDefinition>();
 
-            if (table.PrimaryKey?.Key.Count == 1)
+            if (table.PrimaryKey != null)
             {
-                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
+                if (table.PrimaryKey.Key.Count == 1)
+                {
+                    var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
-                parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                    parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                }
+                else if (table.PrimaryKey.Key.Count > 1)
+                {
+                    parameters.Add(new ParameterDefinition("string", "id"));
+                }
             }
 
             var selection = projectFeature.GetAspNetCoreProject().GetSelection(table);
@@ -243,12 +252,43 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CommentLine(1, " Retrieve entity by id"));
-            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
-            lines.Add(new CodeLine());
-            lines.Add(new CodeLine(1, "if (entity != null)"));
-            lines.Add(new CodeLine(1, "{"));
-            lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+            if (table.PrimaryKey?.Key.Count == 1)
+            {
+                lines.Add(new CommentLine(1, " Retrieve entity by id"));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
+                lines.Add(new CodeLine());
+                lines.Add(new CodeLine(1, "if (entity != null)"));
+                lines.Add(new CodeLine(1, "{"));
+                lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+            }
+            else if (table.PrimaryKey?.Key.Count > 1)
+            {
+                lines.Add(new CodeLine(1, "var key = id.Split('|');"));
+                lines.Add(new CodeLine());
+
+                var key = table.GetColumnsFromConstraint(table.PrimaryKey).ToList();
+
+                for (var i = 0; i < key.Count; i++)
+                {
+                    var column = key[i];
+
+                    if (projectFeature.Project.Database.ColumnIsInt32(column))
+                        lines.Add(new CodeLine(1, "var {0} = Convert.ToInt32(key[{1}]);", key[i].GetParameterName(), (i + 1).ToString()));
+                    else
+                        lines.Add(new CodeLine(1, "var {0} = key[{1}];", key[i].GetParameterName(), (i + 1).ToString()));
+                }
+
+                var exp = string.Join(", ", key.Select(item => string.Format("{0} = {1}", item.GetPropertyName(), item.GetParameterName())));
+
+                lines.Add(new CodeLine());
+
+                lines.Add(new CommentLine(1, " Retrieve entity"));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1} {{ {2} }});", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
+                lines.Add(new CodeLine());
+                lines.Add(new CodeLine(1, "if (entity != null)"));
+                lines.Add(new CodeLine(1, "{"));
+                lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+            }
 
             if (selection.Settings.UseLogger)
             {
@@ -264,7 +304,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
             }
             else
             {
@@ -344,7 +384,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
             }
             else
             {
@@ -391,14 +431,48 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CommentLine(1, " Retrieve entity by id"));
-            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
-            lines.Add(new CodeLine());
+            if (table.PrimaryKey?.Key.Count == 1)
+            {
+                lines.Add(new CommentLine(1, " Retrieve entity by id"));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
+                lines.Add(new CodeLine());
+            }
+            else if (table.PrimaryKey?.Key.Count > 1)
+            {
+                lines.Add(new CodeLine(1, "var key = id.Split('|');"));
+                lines.Add(new CodeLine());
+
+                var key = table.GetColumnsFromConstraint(table.PrimaryKey).ToList();
+
+                for (var i = 0; i < key.Count; i++)
+                {
+                    var column = key[i];
+
+                    if (projectFeature.Project.Database.ColumnIsInt32(column))
+                        lines.Add(new CodeLine(1, "var {0} = Convert.ToInt32(key[{1}]);", key[i].GetParameterName(), (i + 1).ToString()));
+                    else
+                        lines.Add(new CodeLine(1, "var {0} = key[{1}];", key[i].GetParameterName(), (i + 1).ToString()));
+                }
+
+                var exp = string.Join(", ", key.Select(item => string.Format("{0} = {1}", item.GetPropertyName(), item.GetParameterName())));
+
+                lines.Add(new CodeLine());
+
+                lines.Add(new CommentLine(1, " Retrieve entity"));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1} {{ {2} }});", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
+                lines.Add(new CodeLine());
+            }
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
+            lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+
+            lines.Add(new CodeLine());
 
             lines.Add(new TodoLine(2, " Check properties to update"));
+
+            lines.Add(new CodeLine());
+
             lines.Add(new CommentLine(2, " Apply changes on entity"));
 
             foreach (var column in projectFeature.GetUpdateColumns(table))
@@ -431,7 +505,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
             }
             else
             {
@@ -451,6 +525,10 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
                 parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+            }
+            else if (table.PrimaryKey?.Key.Count > 1)
+            {
+                parameters.Add(new ParameterDefinition("string", "id"));
             }
 
             parameters.Add(new ParameterDefinition(table.GetRequestModelName(), "requestModel", new MetadataAttribute("FromBody")));
@@ -484,9 +562,37 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CommentLine(1, " Retrieve entity by id"));
-            lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
-            lines.Add(new CodeLine());
+            if (table.PrimaryKey.Key.Count == 1)
+            {
+                lines.Add(new CommentLine(1, " Retrieve entity by id"));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}(id));", table.GetGetRepositoryMethodName(), table.GetEntityName()));
+                lines.Add(new CodeLine());
+            }
+            else if (table.PrimaryKey.Key.Count > 1)
+            {
+                lines.Add(new CodeLine(1, "var key = id.Split('|');"));
+                lines.Add(new CodeLine());
+
+                var key = table.GetColumnsFromConstraint(table.PrimaryKey).ToList();
+
+                for (var i = 0; i < key.Count; i++)
+                {
+                    var column = key[i];
+
+                    if (projectFeature.Project.Database.ColumnIsInt32(column))
+                        lines.Add(new CodeLine(1, "var {0} = Convert.ToInt32(key[{1}]);", key[i].GetParameterName(), (i + 1).ToString()));
+                    else
+                        lines.Add(new CodeLine(1, "var {0} = key[{1}];", key[i].GetParameterName(), (i + 1).ToString()));
+                }
+
+                var exp = string.Join(", ", key.Select(item => string.Format("{0} = {1}", item.GetPropertyName(), item.GetParameterName())));
+
+                lines.Add(new CodeLine());
+
+                lines.Add(new CommentLine(1, " Retrieve entity"));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1} {{ {2} }});", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
+                lines.Add(new CodeLine());
+            }
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
@@ -515,7 +621,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(ex, Logger);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
             }
             else
             {
@@ -530,11 +636,15 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             var parameters = new List<ParameterDefinition>();
 
-            if (table.PrimaryKey?.Key.Count == 1)
+            if (table.PrimaryKey.Key.Count == 1)
             {
                 var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
 
                 parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+            }
+            else if (table.PrimaryKey.Key.Count > 1)
+            {
+                parameters.Add(new ParameterDefinition("string", "id"));
             }
 
             return new MethodDefinition("Task<IActionResult>", table.GetControllerDeleteAsyncMethodName(), parameters.ToArray())

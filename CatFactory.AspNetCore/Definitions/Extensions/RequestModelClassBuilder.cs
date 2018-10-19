@@ -15,7 +15,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     "System",
                     "System.ComponentModel.DataAnnotations",
-                    table.HasDefaultSchema() ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
+                    Mapping.DatabaseExtensions.HasDefaultSchema(project.Database, table) ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
                 },
                 Namespace = project.GetRequestModelsNamespace(),
                 Name = table.GetRequestModelName()

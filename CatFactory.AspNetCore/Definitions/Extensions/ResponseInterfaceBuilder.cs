@@ -15,9 +15,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Name = "IResponse",
                 Properties =
                 {
-                    new PropertyDefinition("String", "Message"),
-                    new PropertyDefinition("Boolean", "DidError"),
-                    new PropertyDefinition("String", "ErrorMessage")
+                    new PropertyDefinition("string", "Message"),
+                    new PropertyDefinition("bool", "DidError"),
+                    new PropertyDefinition("string", "ErrorMessage")
                 }
             };
     }
