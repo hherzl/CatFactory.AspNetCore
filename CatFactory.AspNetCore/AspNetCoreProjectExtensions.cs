@@ -8,6 +8,7 @@ using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
 using CatFactory.Mapping;
 using CatFactory.NetCore;
+using CatFactory.NetCore.CodeFactory;
 
 namespace CatFactory.AspNetCore
 {
