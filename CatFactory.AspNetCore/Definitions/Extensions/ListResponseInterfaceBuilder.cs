@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CatFactory.OOP;
+﻿using CatFactory.ObjectOrientedProgramming;
 
 namespace CatFactory.AspNetCore.Definitions.Extensions
 {
@@ -14,7 +13,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Namespace = project.GetResponsesNamespace(),
                 Name = "IListResponse",
-                GenericTypes = new List<GenericTypeDefinition>
+                GenericTypes =
                 {
                     new GenericTypeDefinition
                     {

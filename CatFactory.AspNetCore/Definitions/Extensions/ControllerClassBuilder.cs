@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CatFactory.CodeFactory;
+using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.Mapping;
-using CatFactory.NetCore;
-using CatFactory.OOP;
+using CatFactory.NetCore.ObjectOrientedProgramming;
+using CatFactory.ObjectOrientedProgramming;
+using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore.Definitions.Extensions
 {
@@ -108,7 +109,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
         private static MethodDefinition GetGetAllMethod(ProjectFeature<AspNetCoreProjectSettings> projectFeature, CSharpClassDefinition definition, ITable table)
         {
-            if (Mapping.DatabaseExtensions.HasDefaultSchema(projectFeature.Project.Database, table))
+            if (projectFeature.Project.Database.HasDefaultSchema(table))
                 definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetEntityLayerNamespace());
             else
                 definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetEntityLayerNamespace(table.Schema));

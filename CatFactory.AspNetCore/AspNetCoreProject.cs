@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CatFactory.CodeFactory;
+using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.Mapping;
+using CatFactory.ObjectRelationalMapping;
 using Microsoft.Extensions.Logging;
 
 namespace CatFactory.AspNetCore
@@ -10,6 +10,7 @@ namespace CatFactory.AspNetCore
     public class AspNetCoreProject : Project<AspNetCoreProjectSettings>
     {
         public AspNetCoreProject()
+            : base()
         {
         }
 

@@ -3,8 +3,8 @@ using System.Linq;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.Mapping;
-using CatFactory.OOP;
+using CatFactory.ObjectOrientedProgramming;
+using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore.Definitions.Extensions
 {
@@ -26,7 +26,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var table in project.Database.Tables)
             {
-                if (!Mapping.DatabaseExtensions.HasDefaultSchema(project.Database, table))
+                if (!project.Database.HasDefaultSchema(table))
                     definition.Namespaces.AddUnique(project.GetEntityLayerNamespace(table.Schema));
 
                 definition.Methods.Add(GetToEntityMethod(project, table));

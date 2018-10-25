@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using CatFactory.AspNetCore.Definitions.Extensions;
 using CatFactory.CodeFactory;
+using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.Mapping;
-using CatFactory.NetCore;
 using CatFactory.NetCore.CodeFactory;
+using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore
 {

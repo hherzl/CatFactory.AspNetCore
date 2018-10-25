@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CatFactory.CodeFactory;
+using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.Mapping;
-using CatFactory.NetCore;
+using CatFactory.NetCore.CodeFactory;
+using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore
 {

@@ -1,5 +1,6 @@
 ﻿using CatFactory.CodeFactory;
-using CatFactory.NetCore;
+using CatFactory.CodeFactory.Scaffolding;
+using CatFactory.NetCore.CodeFactory;
 
 namespace CatFactory.AspNetCore
 {
