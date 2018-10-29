@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
@@ -23,7 +24,20 @@ namespace CatFactory.AspNetCore
 
         public string ReferencedProjectName { get; set; }
 
-        public ProjectNamespaces Namespaces { get; set; } = new ProjectNamespaces();
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private ProjectNamespaces m_namespaces;
+
+        public ProjectNamespaces Namespaces
+        {
+            get
+            {
+                return m_namespaces ?? (m_namespaces = new ProjectNamespaces());
+            }
+            set
+            {
+                m_namespaces = value;
+            }
+        }
 
         public override void BuildFeatures()
         {

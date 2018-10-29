@@ -21,7 +21,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Name = "ResponsesExtensions"
             };
 
-            definition.Methods.Add(new MethodDefinition("void", "SetError", new ParameterDefinition("IResponse", "response"), new ParameterDefinition("ILogger", "logger"), new ParameterDefinition("Exception", "ex"))
+            definition.Methods.Add(new MethodDefinition("void", "SetError", new ParameterDefinition("IResponse", "response"), new ParameterDefinition("ILogger", "logger"), new ParameterDefinition("string", "action"), new ParameterDefinition("Exception", "ex"))
             {
                 IsStatic = true,
                 IsExtension = true,
@@ -31,7 +31,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     new CodeLine("response.ErrorMessage = ex.Message;"),
                     new CodeLine(),
                     new TodoLine("Add additional logic to save exception"),
-                    new CodeLine("logger?.LogCritical(ex.ToString());")
+                    new CodeLine("logger?.LogCritical(\"There was an error on '{0}': {1}\", action, ex);")
                 }
             });
 

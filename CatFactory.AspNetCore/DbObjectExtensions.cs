@@ -33,7 +33,7 @@ namespace CatFactory.AspNetCore
             => string.Format("{0}{1}{2}", "Delete", table.GetEntityName(), "Async");
 
         public static string GetRequestModelName(this IDbObject dbObject)
-            => string.Format("{0}RequestModel", dbObject.GetEntityName());
+            => string.Format("{0}Request", dbObject.GetEntityName());
 
         public static string GetRequestModelExtensionName(this ITable table)
             => string.Format("{0}Extensions", NamingConvention.GetPascalCase(table.Name));

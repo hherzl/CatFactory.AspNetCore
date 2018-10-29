@@ -24,8 +24,8 @@ namespace CatFactory.AspNetCore
         public static string GetResponsesNamespace(this AspNetCoreProject project)
             => string.Format("{0}.{1}", project.Name, "Responses");
 
-        public static string GetRequestModelsNamespace(this AspNetCoreProject project)
-            => string.Format("{0}.{1}", project.Name, "RequestModels");
+        public static string GetRequestsNamespace(this AspNetCoreProject project)
+            => string.Format("{0}.{1}", project.Name, "Requests");
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project)
             => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), namingConvention.GetNamespace(project.Namespaces.EntityLayer));
@@ -138,15 +138,18 @@ namespace CatFactory.AspNetCore
             {
                 var classDefinition = project.GetResponsesExtensionsClassDefinition(table);
 
-                CSharpClassBuilder.CreateFiles(project.OutputDirectory, "RequestModels", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Requests", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
             }
         }
 
         internal static void ScaffoldRequestModelsExtensions(this AspNetCoreProject project)
         {
-            var classDefinition = project.GetRequestModelExtensionsClassDefinition();
+            foreach (var table in project.Database.Tables)
+            {
+                var classDefinition = project.GetRequestModelExtensionsClassDefinition(table);
 
-            CSharpClassBuilder.CreateFiles(project.OutputDirectory, "RequestModels", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Requests", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
+            }
         }
 
         private static void ScaffoldReadMe(this AspNetCoreProject project)

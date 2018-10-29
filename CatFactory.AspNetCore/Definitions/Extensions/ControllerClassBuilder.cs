@@ -29,7 +29,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     aspNetCoreProject.GetDataLayerContractsNamespace(),
                     aspNetCoreProject.GetDataLayerRepositoriesNamespace(),
                     aspNetCoreProject.GetResponsesNamespace(),
-                    aspNetCoreProject.GetRequestModelsNamespace()
+                    aspNetCoreProject.GetRequestsNamespace()
                 },
                 Namespace = string.Format("{0}.{1}", aspNetCoreProject.Name, "Controllers"),
                 Name = projectFeature.GetControllerName(),
@@ -60,6 +60,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var table in tables)
             {
+                if (table.Columns.Count == table.PrimaryKey?.Key.Count)
+                    continue;
+
                 definition.Methods.Add(GetGetAllMethod(projectFeature, definition, table));
 
                 if (table.PrimaryKey != null)
@@ -76,6 +79,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             }
 
             // todo: Add views in controller
+
+            definition.SimplifyDataTypes();
 
             return definition;
         }
@@ -196,7 +201,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", table.GetControllerGetAllAsyncMethodName()));
             }
             else
             {
@@ -260,7 +265,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(1, "if (entity != null)"));
                 lines.Add(new CodeLine(1, "{"));
-                lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+                lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
             }
             else if (table.PrimaryKey?.Key.Count > 1)
             {
@@ -279,16 +284,16 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                         lines.Add(new CodeLine(1, "var {0} = key[{1}];", key[i].GetParameterName(), (i + 1).ToString()));
                 }
 
-                var exp = string.Join(", ", key.Select(item => string.Format("{0} = {1}", item.GetPropertyName(), item.GetParameterName())));
+                var exp = string.Join(", ", key.Select(item => string.Format("{0}", item.GetParameterName())));
 
                 lines.Add(new CodeLine());
 
                 lines.Add(new CommentLine(1, " Retrieve entity"));
-                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1} {{ {2} }});", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}({2}));", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(1, "if (entity != null)"));
                 lines.Add(new CodeLine(1, "{"));
-                lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+                lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
             }
 
             if (selection.Settings.UseLogger)
@@ -305,7 +310,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", table.GetControllerGetAsyncMethodName()));
             }
             else
             {
@@ -371,7 +376,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             lines.Add(new CodeLine(1, "await Repository.CommitChangesAsync();"));
             lines.Add(new CodeLine());
 
-            lines.Add(new CodeLine(1, "response.Model = entity.ToRequestModel();"));
+            lines.Add(new CodeLine(1, "response.Model = entity.ToRequest();"));
 
             if (selection.Settings.UseLogger)
             {
@@ -385,7 +390,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", table.GetControllerPostAsyncMethodName()));
             }
             else
             {
@@ -455,18 +460,18 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                         lines.Add(new CodeLine(1, "var {0} = key[{1}];", key[i].GetParameterName(), (i + 1).ToString()));
                 }
 
-                var exp = string.Join(", ", key.Select(item => string.Format("{0} = {1}", item.GetPropertyName(), item.GetParameterName())));
+                var exp = string.Join(", ", key.Select(item => string.Format("{0}", item.GetParameterName())));
 
                 lines.Add(new CodeLine());
 
                 lines.Add(new CommentLine(1, " Retrieve entity"));
-                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1} {{ {2} }});", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}({2}));", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
                 lines.Add(new CodeLine());
             }
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
-            lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+            lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
 
             lines.Add(new CodeLine());
 
@@ -495,7 +500,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
                 lines.Add(new CodeLine());
 
-                lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+                lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
             }
 
             lines.Add(new CodeLine(1, "}"));
@@ -506,7 +511,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", table.GetControllerPutAsyncMethodName()));
             }
             else
             {
@@ -538,7 +543,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 Attributes =
                 {
-                    new MetadataAttribute("HttpPut", string.Format("\"{0}\"", table.GetEntityName())),
+                    new MetadataAttribute("HttpPut", string.Format("\"{0}/{{id}}\"", table.GetEntityName())),
                 },
                 IsAsync = true,
                 Lines = lines
@@ -586,12 +591,12 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                         lines.Add(new CodeLine(1, "var {0} = key[{1}];", key[i].GetParameterName(), (i + 1).ToString()));
                 }
 
-                var exp = string.Join(", ", key.Select(item => string.Format("{0} = {1}", item.GetPropertyName(), item.GetParameterName())));
+                var exp = string.Join(", ", key.Select(item => string.Format("{0}", item.GetParameterName())));
 
                 lines.Add(new CodeLine());
 
                 lines.Add(new CommentLine(1, " Retrieve entity"));
-                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1} {{ {2} }});", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
+                lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}({2}));", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
                 lines.Add(new CodeLine());
             }
 
@@ -612,7 +617,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine());
 
-            lines.Add(new CodeLine(2, "response.Model = entity.ToRequestModel();"));
+            lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
 
             lines.Add(new CodeLine(1, "}"));
 
@@ -622,7 +627,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (selection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(Logger, ex);"));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", table.GetControllerDeleteAsyncMethodName()));
             }
             else
             {
@@ -652,7 +657,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 Attributes =
                 {
-                    new MetadataAttribute("HttpDelete", string.Format("\"{0}\"", table.GetEntityName())),
+                    new MetadataAttribute("HttpDelete", string.Format("\"{0}/{{id}}\"", table.GetEntityName())),
                 },
                 IsAsync = true,
                 Lines = lines

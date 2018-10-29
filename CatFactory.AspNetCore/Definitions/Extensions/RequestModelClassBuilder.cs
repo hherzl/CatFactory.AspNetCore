@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using CatFactory.EntityFrameworkCore;
+using CatFactory.NetCore.ObjectOrientedProgramming;
 using CatFactory.ObjectOrientedProgramming;
 using CatFactory.ObjectRelationalMapping;
 
@@ -17,7 +18,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     "System.ComponentModel.DataAnnotations",
                     project.Database.HasDefaultSchema(table) ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
                 },
-                Namespace = project.GetRequestModelsNamespace(),
+                Namespace = project.GetRequestsNamespace(),
                 Name = table.GetRequestModelName()
             };
 
@@ -38,6 +39,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
                 definition.Properties.Add(property);
             }
+
+            definition.SimplifyDataTypes();
 
             return definition;
         }
