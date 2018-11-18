@@ -2,9 +2,9 @@
 
 namespace CatFactory.AspNetCore.Definitions
 {
-    public class RequestModelClassDefinition : CSharpClassDefinition
+    public class RequestClassDefinition : CSharpClassDefinition
     {
-        public RequestModelClassDefinition()
+        public RequestClassDefinition()
             : base()
         {
         }

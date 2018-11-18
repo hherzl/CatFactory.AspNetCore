@@ -6,11 +6,11 @@ using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore.Definitions.Extensions
 {
-    public static class RequestModelClassBuilder
+    public static class RequestClassBuilder
     {
-        public static RequestModelClassDefinition GetResponsesExtensionsClassDefinition(this AspNetCoreProject project, ITable table)
+        public static RequestClassDefinition GetRequestClassDefinition(this AspNetCoreProject project, ITable table)
         {
-            var definition = new RequestModelClassDefinition
+            var definition = new RequestClassDefinition
             {
                 Namespaces =
                 {
@@ -19,7 +19,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     project.Database.HasDefaultSchema(table) ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
                 },
                 Namespace = project.GetRequestsNamespace(),
-                Name = table.GetRequestModelName()
+                Name = table.GetRequestName()
             };
 
             var selection = project.GetSelection(table);

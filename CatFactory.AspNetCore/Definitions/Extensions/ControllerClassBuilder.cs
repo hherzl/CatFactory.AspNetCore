@@ -162,12 +162,15 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
                 if (parentTable.PrimaryKey?.Key.Count == 1)
                 {
-                    // todo: add logic for multiple columns in key
                     var column = parentTable.GetColumnsFromConstraint(parentTable.PrimaryKey).First();
 
                     parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), column.GetParameterName(), "null"));
 
                     foreignKeys.Add(column.GetParameterName());
+                }
+                else
+                {
+                    // todo: add logic for multiple columns in key
                 }
             }
 
@@ -192,7 +195,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 lines.Add(new CodeLine(1, "response.Model = await query.Paging(response.PageSize, response.PageNumber).ToListAsync();"));
                 lines.Add(new CodeLine());
 
-                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"Page {0} of {1}, Total of rows: {2}\", response.PageNumber, response.PageCount, response.ItemsCount);"));
+                lines.Add(new CodeLine(1, "Logger?.LogInformation(\"Page {0} of {1}, Total of rows: {2}.\", response.PageNumber, response.PageCount, response.ItemsCount);"));
             }
 
             lines.Add(new CodeLine("}"));
@@ -232,7 +235,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 if (table.PrimaryKey.Key.Count == 1)
                 {
-                    var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
+                    var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
                     parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
                 }
@@ -252,7 +255,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 lines.Add(new CodeLine());
             }
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
+            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
@@ -347,17 +350,17 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             }
 
             lines.Add(new CommentLine(" Validate request model"));
-            lines.Add(new CodeLine("if (!ModelState.IsValid)", table.GetRequestModelName()));
-            lines.Add(new CodeLine(1, "return BadRequest(requestModel);"));
+            lines.Add(new CodeLine("if (!ModelState.IsValid)"));
+            lines.Add(new CodeLine(1, "return BadRequest(request);"));
             lines.Add(new CodeLine());
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
+            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestName()));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
             lines.Add(new CodeLine("{"));
 
-            lines.Add(new CodeLine(1, "var entity = requestModel.ToEntity();", table.GetAddRepositoryMethodName()));
+            lines.Add(new CodeLine(1, "var entity = request.ToEntity();", table.GetAddRepositoryMethodName()));
             lines.Add(new CodeLine());
 
             foreach (var unique in table.Uniques)
@@ -403,7 +406,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine("return response.ToHttpResponse();"));
 
-            return new MethodDefinition("Task<IActionResult>", table.GetControllerPostAsyncMethodName(), new ParameterDefinition(table.GetRequestModelName(), "requestModel", new MetadataAttribute("FromBody")))
+            return new MethodDefinition("Task<IActionResult>", table.GetControllerPostAsyncMethodName(), new ParameterDefinition(table.GetRequestName(), "request", new MetadataAttribute("FromBody")))
             {
                 Attributes =
                 {
@@ -427,11 +430,11 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             }
 
             lines.Add(new CommentLine(" Validate request model"));
-            lines.Add(new CodeLine("if (!ModelState.IsValid)", table.GetRequestModelName()));
-            lines.Add(new CodeLine(1, "return BadRequest(requestModel);"));
+            lines.Add(new CodeLine("if (!ModelState.IsValid)"));
+            lines.Add(new CodeLine(1, "return BadRequest(request);"));
             lines.Add(new CodeLine());
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
+            lines.Add(new CodeLine("var response = new Response();"));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
@@ -471,9 +474,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine(1, "if (entity != null)"));
             lines.Add(new CodeLine(1, "{"));
-            lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
+            //lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
 
-            lines.Add(new CodeLine());
+            //lines.Add(new CodeLine());
 
             lines.Add(new TodoLine(2, " Check properties to update"));
 
@@ -483,7 +486,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var column in projectFeature.GetUpdateColumns(table))
             {
-                lines.Add(new CodeLine(2, "entity.{0} = requestModel.{0};", column.GetPropertyName()));
+                lines.Add(new CodeLine(2, "entity.{0} = request.{0};", column.GetPropertyName()));
             }
 
             lines.Add(new CodeLine());
@@ -497,10 +500,6 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The entity was updated successfully\");"));
-
-                lines.Add(new CodeLine());
-
-                lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
             }
 
             lines.Add(new CodeLine(1, "}"));
@@ -528,7 +527,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (table.PrimaryKey?.Key.Count == 1)
             {
-                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
+                var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
                 parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }
@@ -537,7 +536,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 parameters.Add(new ParameterDefinition("string", "id"));
             }
 
-            parameters.Add(new ParameterDefinition(table.GetRequestModelName(), "requestModel", new MetadataAttribute("FromBody")));
+            parameters.Add(new ParameterDefinition(table.GetRequestName(), "request", new MetadataAttribute("FromBody")));
 
             return new MethodDefinition("Task<IActionResult>", table.GetControllerPutAsyncMethodName(), parameters.ToArray())
             {
@@ -562,7 +561,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 lines.Add(new CodeLine());
             }
 
-            lines.Add(new CodeLine("var response = new SingleResponse<{0}>();", table.GetRequestModelName()));
+            lines.Add(new CodeLine("var response = new Response();"));
             lines.Add(new CodeLine());
 
             lines.Add(new CodeLine("try"));
@@ -593,8 +592,6 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
                 var exp = string.Join(", ", key.Select(item => string.Format("{0}", item.GetParameterName())));
 
-                lines.Add(new CodeLine());
-
                 lines.Add(new CommentLine(1, " Retrieve entity"));
                 lines.Add(new CodeLine(1, "var entity = await Repository.{0}(new {1}({2}));", table.GetGetRepositoryMethodName(), table.GetEntityName(), exp));
                 lines.Add(new CodeLine());
@@ -614,10 +611,6 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 lines.Add(new CodeLine());
                 lines.Add(new CodeLine(2, "Logger?.LogInformation(\"The entity was deleted successfully\");"));
             }
-
-            lines.Add(new CodeLine());
-
-            lines.Add(new CodeLine(2, "response.Model = entity.ToRequest();"));
 
             lines.Add(new CodeLine(1, "}"));
 
@@ -644,7 +637,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (table.PrimaryKey.Key.Count == 1)
             {
-                var column = table.Columns.FirstOrDefault(item => item.Name == table.PrimaryKey.Key.First());
+                var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
                 parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
             }

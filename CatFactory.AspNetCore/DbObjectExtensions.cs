@@ -32,11 +32,11 @@ namespace CatFactory.AspNetCore
         public static string GetControllerDeleteAsyncMethodName(this ITable table)
             => string.Format("{0}{1}{2}", "Delete", table.GetEntityName(), "Async");
 
-        public static string GetRequestModelName(this IDbObject dbObject)
+        public static string GetRequestName(this IDbObject dbObject)
             => string.Format("{0}Request", dbObject.GetEntityName());
 
-        public static string GetRequestModelExtensionName(this ITable table)
-            => string.Format("{0}Extensions", NamingConvention.GetPascalCase(table.Name));
+        public static string GetRequestExtensionName(this ITable table)
+            => string.Format("{0}Extensions", table.GetRequestName());
 
         public static IEnumerable<Column> GetUpdateColumns(this ProjectFeature<AspNetCoreProjectSettings> projectFeature, ITable table)
         {

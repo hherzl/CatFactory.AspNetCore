@@ -36,12 +36,12 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     new PropertyDefinition("int", "PageSize"),
                     new PropertyDefinition("int", "PageNumber"),
                     new PropertyDefinition("int", "ItemsCount"),
-                    new PropertyDefinition("int", "PageCount")
+                    new PropertyDefinition("double", "PageCount")
                     {
                         IsReadOnly = true,
                         GetBody =
                         {
-                            new CodeLine("PageSize == 0 ? 0 : ItemsCount / PageSize;")
+                            new CodeLine("ItemsCount < PageSize ? 1 : (int)(((double)ItemsCount / PageSize) + 1);")
                         }
                     }
                 }

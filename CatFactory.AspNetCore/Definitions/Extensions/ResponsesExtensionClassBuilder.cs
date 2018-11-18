@@ -35,6 +35,24 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 }
             });
 
+            definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResponse", new ParameterDefinition("IResponse", "response"))
+            {
+                IsStatic = true,
+                IsExtension = true,
+                Lines =
+                {
+                    new CodeLine("var status = HttpStatusCode.OK;"),
+                    new CodeLine(),
+                    new CodeLine("if (response.DidError)"),
+                    new CodeLine(1, "status = HttpStatusCode.InternalServerError;"),
+                    new CodeLine(),
+                    new CodeLine("return new ObjectResult(response)"),
+                    new CodeLine("{"),
+                    new CodeLine(1, "StatusCode = (int)status"),
+                    new CodeLine("};")
+                }
+            });
+
             definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResponse", new ParameterDefinition("ISingleResponse<TModel>", "response"))
             {
                 IsStatic = true,

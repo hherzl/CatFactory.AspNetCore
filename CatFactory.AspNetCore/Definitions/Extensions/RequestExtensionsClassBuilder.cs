@@ -8,9 +8,9 @@ using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore.Definitions.Extensions
 {
-    public static class RequestModelExtensionsClassBuilder
+    public static class RequestExtensionsClassBuilder
     {
-        public static RequestModelExtensionsClassDefinition GetRequestModelExtensionsClassDefinition(this AspNetCoreProject project, ITable table)
+        public static RequestModelExtensionsClassDefinition GetRequestExtensionsClassDefinition(this AspNetCoreProject project, ITable table)
         {
             var definition = new RequestModelExtensionsClassDefinition
             {
@@ -49,12 +49,12 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 var column = columns[i];
 
-                lines.Add(new CodeLine(1, "{0} = requestModel.{0}{1}", column.GetPropertyName(), i < columns.Count - 1 ? "," : string.Empty));
+                lines.Add(new CodeLine(1, "{0} = request.{0}{1}", column.GetPropertyName(), i < columns.Count - 1 ? "," : string.Empty));
             }
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition(table.GetEntityName(), "ToEntity", new ParameterDefinition(table.GetRequestModelName(), "requestModel"))
+            return new MethodDefinition(table.GetEntityName(), "ToEntity", new ParameterDefinition(table.GetRequestName(), "request"))
             {
                 IsStatic = true,
                 IsExtension = true,
@@ -66,7 +66,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
         {
             var lines = new List<ILine>
             {
-                new CodeLine("return new {0}", table.GetRequestModelName()),
+                new CodeLine("return new {0}", table.GetRequestName()),
                 new CodeLine("{")
             };
 
@@ -83,7 +83,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition(table.GetRequestModelName(), "ToRequest", new ParameterDefinition(table.GetEntityName(), "entity"))
+            return new MethodDefinition(table.GetRequestName(), "ToRequest", new ParameterDefinition(table.GetEntityName(), "entity"))
             {
                 IsStatic = true,
                 IsExtension = true,

@@ -121,6 +121,7 @@ namespace CatFactory.AspNetCore
             );
 
             CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Responses", globalSelection.Settings.ForceOverwrite,
+                project.GetResponseClassDefinition(),
                 project.GetSingleResponseClassDefinition(),
                 project.GetListResponseClassDefinition(),
                 project.GetPagedResponseClassDefinition()
@@ -132,21 +133,21 @@ namespace CatFactory.AspNetCore
             CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Responses", project.GlobalSelection().Settings.ForceOverwrite, project.GetResponsesExtensionsClassDefinition());
         }
 
-        internal static void ScaffoldRequestModels(this AspNetCoreProject project)
+        internal static void ScaffoldRequests(this AspNetCoreProject project)
         {
             foreach (var table in project.Database.Tables)
             {
-                var classDefinition = project.GetResponsesExtensionsClassDefinition(table);
+                var classDefinition = project.GetRequestClassDefinition(table);
 
                 CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Requests", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
             }
         }
 
-        internal static void ScaffoldRequestModelsExtensions(this AspNetCoreProject project)
+        internal static void ScaffoldRequestsExtensions(this AspNetCoreProject project)
         {
             foreach (var table in project.Database.Tables)
             {
-                var classDefinition = project.GetRequestModelExtensionsClassDefinition(table);
+                var classDefinition = project.GetRequestExtensionsClassDefinition(table);
 
                 CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Requests", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
             }
@@ -231,8 +232,8 @@ namespace CatFactory.AspNetCore
         {
             aspNetCoreProject.ScaffoldResponses();
             aspNetCoreProject.ScaffoldResponsesExtensions();
-            aspNetCoreProject.ScaffoldRequestModels();
-            aspNetCoreProject.ScaffoldRequestModelsExtensions();
+            aspNetCoreProject.ScaffoldRequests();
+            aspNetCoreProject.ScaffoldRequestsExtensions();
             aspNetCoreProject.ScaffoldReadMe();
 
             foreach (var feature in aspNetCoreProject.Features)
