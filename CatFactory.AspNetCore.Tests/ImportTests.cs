@@ -7,18 +7,18 @@ namespace CatFactory.AspNetCore.Tests
     public class ImportTests
     {
         [Fact]
-        public void TestControllerScaffoldingFromStoreDatabase()
+        public void TestScaffoldingWebApiFromOnLineStoreDatabase()
         {
             // Import database
             var database = SqlServerDatabaseFactory
-                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=Store;integrated security=yes;", "dbo.sysdiagrams");
+                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=OnLineStore;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = new EntityFrameworkCoreProject
             {
-                Name = "Store.Core",
+                Name = "OnLineStore.Core",
                 Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Store.Core"
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\OnLineStore.Core"
             };
 
             // Apply settings for project
@@ -29,7 +29,7 @@ namespace CatFactory.AspNetCore.Tests
                 settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
             });
 
-            entityFrameworkProject.Select("Sales.Order", settings => settings.EntitiesWithDataContracts = true);
+            entityFrameworkProject.Select("Sales.OrderHeader", settings => settings.EntitiesWithDataContracts = true);
 
             // Build features for project, group all entities by schema into a feature
             entityFrameworkProject.BuildFeatures();
@@ -40,7 +40,7 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Store.Api", "C:\\Temp\\CatFactory.AspNetCore\\Store.Api", entityFrameworkProject.Database);
+                .CreateAspNetCoreProject("OnLineStore.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\OnLineStore.WebApi", entityFrameworkProject.Database);
 
             // Add event handlers to before and after of scaffold
 
@@ -58,7 +58,7 @@ namespace CatFactory.AspNetCore.Tests
         }
 
         [Fact]
-        public void TestControllerScaffoldingFromNorthwindDatabase()
+        public void TestScaffoldingWebApiFromNorthwindDatabase()
         {
             // Import database
             var database = SqlServerDatabaseFactory
@@ -91,7 +91,7 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Northwind.Api", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.Api", entityFrameworkProject.Database);
+                .CreateAspNetCoreProject("Northwind.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.WebApi", entityFrameworkProject.Database);
 
             // Add event handlers to before and after of scaffold
 

@@ -7,9 +7,7 @@ cd %srcPath%
 dotnet build
 cd %testPath%
 dotnet test
-cd %outputBasePath%\Store.Api.UnitTests
-dotnet test
-cd %outputBasePath%\Northwind.Api.UnitTests
+cd %outputBasePath%\OnLineStore.WebApi.UnitTests
 dotnet test
 cd %srcPath%
 dotnet pack
