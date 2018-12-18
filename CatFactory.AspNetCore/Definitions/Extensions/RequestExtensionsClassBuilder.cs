@@ -3,6 +3,7 @@ using System.Linq;
 using CatFactory.CodeFactory;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
+using CatFactory.NetCore;
 using CatFactory.ObjectOrientedProgramming;
 using CatFactory.ObjectRelationalMapping;
 

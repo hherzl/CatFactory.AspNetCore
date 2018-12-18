@@ -4,6 +4,7 @@ using CatFactory.CodeFactory;
 using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
+using CatFactory.NetCore;
 using CatFactory.NetCore.ObjectOrientedProgramming;
 using CatFactory.ObjectOrientedProgramming;
 using CatFactory.ObjectRelationalMapping;
@@ -164,7 +165,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     var column = parentTable.GetColumnsFromConstraint(parentTable.PrimaryKey).First();
 
-                    parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), column.GetParameterName(), "null"));
+                    parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), column.GetParameterName(), "null"));
 
                     foreignKeys.Add(column.GetParameterName());
                 }
@@ -237,7 +238,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
-                    parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                    parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), "id"));
                 }
                 else if (table.PrimaryKey.Key.Count > 1)
                 {
@@ -529,7 +530,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
-                parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), "id"));
             }
             else if (table.PrimaryKey?.Key.Count > 1)
             {
@@ -639,7 +640,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
-                parameters.Add(new ParameterDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(projectFeature.Project.Database, column), "id"));
+                parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), "id"));
             }
             else if (table.PrimaryKey.Key.Count > 1)
             {

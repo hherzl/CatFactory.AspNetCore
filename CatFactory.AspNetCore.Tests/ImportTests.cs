@@ -26,10 +26,16 @@ namespace CatFactory.AspNetCore.Tests
             {
                 settings.ForceOverwrite = true;
                 settings.ConcurrencyToken = "Timestamp";
-                settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
+                settings.AuditEntity = new AuditEntity
+                {
+                    CreationUserColumnName = "CreationUser",
+                    CreationDateTimeColumnName = "CreationDateTime",
+                    LastUpdateUserColumnName = "LastUpdateUser",
+                    LastUpdateDateTimeColumnName = "LastUpdateDateTime"
+                };
             });
 
-            entityFrameworkProject.Select("Sales.OrderHeader", settings => settings.EntitiesWithDataContracts = true);
+            entityFrameworkProject.Selection("Sales.OrderHeader", settings => settings.EntitiesWithDataContracts = true);
 
             // Build features for project, group all entities by schema into a feature
             entityFrameworkProject.BuildFeatures();
@@ -77,10 +83,16 @@ namespace CatFactory.AspNetCore.Tests
             {
                 settings.ForceOverwrite = true;
                 settings.ConcurrencyToken = "Timestamp";
-                settings.AuditEntity = new AuditEntity("CreationUser", "CreationDateTime", "LastUpdateUser", "LastUpdateDateTime");
+                settings.AuditEntity = new AuditEntity
+                {
+                    CreationUserColumnName = "CreationUser",
+                    CreationDateTimeColumnName = "CreationDateTime",
+                    LastUpdateUserColumnName = "LastUpdateUser",
+                    LastUpdateDateTimeColumnName = "LastUpdateDateTime"
+                };
             });
 
-            entityFrameworkProject.Select("dbo.Orders", settings => settings.EntitiesWithDataContracts = true);
+            entityFrameworkProject.Selection("dbo.Orders", settings => settings.EntitiesWithDataContracts = true);
 
             // Build features for project, group all entities by schema into a feature
             entityFrameworkProject.BuildFeatures();

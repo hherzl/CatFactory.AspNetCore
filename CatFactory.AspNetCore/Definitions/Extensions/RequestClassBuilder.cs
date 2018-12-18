@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using CatFactory.EntityFrameworkCore;
+using CatFactory.NetCore;
 using CatFactory.NetCore.ObjectOrientedProgramming;
 using CatFactory.ObjectOrientedProgramming;
 using CatFactory.ObjectRelationalMapping;
@@ -26,7 +26,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {
-                var property = new PropertyDefinition(EntityFrameworkCore.DatabaseExtensions.ResolveType(project.Database, column), column.GetPropertyName());
+                var property = new PropertyDefinition(project.Database.ResolveDatebaseType(column), column.GetPropertyName());
 
                 if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
                     property.Attributes.Add(new MetadataAttribute("Key"));
