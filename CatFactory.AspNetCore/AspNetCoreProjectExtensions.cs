@@ -28,19 +28,19 @@ namespace CatFactory.AspNetCore
             => string.Format("{0}.{1}", project.Name, "Requests");
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), namingConvention.GetNamespace(project.Namespaces.EntityLayer));
+            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), namingConvention.GetNamespace(project.ProjectNamespaces.EntityLayer));
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project, string ns)
-            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.ReferencedProjectName, project.Namespaces.EntityLayer, ns);
+            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.ReferencedProjectName, project.ProjectNamespaces.EntityLayer, ns);
 
         public static string GetDataLayerContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.Namespaces.DataLayer, project.Namespaces.Contracts);
+            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.ProjectNamespaces.DataLayer, project.ProjectNamespaces.Contracts);
 
         public static string GetDataLayerDataContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.Namespaces.DataLayer, project.Namespaces.DataContracts);
+            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.ProjectNamespaces.DataLayer, project.ProjectNamespaces.DataContracts);
 
         public static string GetDataLayerRepositoriesNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.Namespaces.DataLayer, project.Namespaces.Repositories);
+            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.ProjectNamespaces.DataLayer, project.ProjectNamespaces.Repositories);
 
         public static string GetInterfaceRepositoryName(this ProjectFeature<AspNetCoreProjectSettings> projectFeature)
             => namingConvention.GetInterfaceName(string.Format("{0}Repository", projectFeature.Name));

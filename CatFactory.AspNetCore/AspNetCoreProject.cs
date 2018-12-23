@@ -25,17 +25,17 @@ namespace CatFactory.AspNetCore
         public string ReferencedProjectName { get; set; }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private ProjectNamespaces m_namespaces;
+        private EntityFrameworkCoreProjectNamespaces m_projectNamespaces;
 
-        public ProjectNamespaces Namespaces
+        public EntityFrameworkCoreProjectNamespaces ProjectNamespaces
         {
             get
             {
-                return m_namespaces ?? (m_namespaces = new ProjectNamespaces());
+                return m_projectNamespaces ?? (m_projectNamespaces = new EntityFrameworkCoreProjectNamespaces());
             }
             set
             {
-                m_namespaces = value;
+                m_projectNamespaces = value;
             }
         }
 

@@ -26,7 +26,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {
-                var property = new PropertyDefinition(project.Database.ResolveDatebaseType(column), column.GetPropertyName());
+                var property = new PropertyDefinition(project.Database.ResolveDatabaseType(column), column.GetPropertyName());
 
                 if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
                     property.Attributes.Add(new MetadataAttribute("Key"));

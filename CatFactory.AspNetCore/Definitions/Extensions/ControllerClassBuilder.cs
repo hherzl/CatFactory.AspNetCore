@@ -165,7 +165,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     var column = parentTable.GetColumnsFromConstraint(parentTable.PrimaryKey).First();
 
-                    parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), column.GetParameterName(), "null"));
+                    parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), column.GetParameterName(), "null"));
 
                     foreignKeys.Add(column.GetParameterName());
                 }
@@ -238,7 +238,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
-                    parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), "id"));
+                    parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), "id"));
                 }
                 else if (table.PrimaryKey.Key.Count > 1)
                 {
@@ -530,7 +530,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
-                parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), "id"));
+                parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), "id"));
             }
             else if (table.PrimaryKey?.Key.Count > 1)
             {
@@ -640,7 +640,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
-                parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatebaseType(column), "id"));
+                parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), "id"));
             }
             else if (table.PrimaryKey.Key.Count > 1)
             {
