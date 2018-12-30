@@ -19,7 +19,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     project.Database.HasDefaultSchema(table) ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
                 },
                 Namespace = project.GetRequestsNamespace(),
-                Name = table.GetRequestName()
+                Name = project.GetRequestName(table)
             };
 
             var selection = project.GetSelection(table);

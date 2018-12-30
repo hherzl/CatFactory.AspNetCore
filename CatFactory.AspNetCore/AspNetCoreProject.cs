@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
+using CatFactory.NetCore.CodeFactory;
 using CatFactory.ObjectRelationalMapping;
 using Microsoft.Extensions.Logging;
 
@@ -13,21 +14,38 @@ namespace CatFactory.AspNetCore
         public AspNetCoreProject()
             : base()
         {
+            CodeNamingConvention = new DotNetNamingConvention();
         }
 
         public AspNetCoreProject(ILogger<AspNetCoreProject> logger)
             : base(logger)
         {
+            CodeNamingConvention = new DotNetNamingConvention();
         }
 
         public string Version { get; set; }
 
-        public string ReferencedProjectName { get; set; }
+        public EntityFrameworkCoreProject EntityFrameworkCoreProject { get; set; }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private AspNetCoreProjectNamespaces m_aspNetCoreProjectNamespaces;
+
+        public AspNetCoreProjectNamespaces AspNetCoreProjectNamespaces
+        {
+            get
+            {
+                return m_aspNetCoreProjectNamespaces ?? (m_aspNetCoreProjectNamespaces = new AspNetCoreProjectNamespaces());
+            }
+            set
+            {
+                m_aspNetCoreProjectNamespaces = value;
+            }
+        }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private EntityFrameworkCoreProjectNamespaces m_projectNamespaces;
 
-        public EntityFrameworkCoreProjectNamespaces ProjectNamespaces
+        public EntityFrameworkCoreProjectNamespaces EntityFrameworkCoreProjectNamespaces
         {
             get
             {
@@ -58,13 +76,13 @@ namespace CatFactory.AspNetCore
 
             result.AddRange(Database
                 .Tables
-                .Where(x => x.Schema == schema)
-                .Select(y => new DbObject { Schema = y.Schema, Name = y.Name, Type = "Table" }));
+                .Where(item => item.Schema == schema)
+                .Select(item => new DbObject { Schema = item.Schema, Name = item.Name, Type = "Table" }));
 
             result.AddRange(Database
                 .Views
-                .Where(x => x.Schema == schema)
-                .Select(y => new DbObject { Schema = y.Schema, Name = y.Name, Type = "View" }));
+                .Where(item => item.Schema == schema)
+                .Select(item => new DbObject { Schema = item.Schema, Name = item.Name, Type = "View" }));
 
             return result;
         }

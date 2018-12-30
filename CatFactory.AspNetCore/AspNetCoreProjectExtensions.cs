@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatFactory.AspNetCore.Definitions.Extensions;
-using CatFactory.CodeFactory;
 using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
@@ -14,36 +13,47 @@ namespace CatFactory.AspNetCore
 {
     public static class AspNetCoreProjectExtensions
     {
-        private static ICodeNamingConvention namingConvention;
-
-        static AspNetCoreProjectExtensions()
-        {
-            namingConvention = new DotNetNamingConvention();
-        }
+        public static string GetControllerGetAllAsyncMethodName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}{1}{2}", "Get", project.EntityFrameworkCoreProject.GetPluralName(table), "Async");
 
         public static string GetResponsesNamespace(this AspNetCoreProject project)
-            => string.Format("{0}.{1}", project.Name, "Responses");
+            => string.Format("{0}.{1}", project.Name, project.AspNetCoreProjectNamespaces.Responses);
 
         public static string GetRequestsNamespace(this AspNetCoreProject project)
-            => string.Format("{0}.{1}", project.Name, "Requests");
+            => string.Format("{0}.{1}", project.Name, project.AspNetCoreProjectNamespaces.Requests);
+
+        public static string GetControllerGetAsyncMethodName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}{1}{2}", "Get", project.EntityFrameworkCoreProject.GetEntityName(table), "Async");
+
+        public static string GetControllerPostAsyncMethodName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}{1}{2}", "Post", project.EntityFrameworkCoreProject.GetEntityName(table), "Async");
+
+        public static string GetControllerPutAsyncMethodName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}{1}{2}", "Put", project.EntityFrameworkCoreProject.GetEntityName(table), "Async");
+
+        public static string GetControllerDeleteAsyncMethodName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}{1}{2}", "Delete", project.EntityFrameworkCoreProject.GetEntityName(table), "Async");
+
+        public static string GetRequestName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}Request", project.EntityFrameworkCoreProject.GetEntityName(table));
+
+        public static string GetRequestExtensionName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}Extensions", project.GetRequestName(table));
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), namingConvention.GetNamespace(project.ProjectNamespaces.EntityLayer));
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProjectNamespaces.EntityLayer));
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project, string ns)
-            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.ReferencedProjectName, project.ProjectNamespaces.EntityLayer, ns);
+            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.EntityFrameworkCoreProject.Name, project.EntityFrameworkCoreProjectNamespaces.EntityLayer, ns);
 
         public static string GetDataLayerContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.ProjectNamespaces.DataLayer, project.ProjectNamespaces.Contracts);
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProjectNamespaces.DataLayer, project.EntityFrameworkCoreProjectNamespaces.Contracts);
 
         public static string GetDataLayerDataContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.ProjectNamespaces.DataLayer, project.ProjectNamespaces.DataContracts);
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProjectNamespaces.DataLayer, project.EntityFrameworkCoreProjectNamespaces.DataContracts);
 
         public static string GetDataLayerRepositoriesNamespace(this AspNetCoreProject project)
-            => string.Join(".", namingConvention.GetNamespace(project.ReferencedProjectName), project.ProjectNamespaces.DataLayer, project.ProjectNamespaces.Repositories);
-
-        public static string GetInterfaceRepositoryName(this ProjectFeature<AspNetCoreProjectSettings> projectFeature)
-            => namingConvention.GetInterfaceName(string.Format("{0}Repository", projectFeature.Name));
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProjectNamespaces.DataLayer, project.EntityFrameworkCoreProjectNamespaces.Repositories);
 
         public static AspNetCoreProject GlobalSelection(this AspNetCoreProject project, Action<AspNetCoreProjectSettings> action = null)
         {
@@ -74,7 +84,7 @@ namespace CatFactory.AspNetCore
         public static ProjectSelection<AspNetCoreProjectSettings> GlobalSelection(this AspNetCoreProject project)
             => project.Selections.FirstOrDefault(item => item.IsGlobal);
 
-        public static AspNetCoreProject Select(this AspNetCoreProject project, string pattern, Action<AspNetCoreProjectSettings> action = null)
+        public static AspNetCoreProject Selection(this AspNetCoreProject project, string pattern, Action<AspNetCoreProjectSettings> action = null)
         {
             var selection = project.Selections.FirstOrDefault(item => item.Pattern == pattern);
 
@@ -109,18 +119,68 @@ namespace CatFactory.AspNetCore
             return project;
         }
 
+        [Obsolete("Use Selection method")]
+        public static AspNetCoreProject Select(this AspNetCoreProject project, string pattern, Action<AspNetCoreProjectSettings> action = null)
+            => project.Selection(pattern, action);
+
+        public static ProjectSelection<AspNetCoreProjectSettings> GetSelection(this AspNetCoreProject project, ITable table)
+        {
+            // Sales.Order
+            var selectionForFullName = project.Selections.FirstOrDefault(item => item.Pattern == table.FullName);
+
+            if (selectionForFullName != null)
+                return selectionForFullName;
+
+            // Sales.*
+            var selectionForSchema = project.Selections.FirstOrDefault(item => item.Pattern == string.Format("{0}.*", table.Schema));
+
+            if (selectionForSchema != null)
+                return selectionForSchema;
+
+            // *.Order
+            var selectionForName = project.Selections.FirstOrDefault(item => item.Pattern == string.Format("*.{0}", table.Name));
+
+            if (selectionForName != null)
+                return selectionForName;
+
+            return project.GlobalSelection();
+        }
+
+        public static ProjectSelection<AspNetCoreProjectSettings> GetSelection(this AspNetCoreProject project, IView view)
+        {
+            // Sales.Order
+            var selectionForFullName = project.Selections.FirstOrDefault(item => item.Pattern == view.FullName);
+
+            if (selectionForFullName != null)
+                return selectionForFullName;
+
+            // Sales.*
+            var selectionForSchema = project.Selections.FirstOrDefault(item => item.Pattern == string.Format("{0}.*", view.Schema));
+
+            if (selectionForSchema != null)
+                return selectionForSchema;
+
+            // *.Order
+            var selectionForName = project.Selections.FirstOrDefault(item => item.Pattern == string.Format("*.{0}", view.Name));
+
+            if (selectionForName != null)
+                return selectionForName;
+
+            return project.GlobalSelection();
+        }
+
         internal static void ScaffoldResponses(this AspNetCoreProject project)
         {
             var globalSelection = project.GlobalSelection();
 
-            CSharpInterfaceBuilder.CreateFiles(project.OutputDirectory, "Responses", globalSelection.Settings.ForceOverwrite,
+            CSharpInterfaceBuilder.CreateFiles(project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses, globalSelection.Settings.ForceOverwrite,
                 project.GetResponseInterfaceDefinition(),
                 project.GetSingleResponseInterfaceDefinition(),
                 project.GetListResponseInterfaceDefinition(),
                 project.GetPagedResponseInterfaceDefinition()
             );
 
-            CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Responses", globalSelection.Settings.ForceOverwrite,
+            CSharpClassBuilder.CreateFiles(project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses, globalSelection.Settings.ForceOverwrite,
                 project.GetResponseClassDefinition(),
                 project.GetSingleResponseClassDefinition(),
                 project.GetListResponseClassDefinition(),
@@ -130,7 +190,7 @@ namespace CatFactory.AspNetCore
 
         internal static void ScaffoldResponsesExtensions(this AspNetCoreProject project)
         {
-            CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Responses", project.GlobalSelection().Settings.ForceOverwrite, project.GetResponsesExtensionsClassDefinition());
+            CSharpClassBuilder.CreateFiles(project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses, project.GlobalSelection().Settings.ForceOverwrite, project.GetResponsesExtensionsClassDefinition());
         }
 
         internal static void ScaffoldRequests(this AspNetCoreProject project)
@@ -139,7 +199,7 @@ namespace CatFactory.AspNetCore
             {
                 var classDefinition = project.GetRequestClassDefinition(table);
 
-                CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Requests", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(project.OutputDirectory, project.AspNetCoreProjectNamespaces.Requests, project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
             }
         }
 
@@ -149,7 +209,7 @@ namespace CatFactory.AspNetCore
             {
                 var classDefinition = project.GetRequestExtensionsClassDefinition(table);
 
-                CSharpClassBuilder.CreateFiles(project.OutputDirectory, "Requests", project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
+                CSharpClassBuilder.CreateFiles(project.OutputDirectory, project.AspNetCoreProjectNamespaces.Requests, project.GlobalSelection().Settings.ForceOverwrite, classDefinition);
             }
         }
 
@@ -167,7 +227,7 @@ namespace CatFactory.AspNetCore
                 string.Empty,
 
                 "2. Register your DbContext and repositories in ConfigureServices method (Startup class):",
-                string.Format(" services.AddDbContext<{0}>(options => options.UseSqlServer(Configuration[\"ConnectionString\"]));", project.Database.GetDbContextName()),
+                string.Format(" services.AddDbContext<{0}>(options => options.UseSqlServer(Configuration[\"ConnectionString\"]));", project.EntityFrameworkCoreProject.GetDbContextName(project.Database)),
 
                 " services.AddScoped<IDboRepository, DboRepository>();",
                 string.Empty,
@@ -191,43 +251,6 @@ namespace CatFactory.AspNetCore
             File.WriteAllText(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.txt"), lines.ToStringBuilder().ToString());
         }
 
-        public static AspNetCoreProject CreateAspNetCoreProject(this EntityFrameworkCoreProject entityFrameworkProject, string name, string outputDirectory, Database database)
-        {
-            var aspNetCoreProject = new AspNetCoreProject
-            {
-                Name = name,
-                OutputDirectory = outputDirectory,
-                Database = database,
-                ReferencedProjectName = entityFrameworkProject.Name
-            };
-
-            aspNetCoreProject.BuildFeatures();
-
-            foreach (var selection in entityFrameworkProject.Selections)
-            {
-                aspNetCoreProject.Selections.Add(new ProjectSelection<AspNetCoreProjectSettings>
-                {
-                    Pattern = selection.Pattern,
-                    Settings = new AspNetCoreProjectSettings
-                    {
-                        ForceOverwrite = selection.Settings.ForceOverwrite,
-                        UseLogger = true,
-                        ConcurrencyToken = selection.Settings.ConcurrencyToken,
-                        AuditEntity = selection.Settings.AuditEntity == null ? null : new AuditEntity
-                        {
-                            CreationUserColumnName = selection.Settings.AuditEntity.CreationUserColumnName,
-                            CreationDateTimeColumnName = selection.Settings.AuditEntity.CreationDateTimeColumnName,
-                            LastUpdateUserColumnName = selection.Settings.AuditEntity.LastUpdateUserColumnName,
-                            LastUpdateDateTimeColumnName = selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
-                        },
-                        EntitiesWithDataContracts = selection.Settings.EntitiesWithDataContracts
-                    }
-                });
-            }
-
-            return aspNetCoreProject;
-        }
-
         public static AspNetCoreProject ScaffoldAspNetCore(this AspNetCoreProject aspNetCoreProject)
         {
             aspNetCoreProject.ScaffoldResponses();
@@ -238,7 +261,7 @@ namespace CatFactory.AspNetCore
 
             foreach (var feature in aspNetCoreProject.Features)
             {
-                CSharpClassBuilder.CreateFiles(aspNetCoreProject.OutputDirectory, "Controllers", aspNetCoreProject.GlobalSelection().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
+                CSharpClassBuilder.CreateFiles(aspNetCoreProject.OutputDirectory, aspNetCoreProject.AspNetCoreProjectNamespaces.Controllers, aspNetCoreProject.GlobalSelection().Settings.ForceOverwrite, feature.GetControllerClassDefinition());
             }
 
             return aspNetCoreProject;

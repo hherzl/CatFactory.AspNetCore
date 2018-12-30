@@ -22,7 +22,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Namespace = project.GetRequestsNamespace(),
                 IsStatic = true,
-                Name = string.Format("{0}RequestExtensions", table.GetEntityName())
+                Name = string.Format("{0}RequestExtensions", project.EntityFrameworkCoreProject.GetEntityName(table))
             };
 
             if (!project.Database.HasDefaultSchema(table))
@@ -38,7 +38,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
         {
             var lines = new List<ILine>
             {
-                new CodeLine("return new {0}", table.GetEntityName()),
+                new CodeLine("return new {0}", project.EntityFrameworkCoreProject.GetEntityName(table)),
                 new CodeLine("{")
             };
 
@@ -55,7 +55,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition(table.GetEntityName(), "ToEntity", new ParameterDefinition(table.GetRequestName(), "request"))
+            return new MethodDefinition(project.EntityFrameworkCoreProject.GetEntityName(table), "ToEntity", new ParameterDefinition(project.GetRequestName(table), "request"))
             {
                 IsStatic = true,
                 IsExtension = true,
@@ -67,7 +67,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
         {
             var lines = new List<ILine>
             {
-                new CodeLine("return new {0}", table.GetRequestName()),
+                new CodeLine("return new {0}", project.GetRequestName(table)),
                 new CodeLine("{")
             };
 
@@ -84,7 +84,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition(table.GetRequestName(), "ToRequest", new ParameterDefinition(table.GetEntityName(), "entity"))
+            return new MethodDefinition(project.GetRequestName(table), "ToRequest", new ParameterDefinition(project.EntityFrameworkCoreProject.GetEntityName(table), "entity"))
             {
                 IsStatic = true,
                 IsExtension = true,
