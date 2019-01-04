@@ -26,6 +26,63 @@ The flow to import an existing database is:
 4. Build Features (One feature per schema)
 5. Scaffold objects, these methods read all objects from database and create instances for code builders
 
+Sample code:
+
+```csharp
+// Import database
+var database = SqlServerDatabaseFactory
+	.Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=OnLineStore;integrated security=yes;", "dbo.sysdiagrams");
+
+// Create instance of Entity Framework Core Project
+var entityFrameworkProject = new EntityFrameworkCoreProject
+{
+	Name = "OnLineStore.Core",
+	Database = database,
+	OutputDirectory = "C:\\Projects\\OnLineStore.Core"
+};
+
+// Apply settings for project
+entityFrameworkProject.GlobalSelection(settings =>
+{
+	settings.ForceOverwrite = true;
+	settings.ConcurrencyToken = "Timestamp";
+	settings.AuditEntity = new AuditEntity
+	{
+		CreationUserColumnName = "CreationUser",
+		CreationDateTimeColumnName = "CreationDateTime",
+		LastUpdateUserColumnName = "LastUpdateUser",
+		LastUpdateDateTimeColumnName = "LastUpdateDateTime"
+	};
+});
+
+entityFrameworkProject.Selection("Sales.OrderHeader", settings => settings.EntitiesWithDataContracts = true);
+
+// Build features for project, group all entities by schema into a feature
+entityFrameworkProject.BuildFeatures();
+
+// Scaffolding =^^=
+entityFrameworkProject
+	.ScaffoldEntityLayer()
+	.ScaffoldDataLayer();
+
+var aspNetCoreProject = entityFrameworkProject
+	.CreateAspNetCoreProject("OnLineStore.WebApi", "C:\\Projects\\OnLineStore.WebApi", entityFrameworkProject.Database);
+
+// Add event handlers to before and after of scaffold
+
+aspNetCoreProject.ScaffoldingDefinition += (source, args) =>
+{
+	// Add code to perform operations with code builder instance before to create code file
+};
+
+aspNetCoreProject.ScaffoldedDefinition += (source, args) =>
+{
+	// Add code to perform operations after of create code file
+};
+
+aspNetCoreProject.ScaffoldAspNetCore();
+```
+
 ## Roadmap
 
 There will be a lot of improvements for CatFactory on road:
