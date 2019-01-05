@@ -4,7 +4,7 @@
 
 CatFactory is a scaffolding engine for .NET Core built with C#.
 
-## How it Works?
+## How does it Works?
 
 The concept behind CatFactory is to import an existing database from SQL Server instance and then to scaffold a target technology.
 
