@@ -9,10 +9,10 @@ namespace CatFactory.AspNetCore
 
         public bool UseLogger { get; set; } = true;
 
-        public string ConcurrencyToken { get; set; }
+        //public string ConcurrencyToken { get; set; }
 
-        public AuditEntity AuditEntity { get; set; }
+        //public AuditEntity AuditEntity { get; set; }
 
-        public bool EntitiesWithDataContracts { get; set; }
+        //public bool EntitiesWithDataContracts { get; set; }
     }
 }

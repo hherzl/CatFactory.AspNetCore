@@ -46,7 +46,7 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("OnLineStore.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\OnLineStore.WebApi", entityFrameworkProject.Database);
+                .CreateAspNetCoreProject("OnLineStore.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\OnLineStore.WebApi");
 
             // Add event handlers to before and after of scaffold
 
@@ -103,7 +103,7 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Northwind.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.WebApi", entityFrameworkProject.Database);
+                .CreateAspNetCoreProject("Northwind.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.WebApi");
 
             // Add event handlers to before and after of scaffold
 

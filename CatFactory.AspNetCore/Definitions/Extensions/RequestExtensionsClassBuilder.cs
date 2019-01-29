@@ -42,7 +42,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 new CodeLine("{")
             };
 
-            var selection = project.GetSelection(table);
+            var selection = project.EntityFrameworkCoreProject.GetSelection(table);
 
             var columns = table.Columns.Where(item => item.Name != selection.Settings.ConcurrencyToken).ToList();
 
@@ -71,7 +71,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 new CodeLine("{")
             };
 
-            var selection = project.GetSelection(table);
+            var selection = project.EntityFrameworkCoreProject.GetSelection(table);
 
             var columns = table.Columns.Where(item => item.Name != selection.Settings.ConcurrencyToken).ToList();
 

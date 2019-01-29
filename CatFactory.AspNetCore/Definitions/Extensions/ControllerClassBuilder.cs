@@ -123,15 +123,17 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             var lines = new List<ILine>();
 
             var aspNetCoreProject = projectFeature.GetAspNetCoreProject();
-            var selection = aspNetCoreProject.GetSelection(table);
+            var aspNetCoreSelection = aspNetCoreProject.GetSelection(table);
+            var efCoreProject = aspNetCoreProject.EntityFrameworkCoreProject;
+            var efCoreSelection = efCoreProject.GetSelection(table);
 
-            if (selection.Settings.UseLogger)
+            if (aspNetCoreSelection.Settings.UseLogger)
             {
                 lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", aspNetCoreProject.GetControllerGetAllAsyncMethodName(table)));
                 lines.Add(new CodeLine());
             }
 
-            if (selection.Settings.EntitiesWithDataContracts)
+            if (efCoreSelection.Settings.EntitiesWithDataContracts)
             {
                 definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetDataLayerDataContractsNamespace());
 
@@ -185,7 +187,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine());
 
-            if (selection.Settings.UseLogger)
+            if (aspNetCoreSelection.Settings.UseLogger)
             {
                 lines.Add(new CommentLine(1, " Set paging's information"));
                 lines.Add(new CodeLine(1, "response.PageSize = (int)pageSize;"));
@@ -204,7 +206,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             lines.Add(new CodeLine("catch (Exception ex)"));
             lines.Add(new CodeLine("{"));
 
-            if (selection.Settings.UseLogger)
+            if (aspNetCoreSelection.Settings.UseLogger)
             {
                 lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", aspNetCoreProject.GetControllerGetAllAsyncMethodName(table)));
             }

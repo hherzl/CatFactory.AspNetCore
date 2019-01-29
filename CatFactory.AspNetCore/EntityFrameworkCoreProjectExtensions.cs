@@ -6,13 +6,13 @@ namespace CatFactory.AspNetCore
 {
     public static class EntityFrameworkCoreProjectExtensions
     {
-        public static AspNetCoreProject CreateAspNetCoreProject(this EntityFrameworkCoreProject entityFrameworkCoreProject, string name, string outputDirectory, Database database)
+        public static AspNetCoreProject CreateAspNetCoreProject(this EntityFrameworkCoreProject entityFrameworkCoreProject, string name, string outputDirectory)
         {
             var aspNetCoreProject = new AspNetCoreProject
             {
                 Name = name,
                 OutputDirectory = outputDirectory,
-                Database = database,
+                Database = entityFrameworkCoreProject.Database,
                 EntityFrameworkCoreProject = entityFrameworkCoreProject
             };
 
@@ -27,15 +27,15 @@ namespace CatFactory.AspNetCore
                     {
                         ForceOverwrite = selection.Settings.ForceOverwrite,
                         UseLogger = true,
-                        ConcurrencyToken = selection.Settings.ConcurrencyToken,
-                        AuditEntity = selection.Settings.AuditEntity == null ? null : new AuditEntity
-                        {
-                            CreationUserColumnName = selection.Settings.AuditEntity.CreationUserColumnName,
-                            CreationDateTimeColumnName = selection.Settings.AuditEntity.CreationDateTimeColumnName,
-                            LastUpdateUserColumnName = selection.Settings.AuditEntity.LastUpdateUserColumnName,
-                            LastUpdateDateTimeColumnName = selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
-                        },
-                        EntitiesWithDataContracts = selection.Settings.EntitiesWithDataContracts
+                        //ConcurrencyToken = selection.Settings.ConcurrencyToken,
+                        //AuditEntity = selection.Settings.AuditEntity == null ? null : new AuditEntity
+                        //{
+                        //    CreationUserColumnName = selection.Settings.AuditEntity.CreationUserColumnName,
+                        //    CreationDateTimeColumnName = selection.Settings.AuditEntity.CreationDateTimeColumnName,
+                        //    LastUpdateUserColumnName = selection.Settings.AuditEntity.LastUpdateUserColumnName,
+                        //    LastUpdateDateTimeColumnName = selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
+                        //},
+                        //EntitiesWithDataContracts = selection.Settings.EntitiesWithDataContracts
                     }
                 });
             }

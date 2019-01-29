@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CatFactory.CodeFactory.Scaffolding;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore
@@ -18,17 +19,19 @@ namespace CatFactory.AspNetCore
 
         public static IEnumerable<Column> GetUpdateColumns(this ProjectFeature<AspNetCoreProjectSettings> projectFeature, ITable table)
         {
-            var settings = projectFeature.GetAspNetCoreProject().GetSelection(table).Settings;
+            var aspNetCoreProject = projectFeature.GetAspNetCoreProject();
+
+            var efCoreProjectSettings = aspNetCoreProject.EntityFrameworkCoreProject.GetSelection(table).Settings;
 
             foreach (var column in table.Columns)
             {
                 if (table.PrimaryKey != null && table.PrimaryKey.Key.Contains(column.Name))
                     continue;
 
-                if (settings.AuditEntity != null && settings.AuditEntity.Names.Contains(column.Name))
+                if (efCoreProjectSettings.AuditEntity != null && efCoreProjectSettings.AuditEntity.Names.Contains(column.Name))
                     continue;
 
-                if (!string.IsNullOrEmpty(settings.ConcurrencyToken) && string.Compare(settings.ConcurrencyToken, column.Name) == 0)
+                if (!string.IsNullOrEmpty(efCoreProjectSettings.ConcurrencyToken) && string.Compare(efCoreProjectSettings.ConcurrencyToken, column.Name) == 0)
                     continue;
 
                 yield return column;

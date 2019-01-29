@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.NetCore;
 using CatFactory.NetCore.ObjectOrientedProgramming;
 using CatFactory.ObjectOrientedProgramming;
@@ -22,7 +23,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Name = project.GetRequestName(table)
             };
 
-            var selection = project.GetSelection(table);
+            var selection = project.EntityFrameworkCoreProject.GetSelection(table);
 
             foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {

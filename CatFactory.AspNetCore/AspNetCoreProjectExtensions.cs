@@ -99,15 +99,15 @@ namespace CatFactory.AspNetCore
                     {
                         ForceOverwrite = globalSettings.ForceOverwrite,
                         UseLogger = globalSettings.UseLogger,
-                        ConcurrencyToken = globalSettings.ConcurrencyToken,
-                        AuditEntity = new AuditEntity
-                        {
-                            CreationUserColumnName = globalSettings.AuditEntity.CreationUserColumnName,
-                            CreationDateTimeColumnName = globalSettings.AuditEntity.CreationDateTimeColumnName,
-                            LastUpdateUserColumnName = globalSettings.AuditEntity.LastUpdateUserColumnName,
-                            LastUpdateDateTimeColumnName = globalSettings.AuditEntity.LastUpdateDateTimeColumnName
-                        },
-                        EntitiesWithDataContracts = globalSettings.EntitiesWithDataContracts
+                        //ConcurrencyToken = globalSettings.ConcurrencyToken,
+                        //AuditEntity = new AuditEntity
+                        //{
+                        //    CreationUserColumnName = globalSettings.AuditEntity.CreationUserColumnName,
+                        //    CreationDateTimeColumnName = globalSettings.AuditEntity.CreationDateTimeColumnName,
+                        //    LastUpdateUserColumnName = globalSettings.AuditEntity.LastUpdateUserColumnName,
+                        //    LastUpdateDateTimeColumnName = globalSettings.AuditEntity.LastUpdateDateTimeColumnName
+                        //},
+                        //EntitiesWithDataContracts = globalSettings.EntitiesWithDataContracts
                     }
                 };
 
