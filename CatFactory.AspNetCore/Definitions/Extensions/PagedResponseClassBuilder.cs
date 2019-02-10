@@ -14,6 +14,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     "System.Collections.Generic"
                 },
                 Namespace = project.GetResponsesNamespace(),
+                AccessModifier = AccessModifier.Public,
                 Name = "PagedResponse",
                 GenericTypes =
                 {
@@ -29,14 +30,14 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Properties =
                 {
-                    new PropertyDefinition("string", "Message"),
-                    new PropertyDefinition("bool", "DidError"),
-                    new PropertyDefinition("string", "ErrorMessage"),
-                    new PropertyDefinition("IEnumerable<TModel>", "Model"),
-                    new PropertyDefinition("int", "PageSize"),
-                    new PropertyDefinition("int", "PageNumber"),
-                    new PropertyDefinition("int", "ItemsCount"),
-                    new PropertyDefinition("double", "PageCount")
+                    new PropertyDefinition(AccessModifier.Public, "string", "Message") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "bool", "DidError") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "string", "ErrorMessage") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "IEnumerable<TModel>", "Model") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "int", "PageSize") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "int", "PageNumber") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "int", "ItemsCount") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "double", "PageCount")
                     {
                         IsReadOnly = true,
                         GetBody =

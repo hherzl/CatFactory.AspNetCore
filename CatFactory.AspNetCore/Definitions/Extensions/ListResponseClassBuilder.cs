@@ -13,6 +13,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     "System.Collections.Generic"
                 },
                 Namespace = project.GetResponsesNamespace(),
+                AccessModifier = AccessModifier.Public,
                 Name = "ListResponse",
                 GenericTypes =
                 {
@@ -28,10 +29,10 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Properties =
                 {
-                    new PropertyDefinition("string", "Message"),
-                    new PropertyDefinition("bool", "DidError"),
-                    new PropertyDefinition("string", "ErrorMessage"),
-                    new PropertyDefinition("IEnumerable<TModel>", "Model")
+                    new PropertyDefinition(AccessModifier.Public, "string", "Message") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "bool", "DidError") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "string", "ErrorMessage") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "IEnumerable<TModel>", "Model") { IsAutomatic = true }
                 }
             };
     }

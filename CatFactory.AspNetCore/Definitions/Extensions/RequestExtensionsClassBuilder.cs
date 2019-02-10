@@ -21,6 +21,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     project.GetEntityLayerNamespace()
                 },
                 Namespace = project.GetRequestsNamespace(),
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 Name = string.Format("{0}RequestExtensions", project.EntityFrameworkCoreProject.GetEntityName(table))
             };
@@ -57,6 +58,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             return new MethodDefinition(project.EntityFrameworkCoreProject.GetEntityName(table), "ToEntity", new ParameterDefinition(project.GetRequestName(table), "request"))
             {
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 IsExtension = true,
                 Lines = lines
@@ -86,6 +88,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             return new MethodDefinition(project.GetRequestName(table), "ToRequest", new ParameterDefinition(project.EntityFrameworkCoreProject.GetEntityName(table), "entity"))
             {
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 IsExtension = true,
                 Lines = lines

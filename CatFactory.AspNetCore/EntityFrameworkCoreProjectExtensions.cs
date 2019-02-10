@@ -1,6 +1,5 @@
 ﻿using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.ObjectRelationalMapping;
 
 namespace CatFactory.AspNetCore
 {
@@ -26,16 +25,7 @@ namespace CatFactory.AspNetCore
                     Settings = new AspNetCoreProjectSettings
                     {
                         ForceOverwrite = selection.Settings.ForceOverwrite,
-                        UseLogger = true,
-                        //ConcurrencyToken = selection.Settings.ConcurrencyToken,
-                        //AuditEntity = selection.Settings.AuditEntity == null ? null : new AuditEntity
-                        //{
-                        //    CreationUserColumnName = selection.Settings.AuditEntity.CreationUserColumnName,
-                        //    CreationDateTimeColumnName = selection.Settings.AuditEntity.CreationDateTimeColumnName,
-                        //    LastUpdateUserColumnName = selection.Settings.AuditEntity.LastUpdateUserColumnName,
-                        //    LastUpdateDateTimeColumnName = selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
-                        //},
-                        //EntitiesWithDataContracts = selection.Settings.EntitiesWithDataContracts
+                        UseLogger = true
                     }
                 });
             }

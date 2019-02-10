@@ -12,6 +12,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     "System"
                 },
                 Namespace = project.GetResponsesNamespace(),
+                AccessModifier = AccessModifier.Public,
                 Name = "IResponse",
                 Properties =
                 {

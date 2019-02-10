@@ -8,6 +8,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             => new SingleResponseInterfaceDefinition
             {
                 Namespace = project.GetResponsesNamespace(),
+                AccessModifier = AccessModifier.Public,
                 Name = "ISingleResponse",
                 GenericTypes =
                 {

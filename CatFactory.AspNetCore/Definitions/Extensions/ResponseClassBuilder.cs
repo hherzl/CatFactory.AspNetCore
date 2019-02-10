@@ -12,6 +12,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     "System"
                 },
                 Namespace = project.GetResponsesNamespace(),
+                AccessModifier = AccessModifier.Public,
                 Name = "Response",
                 Implements =
                 {
@@ -19,9 +20,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Properties =
                 {
-                    new PropertyDefinition("string", "Message"),
-                    new PropertyDefinition("bool", "DidError"),
-                    new PropertyDefinition("string", "ErrorMessage")
+                    new PropertyDefinition(AccessModifier.Public, "string", "Message") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "bool", "DidError") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "string", "ErrorMessage") { IsAutomatic = true }
                 }
             };
     }

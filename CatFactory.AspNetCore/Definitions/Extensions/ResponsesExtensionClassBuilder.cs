@@ -17,12 +17,14 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     "Microsoft.Extensions.Logging"
                 },
                 Namespace = project.GetResponsesNamespace(),
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 Name = "ResponsesExtensions"
             };
 
             definition.Methods.Add(new MethodDefinition("void", "SetError", new ParameterDefinition("IResponse", "response"), new ParameterDefinition("ILogger", "logger"), new ParameterDefinition("string", "action"), new ParameterDefinition("Exception", "ex"))
             {
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 IsExtension = true,
                 Lines =
@@ -37,6 +39,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResponse", new ParameterDefinition("IResponse", "response"))
             {
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 IsExtension = true,
                 Lines =
@@ -55,6 +58,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResponse", new ParameterDefinition("ISingleResponse<TModel>", "response"))
             {
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 IsExtension = true,
                 GenericTypes =
@@ -84,6 +88,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResponse", new ParameterDefinition("IListResponse<TModel>", "response"))
             {
+                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
                 IsExtension = true,
                 GenericTypes =

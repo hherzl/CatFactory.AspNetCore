@@ -20,6 +20,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     project.Database.HasDefaultSchema(table) ? project.GetEntityLayerNamespace() : project.GetEntityLayerNamespace(table.Schema)
                 },
                 Namespace = project.GetRequestsNamespace(),
+                AccessModifier = AccessModifier.Public,
                 Name = project.GetRequestName(table)
             };
 
@@ -27,7 +28,10 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {
-                var property = new PropertyDefinition(project.Database.ResolveDatabaseType(column), column.GetPropertyName());
+                var property = new PropertyDefinition(AccessModifier.Public, project.Database.ResolveDatabaseType(column), column.GetPropertyName())
+                {
+                    IsAutomatic = true
+                };
 
                 if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
                     property.Attributes.Add(new MetadataAttribute("Key"));

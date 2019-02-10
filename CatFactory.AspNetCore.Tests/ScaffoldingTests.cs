@@ -7,18 +7,18 @@ namespace CatFactory.AspNetCore.Tests
     public class ScaffoldingTests
     {
         [Fact]
-        public void TestScaffoldingWebApiFromOnLineStoreDatabase()
+        public void TestScaffoldingWebApiFromOnlineStoreDatabase()
         {
             // Import database
             var database = SqlServerDatabaseFactory
-                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=OnLineStore;integrated security=yes;", "dbo.sysdiagrams");
+                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = new EntityFrameworkCoreProject
             {
-                Name = "OnLineStore.Core",
+                Name = "OnlineStore.Core",
                 Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\OnLineStore.Core"
+                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\OnlineStore.Core"
             };
 
             // Apply settings for project
@@ -46,7 +46,7 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("OnLineStore.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\OnLineStore.WebApi");
+                .CreateAspNetCoreProject("OnlineStore.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\OnlineStore.WebApi");
 
             // Add event handlers to before and after of scaffold
 

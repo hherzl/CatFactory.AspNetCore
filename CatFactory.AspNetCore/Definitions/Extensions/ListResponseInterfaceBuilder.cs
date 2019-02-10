@@ -12,6 +12,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     "System.Collections.Generic"
                 },
                 Namespace = project.GetResponsesNamespace(),
+                AccessModifier = AccessModifier.Public,
                 Name = "IListResponse",
                 GenericTypes =
                 {

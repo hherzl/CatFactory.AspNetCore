@@ -33,6 +33,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     aspNetCoreProject.GetRequestsNamespace()
                 },
                 Namespace = string.Format("{0}.{1}", aspNetCoreProject.Name, "Controllers"),
+                AccessModifier = AccessModifier.Public,
                 Name = projectFeature.GetControllerName(),
                 Attributes = new List<MetadataAttribute>
                 {
@@ -107,7 +108,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 lines.Add(new CodeLine("Logger = logger;"));
             }
 
-            return new ClassConstructorDefinition(parameters.ToArray())
+            return new ClassConstructorDefinition(AccessModifier.Public, parameters.ToArray())
             {
                 Lines = lines
             };
@@ -222,6 +223,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             return new MethodDefinition("Task<IActionResult>", aspNetCoreProject.GetControllerGetAllAsyncMethodName(table), parameters.ToArray())
             {
+                AccessModifier = AccessModifier.Public,
                 Attributes =
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
@@ -345,6 +347,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}/{1}\"", efCoreProject.GetEntityName(table), "{id}")),
                 },
+                AccessModifier = AccessModifier.Public,
                 IsAsync = true,
                 Lines = lines
             };
@@ -426,6 +429,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     new MetadataAttribute("HttpPost", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
                 },
+                AccessModifier = AccessModifier.Public,
                 IsAsync = true,
                 Lines = lines
             };
@@ -562,6 +566,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     new MetadataAttribute("HttpPut", string.Format("\"{0}/{{id}}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
                 },
+                AccessModifier = AccessModifier.Public,
                 IsAsync = true,
                 Lines = lines
             };
@@ -677,6 +682,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     new MetadataAttribute("HttpDelete", string.Format("\"{0}/{{id}}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
                 },
+                AccessModifier = AccessModifier.Public,
                 IsAsync = true,
                 Lines = lines
             };
