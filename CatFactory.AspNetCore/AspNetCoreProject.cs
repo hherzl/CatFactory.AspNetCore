@@ -1,26 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.NetCore.CodeFactory;
+using CatFactory.NetCore;
 using CatFactory.ObjectRelationalMapping;
 using Microsoft.Extensions.Logging;
 
 namespace CatFactory.AspNetCore
 {
-    public class AspNetCoreProject : Project<AspNetCoreProjectSettings>
+    public class AspNetCoreProject : CSharpProject<AspNetCoreProjectSettings>
     {
         public AspNetCoreProject()
             : base()
         {
-            CodeNamingConvention = new DotNetNamingConvention();
         }
 
         public AspNetCoreProject(ILogger<AspNetCoreProject> logger)
             : base(logger)
         {
-            CodeNamingConvention = new DotNetNamingConvention();
         }
 
         public string Version { get; set; }
@@ -66,25 +63,8 @@ namespace CatFactory.AspNetCore
                 .DbObjects
                 .Select(item => item.Schema)
                 .Distinct()
-                .Select(item => new ProjectFeature<AspNetCoreProjectSettings>(item, GetDbObjects(Database, item)) { Project = this })
+                .Select(item => new ProjectFeature<AspNetCoreProjectSettings>(item, GetDbObjectsBySchema(item), this))
                 .ToList();
-        }
-
-        private IEnumerable<DbObject> GetDbObjects(Database database, string schema)
-        {
-            var result = new List<DbObject>();
-
-            result.AddRange(Database
-                .Tables
-                .Where(item => item.Schema == schema)
-                .Select(item => new DbObject { Schema = item.Schema, Name = item.Name, Type = "Table" }));
-
-            result.AddRange(Database
-                .Views
-                .Where(item => item.Schema == schema)
-                .Select(item => new DbObject { Schema = item.Schema, Name = item.Name, Type = "View" }));
-
-            return result;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var column in table.Columns.Where(item => selection.Settings.ConcurrencyToken != item.Name).ToList())
             {
-                var property = new PropertyDefinition(AccessModifier.Public, project.Database.ResolveDatabaseType(column), column.GetPropertyName())
+                var property = new PropertyDefinition(AccessModifier.Public, project.Database.ResolveDatabaseType(column), project.GetPropertyName(table, column))
                 {
                     IsAutomatic = true
                 };

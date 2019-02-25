@@ -508,7 +508,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var column in projectFeature.GetUpdateColumns(table))
             {
-                lines.Add(new CodeLine(2, "entity.{0} = request.{0};", column.GetPropertyName()));
+                lines.Add(new CodeLine(2, "entity.{0} = request.{0};", aspNetCoreProject.GetPropertyName(table, column)));
             }
 
             lines.Add(new CodeLine());

@@ -51,7 +51,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 var column = columns[i];
 
-                lines.Add(new CodeLine(1, "{0} = request.{0}{1}", column.GetPropertyName(), i < columns.Count - 1 ? "," : string.Empty));
+                lines.Add(new CodeLine(1, "{0} = request.{0}{1}", project.GetPropertyName(table, column), i < columns.Count - 1 ? "," : string.Empty));
             }
 
             lines.Add(new CodeLine("};"));
@@ -81,7 +81,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 var column = columns[i];
 
-                lines.Add(new CodeLine(1, "{0} = entity.{0}{1}", column.GetPropertyName(), i < columns.Count - 1 ? "," : string.Empty));
+                lines.Add(new CodeLine(1, "{0} = entity.{0}{1}", project.GetPropertyName(table, column), i < columns.Count - 1 ? "," : string.Empty));
             }
 
             lines.Add(new CodeLine("};"));
