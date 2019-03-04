@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Version>1.0.0-beta-sun-build30</Version>
+    <Version>1.0.0-beta-sun-build31</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
-    <Description>CatFactory Package for ASP.NET Core (C#) scaffolding</Description>
-    <PackageReleaseNotes>1.0.0-beta-sun-build30 Version:
+    <Description>CatFactory Package to scaffold ASP.NET Core</Description>
+    <PackageReleaseNotes>1.0.0-beta-sun-build31 Version:
 
 * Core package update
 
@@ -16,10 +16,11 @@ Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-w
     <RepositoryUrl>https://github.com/hherzl/CatFactory.AspNetCore</RepositoryUrl>
     <PackageTags>ASP.NET Core Web API REST Scaffolding</PackageTags>
     <PackageProjectUrl>https://github.com/hherzl/CatFactory.AspNetCore</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/hherzl/CatFactory.AspNetCore/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build30" />
+    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build31" />
   </ItemGroup>
 
 </Project>

@@ -1,18 +1,19 @@
 ﻿using CatFactory.CodeFactory.Scaffolding;
-using CatFactory.EntityFrameworkCore;
+using CatFactory.Diagnostics;
 
 namespace CatFactory.AspNetCore
 {
-    public class AspNetCoreProjectSettings : ProjectSettings
+    public class AspNetCoreProjectSettings : IProjectSettings
     {
+        public ValidationResult Validate()
+        {
+            // todo: Add this implementation
+
+            throw new System.NotImplementedException();
+        }
+
         public bool ForceOverwrite { get; set; }
 
         public bool UseLogger { get; set; } = true;
-
-        //public string ConcurrencyToken { get; set; }
-
-        //public AuditEntity AuditEntity { get; set; }
-
-        //public bool EntitiesWithDataContracts { get; set; }
     }
 }
