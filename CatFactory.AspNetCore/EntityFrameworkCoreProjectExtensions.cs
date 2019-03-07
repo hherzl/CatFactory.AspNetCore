@@ -1,5 +1,6 @@
 ﻿using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
+using CatFactory.ObjectRelationalMapping.Actions;
 
 namespace CatFactory.AspNetCore
 {
@@ -14,6 +15,16 @@ namespace CatFactory.AspNetCore
                 Database = entityFrameworkCoreProject.Database,
                 EntityFrameworkCoreProject = entityFrameworkCoreProject
             };
+
+            aspNetCoreProject.GlobalSelection(settings =>
+            {
+                settings.Actions.Add(new ReadAllAction());
+                settings.Actions.Add(new ReadByKeyAction());
+                settings.Actions.Add(new ReadByUniqueAction());
+                settings.Actions.Add(new AddEntityAction());
+                settings.Actions.Add(new UpdateEntityAction());
+                settings.Actions.Add(new RemoveEntityAction());
+            });
 
             aspNetCoreProject.BuildFeatures();
 

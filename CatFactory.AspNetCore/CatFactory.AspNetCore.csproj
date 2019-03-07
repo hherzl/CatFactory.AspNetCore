@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Version>1.0.0-beta-sun-build31</Version>
+    <Version>1.0.0-beta-sun-build32</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
     <Description>CatFactory Package to scaffold ASP.NET Core</Description>
-    <PackageReleaseNotes>1.0.0-beta-sun-build31 Version:
+    <PackageReleaseNotes>1.0.0-beta-sun-build32 Version:
 
-* Core package update
+* Code fix for event handlers
+* Addition of entity actions
 
 Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory
 </PackageReleaseNotes>

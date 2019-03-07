@@ -46,7 +46,9 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("OnlineStore.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\OnlineStore.WebApi");
+                .CreateAspNetCoreProject("OnlineStore.WebAPI", "C:\\Temp\\CatFactory.AspNetCore\\OnlineStore.WebAPI");
+
+            aspNetCoreProject.GlobalSelection(settings => settings.ForceOverwrite = true);
 
             // Add event handlers to before and after of scaffold
 
@@ -103,7 +105,9 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Northwind.WebApi", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.WebApi");
+                .CreateAspNetCoreProject("Northwind.WebAPI", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.WebAPI");
+
+            aspNetCoreProject.GlobalSelection(settings => settings.ForceOverwrite = true);
 
             // Add event handlers to before and after of scaffold
 
