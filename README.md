@@ -1,6 +1,6 @@
 # CatFactory.AspNetCore ==^^==
 
-This if the *CatFactory* package for *ASP.NET Core*.
+This is the *CatFactory* package for *ASP.NET Core*.
 
 ## What Is CatFactory?
 
