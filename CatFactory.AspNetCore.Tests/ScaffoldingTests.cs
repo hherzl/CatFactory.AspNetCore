@@ -11,7 +11,7 @@ namespace CatFactory.AspNetCore.Tests
         {
             // Import database
             var database = SqlServerDatabaseFactory
-                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
+                .Import("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = new EntityFrameworkCoreProject
@@ -70,7 +70,7 @@ namespace CatFactory.AspNetCore.Tests
         {
             // Import database
             var database = SqlServerDatabaseFactory
-                .Import(SqlServerDatabaseFactory.GetLogger(), "server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
+                .Import("server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = new EntityFrameworkCoreProject
