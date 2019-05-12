@@ -20,6 +20,12 @@ The flow to import an existing database is:
 4. Build Features (One feature per schema)
 5. Scaffold objects, these methods read all objects from database and create instances for code builders
 
+## Donation
+
+You can make a donation via PayPal using this link: [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XB49JFNSMGY6U&item_name=CatFactory&currency_code=USD&source=url)
+
+Thanks for your help! ==^^==
+
 ## Code Snippet
 
 ```csharp
