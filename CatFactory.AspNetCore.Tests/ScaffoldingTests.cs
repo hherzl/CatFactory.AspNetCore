@@ -1,4 +1,5 @@
 ﻿using CatFactory.EntityFrameworkCore;
+using CatFactory.ObjectRelationalMapping.Actions;
 using CatFactory.SqlServer;
 using Xunit;
 
@@ -18,7 +19,7 @@ namespace CatFactory.AspNetCore.Tests
             {
                 Name = "OnlineStore.Core",
                 Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\OnlineStore.Core"
+                OutputDirectory = @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core"
             };
 
             // Apply settings for project
@@ -46,9 +47,19 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("OnlineStore.WebAPI", "C:\\Temp\\CatFactory.AspNetCore\\OnlineStore.WebAPI");
+                .CreateAspNetCoreProject("OnlineStore.WebAPI", @"C:\Temp\CatFactory.AspNetCore\OnlineStore.WebAPI");
 
             aspNetCoreProject.GlobalSelection(settings => settings.ForceOverwrite = true);
+
+            aspNetCoreProject.Selection("Sales.OrderDetail", settings =>
+            {
+                settings
+                    .RemoveAction<ReadAllAction>()
+                    .RemoveAction<ReadByKeyAction>()
+                    .RemoveAction<AddEntityAction>()
+                    .RemoveAction<UpdateEntityAction>()
+                    .RemoveAction<RemoveEntityAction>();
+            });
 
             // Add event handlers to before and after of scaffold
 
@@ -77,7 +88,7 @@ namespace CatFactory.AspNetCore.Tests
             {
                 Name = "Northwind.Core",
                 Database = database,
-                OutputDirectory = "C:\\Temp\\CatFactory.AspNetCore\\Northwind.Core"
+                OutputDirectory = @"C:\Temp\CatFactory.AspNetCore\Northwind.Core"
             };
 
             // Apply settings for project
@@ -105,7 +116,7 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Northwind.WebAPI", "C:\\Temp\\CatFactory.AspNetCore\\Northwind.WebAPI");
+                .CreateAspNetCoreProject("Northwind.WebAPI", @"C:\Temp\CatFactory.AspNetCore\Northwind.WebAPI");
 
             aspNetCoreProject.GlobalSelection(settings => settings.ForceOverwrite = true);
 

@@ -16,16 +16,6 @@ namespace CatFactory.AspNetCore
                 EntityFrameworkCoreProject = entityFrameworkCoreProject
             };
 
-            aspNetCoreProject.GlobalSelection(settings =>
-            {
-                settings.Actions.Add(new ReadAllAction());
-                settings.Actions.Add(new ReadByKeyAction());
-                settings.Actions.Add(new ReadByUniqueAction());
-                settings.Actions.Add(new AddEntityAction());
-                settings.Actions.Add(new UpdateEntityAction());
-                settings.Actions.Add(new RemoveEntityAction());
-            });
-
             aspNetCoreProject.BuildFeatures();
 
             foreach (var selection in entityFrameworkCoreProject.Selections)
@@ -36,7 +26,8 @@ namespace CatFactory.AspNetCore
                     Settings = new AspNetCoreProjectSettings
                     {
                         ForceOverwrite = selection.Settings.ForceOverwrite,
-                        UseLogger = true
+                        UseLogger = true,
+
                     }
                 });
             }

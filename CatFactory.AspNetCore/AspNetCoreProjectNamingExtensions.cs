@@ -8,6 +8,9 @@ namespace CatFactory.AspNetCore
         public static string GetControllerGetAllAsyncMethodName(this AspNetCoreProject project, ITable table)
             => string.Format("{0}{1}{2}", "Get", project.EntityFrameworkCoreProject.GetPluralName(table), "Async");
 
+        public static string GetControllerGetAllAsyncMethodName(this AspNetCoreProject project, IView table)
+            => string.Format("{0}{1}{2}", "Get", project.EntityFrameworkCoreProject.GetPluralName(table), "Async");
+
         public static string GetResponsesNamespace(this AspNetCoreProject project)
             => string.Format("{0}.{1}", project.Name, project.AspNetCoreProjectNamespaces.Responses);
 
@@ -33,18 +36,18 @@ namespace CatFactory.AspNetCore
             => string.Format("{0}Extensions", project.GetRequestName(table));
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project)
-            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProjectNamespaces.EntityLayer));
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.ProjectNamespaces.EntityLayer));
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project, string ns)
-            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.EntityFrameworkCoreProject.Name, project.EntityFrameworkCoreProjectNamespaces.EntityLayer, ns);
+            => string.IsNullOrEmpty(ns) ? GetEntityLayerNamespace(project) : string.Join(".", project.EntityFrameworkCoreProject.Name, project.EntityFrameworkCoreProject.ProjectNamespaces.EntityLayer, ns);
 
         public static string GetDataLayerContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProjectNamespaces.DataLayer, project.EntityFrameworkCoreProjectNamespaces.Contracts);
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProject.ProjectNamespaces.DataLayer, project.EntityFrameworkCoreProject.ProjectNamespaces.Contracts);
 
         public static string GetDataLayerDataContractsNamespace(this AspNetCoreProject project)
-            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProjectNamespaces.DataLayer, project.EntityFrameworkCoreProjectNamespaces.DataContracts);
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProject.ProjectNamespaces.DataLayer, project.EntityFrameworkCoreProject.ProjectNamespaces.DataContracts);
 
         public static string GetDataLayerRepositoriesNamespace(this AspNetCoreProject project)
-            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProjectNamespaces.DataLayer, project.EntityFrameworkCoreProjectNamespaces.Repositories);
+            => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.EntityFrameworkCoreProject.ProjectNamespaces.DataLayer, project.EntityFrameworkCoreProject.ProjectNamespaces.Repositories);
     }
 }

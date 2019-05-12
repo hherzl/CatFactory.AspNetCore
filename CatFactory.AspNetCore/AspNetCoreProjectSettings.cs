@@ -9,30 +9,33 @@ namespace CatFactory.AspNetCore
 {
     public class AspNetCoreProjectSettings : IProjectSettings
     {
-        public ValidationResult Validate()
-        {
-            // todo: Add this implementation
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private List<IEntityAction> m_actions;
 
-            throw new NotImplementedException();
+        public AspNetCoreProjectSettings()
+        {
+            Actions.Add(new ReadAllAction());
+            Actions.Add(new ReadByKeyAction());
+            Actions.Add(new ReadByUniqueAction());
+            Actions.Add(new AddEntityAction());
+            Actions.Add(new UpdateEntityAction());
+            Actions.Add(new RemoveEntityAction());
         }
 
         public bool ForceOverwrite { get; set; }
 
         public bool UseLogger { get; set; } = true;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private List<IEntityAction> m_actions;
-
         public List<IEntityAction> Actions
         {
-            get
-            {
-                return m_actions ?? (m_actions = new List<IEntityAction>());
-            }
-            set
-            {
-                m_actions = value;
-            }
+            get => m_actions ?? (m_actions = new List<IEntityAction>());
+            set => m_actions = value;
+        }
+
+        // todo: Add this implementation
+
+        public ValidationResult Validate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

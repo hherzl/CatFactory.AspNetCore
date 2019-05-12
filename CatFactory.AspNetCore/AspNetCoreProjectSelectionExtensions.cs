@@ -2,6 +2,7 @@
 using System.Linq;
 using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.ObjectRelationalMapping;
+using CatFactory.ObjectRelationalMapping.Actions;
 
 namespace CatFactory.AspNetCore
 {
@@ -50,7 +51,8 @@ namespace CatFactory.AspNetCore
                     Settings = new AspNetCoreProjectSettings
                     {
                         ForceOverwrite = globalSettings.ForceOverwrite,
-                        UseLogger = globalSettings.UseLogger
+                        UseLogger = globalSettings.UseLogger,
+                        Actions = globalSettings.Actions.Select(item => (IEntityAction)Activator.CreateInstance(item.GetType())).ToList()
                     }
                 };
 
