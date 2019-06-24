@@ -31,10 +31,10 @@ namespace CatFactory.AspNetCore
             set => m_actions = value;
         }
 
-        // todo: Add this implementation
-
         public ValidationResult Validate()
         {
+            // todo: Add this implementation
+
             throw new NotImplementedException();
         }
     }

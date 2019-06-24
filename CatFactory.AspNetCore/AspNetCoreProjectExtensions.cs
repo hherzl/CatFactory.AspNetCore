@@ -3,6 +3,7 @@ using System.IO;
 using CatFactory.AspNetCore.Definitions.Extensions;
 using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
+using CatFactory.NetCore.ObjectOrientedProgramming;
 
 namespace CatFactory.AspNetCore
 {
@@ -29,9 +30,13 @@ namespace CatFactory.AspNetCore
         {
             foreach (var table in project.Database.Tables)
             {
-                var classDefinition = project.GetRequestClassDefinition(table);
+                var postRequestClassDefinition = project.GetPostRequestClassDefinition(table);
 
-                project.Scaffold(classDefinition, project.OutputDirectory, project.AspNetCoreProjectNamespaces.Requests);
+                project.Scaffold(postRequestClassDefinition, project.OutputDirectory, project.AspNetCoreProjectNamespaces.Requests);
+
+                var putRequestClassDefinition = project.GetPutRequestClassDefinition(table);
+
+                project.Scaffold(putRequestClassDefinition, project.OutputDirectory, project.AspNetCoreProjectNamespaces.Requests);
             }
         }
 
@@ -47,21 +52,31 @@ namespace CatFactory.AspNetCore
 
         internal static void ScaffoldResponses(this AspNetCoreProject project)
         {
-            project.Scaffold(project.GetResponseInterfaceDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
+            var interfaces = new List<CSharpInterfaceDefinition>
+            {
+                project.GetResponseInterfaceDefinition(),
+                project.GetSingleResponseInterfaceDefinition(),
+                project.GetListResponseInterfaceDefinition(),
+                project.GetPagedResponseInterfaceDefinition()
+            };
 
-            project.Scaffold(project.GetSingleResponseInterfaceDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
+            foreach (var definition in interfaces)
+            {
+                project.Scaffold(definition, project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
+            }
 
-            project.Scaffold(project.GetListResponseInterfaceDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
+            var classes = new List<CSharpClassDefinition>
+            {
+                project.GetResponseClassDefinition(),
+                project.GetSingleResponseClassDefinition(),
+                project.GetListResponseClassDefinition(),
+                project.GetPagedResponseClassDefinition()
+            };
 
-            project.Scaffold(project.GetPagedResponseInterfaceDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
-
-            project.Scaffold(project.GetResponseClassDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
-
-            project.Scaffold(project.GetSingleResponseClassDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
-
-            project.Scaffold(project.GetListResponseClassDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
-
-            project.Scaffold(project.GetPagedResponseClassDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
+            foreach (var definition in classes)
+            {
+                project.Scaffold(definition, project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
+            }
         }
 
         internal static void ScaffoldResponsesExtensions(this AspNetCoreProject project)

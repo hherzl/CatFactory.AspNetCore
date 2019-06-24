@@ -61,18 +61,6 @@ namespace CatFactory.AspNetCore.Tests
                     .RemoveAction<RemoveEntityAction>();
             });
 
-            // Add event handlers to before and after of scaffold
-
-            aspNetCoreProject.ScaffoldingDefinition += (source, args) =>
-            {
-                // Add code to perform operations with code builder instance before to create code file
-            };
-
-            aspNetCoreProject.ScaffoldedDefinition += (source, args) =>
-            {
-                // Add code to perform operations after of create code file
-            };
-
             aspNetCoreProject.ScaffoldAspNetCore();
         }
 
@@ -119,18 +107,6 @@ namespace CatFactory.AspNetCore.Tests
                 .CreateAspNetCoreProject("Northwind.WebAPI", @"C:\Temp\CatFactory.AspNetCore\Northwind.WebAPI");
 
             aspNetCoreProject.GlobalSelection(settings => settings.ForceOverwrite = true);
-
-            // Add event handlers to before and after of scaffold
-
-            aspNetCoreProject.ScaffoldingDefinition += (source, args) =>
-            {
-                // Add code to perform operations with code builder instance before to create code file
-            };
-
-            aspNetCoreProject.ScaffoldedDefinition += (source, args) =>
-            {
-                // Add code to perform operations after of create code file
-            };
 
             aspNetCoreProject.ScaffoldAspNetCore();
         }

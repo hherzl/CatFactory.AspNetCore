@@ -30,7 +30,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 definition.Namespaces.AddUnique(project.GetEntityLayerNamespace(table.Schema));
 
             definition.Methods.Add(GetToEntityMethod(project, table));
-            definition.Methods.Add(GetToRequestModelMethod(project, table));
+            //definition.Methods.Add(GetToRequestModelMethod(project, table));
 
             return definition;
         }
@@ -45,7 +45,22 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             var selection = project.EntityFrameworkCoreProject.GetSelection(table);
 
-            var columns = table.Columns.Where(item => item.Name != selection.Settings.ConcurrencyToken).ToList();
+            var exclusions = new List<string>
+            {
+                selection.Settings.ConcurrencyToken,
+                selection.Settings.AuditEntity.CreationUserColumnName,
+                selection.Settings.AuditEntity.CreationDateTimeColumnName,
+                selection.Settings.AuditEntity.LastUpdateUserColumnName,
+                selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
+            };
+
+            if (table.PrimaryKey != null)
+                exclusions.Add(table.PrimaryKey.Key.First());
+
+            if (table.Identity != null)
+                exclusions.Add(table.Identity.Name);
+
+            var columns = table.Columns.Where(item => !exclusions.Contains(item.Name)).ToList();
 
             for (var i = 0; i < columns.Count; i++)
             {
@@ -56,43 +71,70 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition(project.EntityFrameworkCoreProject.GetEntityName(table), "ToEntity", new ParameterDefinition(project.GetRequestName(table), "request"))
+            return new MethodDefinition
             {
                 AccessModifier = AccessModifier.Public,
                 IsStatic = true,
+                Type = project.EntityFrameworkCoreProject.GetEntityName(table),
+                Name = "ToEntity",
                 IsExtension = true,
+                Parameters =
+                {
+                    new ParameterDefinition(project.GetPostRequestName(table), "request")
+                },
                 Lines = lines
             };
         }
 
-        private static MethodDefinition GetToRequestModelMethod(AspNetCoreProject project, ITable table)
-        {
-            var lines = new List<ILine>
-            {
-                new CodeLine("return new {0}", project.GetRequestName(table)),
-                new CodeLine("{")
-            };
+        //private static MethodDefinition GetToRequestModelMethod(AspNetCoreProject project, ITable table)
+        //{
+        //    var lines = new List<ILine>
+        //    {
+        //        new CodeLine("return new {0}", project.GetPostRequestName(table)),
+        //        new CodeLine("{")
+        //    };
 
-            var selection = project.EntityFrameworkCoreProject.GetSelection(table);
+        //    var selection = project.EntityFrameworkCoreProject.GetSelection(table);
 
-            var columns = table.Columns.Where(item => item.Name != selection.Settings.ConcurrencyToken).ToList();
+        //    var exclusions = new List<string>
+        //    {
+        //        selection.Settings.ConcurrencyToken,
+        //        selection.Settings.AuditEntity.CreationUserColumnName,
+        //        selection.Settings.AuditEntity.CreationDateTimeColumnName,
+        //        selection.Settings.AuditEntity.LastUpdateUserColumnName,
+        //        selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
+        //    };
 
-            for (var i = 0; i < columns.Count; i++)
-            {
-                var column = columns[i];
+        //    if (table.PrimaryKey != null)
+        //        exclusions.Add(table.PrimaryKey.Key.First());
 
-                lines.Add(new CodeLine(1, "{0} = entity.{0}{1}", project.GetPropertyName(table, column), i < columns.Count - 1 ? "," : string.Empty));
-            }
+        //    if (table.Identity != null)
+        //        exclusions.Add(table.Identity.Name);
 
-            lines.Add(new CodeLine("};"));
+        //    var columns = table.Columns.Where(item => !exclusions.Contains(item.Name)).ToList();
 
-            return new MethodDefinition(project.GetRequestName(table), "ToRequest", new ParameterDefinition(project.EntityFrameworkCoreProject.GetEntityName(table), "entity"))
-            {
-                AccessModifier = AccessModifier.Public,
-                IsStatic = true,
-                IsExtension = true,
-                Lines = lines
-            };
-        }
+        //    for (var i = 0; i < columns.Count; i++)
+        //    {
+        //        var column = columns[i];
+
+        //        lines.Add(new CodeLine(1, "{0} = entity.{0}{1}", project.GetPropertyName(table, column), i < columns.Count - 1 ? "," : string.Empty));
+        //    }
+
+        //    lines.Add(new CodeLine("};"));
+
+        //    return new MethodDefinition
+        //    {
+        //        AccessModifier = AccessModifier.Public,
+        //        IsStatic = true,
+        //        Type = project.GetPostRequestName(table),
+        //        Name = "ToRequest",
+        //        IsExtension = true,
+        //        Parameters =
+        //        {
+        //            new ParameterDefinition(project.EntityFrameworkCoreProject.GetEntityName(table), "entity")
+        //        },
+        //        Lines = lines
+        //    };
+        //}
     }
 }

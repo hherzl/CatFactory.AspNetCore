@@ -73,6 +73,15 @@ namespace CatFactory.AspNetCore
                     ObjectDefinition = objectDefinition
                 };
             }
+            else if (objectDefinition is CSharpEnumDefinition)
+            {
+                codeBuilder = new CSharpEnumBuilder
+                {
+                    OutputDirectory = outputDirectory,
+                    ForceOverwrite = selection.Settings.ForceOverwrite,
+                    ObjectDefinition = objectDefinition
+                };
+            }
 
             OnScaffoldingDefinition(new ScaffoldingDefinitionEventArgs(Logger, codeBuilder));
 

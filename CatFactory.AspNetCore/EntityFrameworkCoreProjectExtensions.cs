@@ -1,6 +1,5 @@
 ﻿using CatFactory.CodeFactory.Scaffolding;
 using CatFactory.EntityFrameworkCore;
-using CatFactory.ObjectRelationalMapping.Actions;
 
 namespace CatFactory.AspNetCore
 {
@@ -26,8 +25,7 @@ namespace CatFactory.AspNetCore
                     Settings = new AspNetCoreProjectSettings
                     {
                         ForceOverwrite = selection.Settings.ForceOverwrite,
-                        UseLogger = true,
-
+                        UseLogger = true
                     }
                 });
             }

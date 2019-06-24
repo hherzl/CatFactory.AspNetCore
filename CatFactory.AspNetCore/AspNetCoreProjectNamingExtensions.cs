@@ -29,11 +29,14 @@ namespace CatFactory.AspNetCore
         public static string GetControllerDeleteAsyncMethodName(this AspNetCoreProject project, ITable table)
             => string.Format("{0}{1}{2}", "Delete", project.EntityFrameworkCoreProject.GetEntityName(table), "Async");
 
-        public static string GetRequestName(this AspNetCoreProject project, ITable table)
-            => string.Format("{0}Request", project.EntityFrameworkCoreProject.GetEntityName(table));
+        public static string GetPostRequestName(this AspNetCoreProject project, ITable table)
+            => string.Format("Post{0}Request", project.EntityFrameworkCoreProject.GetEntityName(table));
+
+        public static string GetPutRequestName(this AspNetCoreProject project, ITable table)
+            => string.Format("Put{0}Request", project.EntityFrameworkCoreProject.GetEntityName(table));
 
         public static string GetRequestExtensionName(this AspNetCoreProject project, ITable table)
-            => string.Format("{0}Extensions", project.GetRequestName(table));
+            => string.Format("{0}Extensions", project.GetPostRequestName(table));
 
         public static string GetEntityLayerNamespace(this AspNetCoreProject project)
             => string.Join(".", project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.Name), project.CodeNamingConvention.GetNamespace(project.EntityFrameworkCoreProject.ProjectNamespaces.EntityLayer));
