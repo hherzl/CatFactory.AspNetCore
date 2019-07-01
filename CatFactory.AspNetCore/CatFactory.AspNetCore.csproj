@@ -2,14 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>1.0.0-beta-sun-build38</Version>
+    <Version>1.0.0-beta-sun-build39</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
     <Description>CatFactory Package to scaffold ASP.NET Core</Description>
-    <PackageReleaseNotes>1.0.0-beta-sun-build38 Version:
+    <PackageReleaseNotes>1.0.0-beta-sun-build39 Version:
 
-* Split requests to create and update an entity
-* Remove ToRequest extension method
+* Add support for Fluent Validation
 
 Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory
 </PackageReleaseNotes>

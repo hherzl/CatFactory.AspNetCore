@@ -104,8 +104,20 @@ namespace CatFactory.AspNetCore
                 string.Empty,
 
                 "3. Register logger instance for your controllers in ConfigureServices method (Startup class):",
-                string.Format(" services.AddScoped<ILogger<DboController>, Logger<DboController>>();"),
+                string.Format(" services.AddScoped<ILogger<DboController>, Logger<DboController>>();")
+            };
 
+            if (FluentValidationExtensions.Used)
+            {
+                lines.AddRange(new List<string>
+                {
+                    string.Empty,
+                    "You have been enabled Fluent Validation for your project, you can read more information on:",
+                    "https://fluentvalidation.net/aspnet"
+                });
+            }
+
+            lines.AddRange(new List<string> {
                 string.Empty,
                 "Happy scaffolding!",
                 string.Empty,
@@ -117,7 +129,7 @@ namespace CatFactory.AspNetCore
                 "https://github.com/hherzl/CatFactory.AspNetCore",
                 string.Empty,
                 "CatFactory Development Team ==^^=="
-            };
+            });
 
             File.WriteAllText(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.txt"), lines.ToStringBuilder().ToString());
         }

@@ -31,6 +31,8 @@ namespace CatFactory.AspNetCore
             set => m_actions = value;
         }
 
+        public bool UseDataAnnotationsToValidateRequestModels { get; set; } = true;
+
         public ValidationResult Validate()
         {
             // todo: Add this implementation

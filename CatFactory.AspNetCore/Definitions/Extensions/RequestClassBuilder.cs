@@ -24,19 +24,21 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Name = project.GetPostRequestName(table)
             };
 
-            var selection = project.EntityFrameworkCoreProject.GetSelection(table);
+            var efCoreSelection = project.EntityFrameworkCoreProject.GetSelection(table);
 
             var exclusions = new List<string>
             {
-                selection.Settings.ConcurrencyToken,
-                selection.Settings.AuditEntity.CreationUserColumnName,
-                selection.Settings.AuditEntity.CreationDateTimeColumnName,
-                selection.Settings.AuditEntity.LastUpdateUserColumnName,
-                selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
+                efCoreSelection.Settings.ConcurrencyToken,
+                efCoreSelection.Settings.AuditEntity.CreationUserColumnName,
+                efCoreSelection.Settings.AuditEntity.CreationDateTimeColumnName,
+                efCoreSelection.Settings.AuditEntity.LastUpdateUserColumnName,
+                efCoreSelection.Settings.AuditEntity.LastUpdateDateTimeColumnName
             };
 
             if (table.Identity != null)
                 exclusions.Add(table.Identity.Name);
+
+            var aspNetCoreSelection = project.GetSelection(table);
 
             foreach (var column in table.Columns.Where(item => !exclusions.Contains(item.Name)).ToList())
             {
@@ -48,14 +50,17 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     IsAutomatic = true
                 };
 
-                if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
-                    property.Attributes.Add(new MetadataAttribute("Key"));
+                if (aspNetCoreSelection.Settings.UseDataAnnotationsToValidateRequestModels)
+                {
+                    if (table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() == column.Name)
+                        property.Attributes.Add(new MetadataAttribute("Key"));
 
-                if (!column.Nullable && table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() != column.Name)
-                    property.Attributes.Add(new MetadataAttribute("Required"));
+                    if (!column.Nullable && table.PrimaryKey?.Key.Count > 0 && table.PrimaryKey?.Key.First() != column.Name)
+                        property.Attributes.Add(new MetadataAttribute("Required"));
 
-                if (project.Database.ColumnIsString(column) && column.Length > 0)
-                    property.Attributes.Add(new MetadataAttribute("StringLength", column.Length.ToString()));
+                    if (project.Database.ColumnIsString(column) && column.Length > 0)
+                        property.Attributes.Add(new MetadataAttribute("StringLength", column.Length.ToString()));
+                }
 
                 definition.Properties.Add(property);
             }
