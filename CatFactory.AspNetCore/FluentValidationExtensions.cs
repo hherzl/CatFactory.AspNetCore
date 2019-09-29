@@ -29,7 +29,7 @@ namespace CatFactory.AspNetCore
 
             foreach (var table in project.Database.Tables)
             {
-                var postValidatorClassDefinition = project.GetPostValidatorClassDefinition(table);
+                var postValidatorClassDefinition = project.GetPutValidatorClassDefinition(table);
 
                 project.Scaffold(postValidatorClassDefinition, project.OutputDirectory, string.Format("{0}\\{1}", project.AspNetCoreProjectNamespaces.Requests, "Validators"));
             }
