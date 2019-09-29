@@ -7,8 +7,11 @@ namespace CatFactory.AspNetCore
     {
         public static bool Used = false;
 
-        public static string GetValidatorName(this AspNetCoreProject project, ITable table)
+        public static string GetPostValidatorName(this AspNetCoreProject project, ITable table)
             => string.Format("{0}Validator", project.GetPostRequestName(table));
+
+        public static string GetPutValidatorName(this AspNetCoreProject project, ITable table)
+            => string.Format("{0}Validator", project.GetPutRequestName(table));
 
         public static string GetValidatorsNamespace(this AspNetCoreProject project)
             => string.Format("{0}.{1}.{2}", project.Name, project.AspNetCoreProjectNamespaces.Requests, "Validators");
@@ -19,9 +22,16 @@ namespace CatFactory.AspNetCore
 
             foreach (var table in project.Database.Tables)
             {
-                var validatorClassDefinition = project.GetValidatorClassDefinition(table);
+                var postValidatorClassDefinition = project.GetPostValidatorClassDefinition(table);
 
-                project.Scaffold(validatorClassDefinition, project.OutputDirectory, string.Format("{0}\\{1}", project.AspNetCoreProjectNamespaces.Requests, "Validators"));
+                project.Scaffold(postValidatorClassDefinition, project.OutputDirectory, string.Format("{0}\\{1}", project.AspNetCoreProjectNamespaces.Requests, "Validators"));
+            }
+
+            foreach (var table in project.Database.Tables)
+            {
+                var postValidatorClassDefinition = project.GetPostValidatorClassDefinition(table);
+
+                project.Scaffold(postValidatorClassDefinition, project.OutputDirectory, string.Format("{0}\\{1}", project.AspNetCoreProjectNamespaces.Requests, "Validators"));
             }
 
             return project;
