@@ -178,7 +178,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
                 if (parentTable.PrimaryKey?.Key.Count == 1)
                 {
-                    var column = table.GetColumnsFromConstraint(foreignKey).First();
+                    var column = (Column)table.GetColumnsFromConstraint(foreignKey).First();
 
                     parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), aspNetCoreProject.CodeNamingConvention.GetParameterName(column.Name), "null"));
 
@@ -349,7 +349,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 if (table.PrimaryKey.Key.Count == 1)
                 {
-                    var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
+                    var column = (Column)table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
                     parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), "id"));
                 }
@@ -670,7 +670,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (table.PrimaryKey?.Key.Count == 1)
             {
-                var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
+                var column = (Column)table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
                 parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), "id"));
             }
@@ -791,7 +791,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (table.PrimaryKey.Key.Count == 1)
             {
-                var column = table.GetColumnsFromConstraint(table.PrimaryKey).First();
+                var column = (Column)table.GetColumnsFromConstraint(table.PrimaryKey).First();
 
                 parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), "id"));
             }
