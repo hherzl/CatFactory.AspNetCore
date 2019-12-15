@@ -49,10 +49,6 @@ There will be a lot of improvements for CatFactory on road:
 
 ## Concepts behind CatFactory
 
-### Database Type Map
-
-## Concepts behind CatFactory
-
     Database Type
     Project Selection
     Event Handlers to Scaffold
