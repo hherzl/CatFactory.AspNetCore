@@ -35,17 +35,6 @@ Also these technologies are supported:
 + [`Entity Framework Core`](https://github.com/hherzl/CatFactory.EntityFrameworkCore)
 + [`Dapper`](https://github.com/hherzl/CatFactory.Dapper)
 
-## Database Objects
-
-|Object|Supported|
-|------|---------|
-|Table|Yes|
-|View|Yes|
-|Scalar Function|Yes|
-|Table Function|Yes|
-|Stored Procedures|Yes|
-|Sequences|Not yet|
-
 ## Roadmap
 
 There will be a lot of improvements for CatFactory on road:
