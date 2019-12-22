@@ -1,4 +1,5 @@
-﻿using CatFactory.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using CatFactory.EntityFrameworkCore;
 using CatFactory.ObjectRelationalMapping.Actions;
 using CatFactory.SqlServer;
 using Xunit;
@@ -8,19 +9,15 @@ namespace CatFactory.AspNetCore.Tests
     public class ScaffoldingTests
     {
         [Fact]
-        public void TestScaffoldingWebApiFromOnlineStoreDatabase()
+        public async Task ScaffoldingWebApiFromOnlineStoreDatabaseAsync()
         {
             // Import database
-            var database = SqlServerDatabaseFactory
-                .Import("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
+            var database = await SqlServerDatabaseFactory
+                .ImportAsync("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
-            var entityFrameworkProject = new EntityFrameworkCoreProject
-            {
-                Name = "OnlineStore.Core",
-                Database = database,
-                OutputDirectory = @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core"
-            };
+            var entityFrameworkProject = EntityFrameworkCoreProject
+                .Create("OnlineStore.Core", database, @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core");
 
             // Apply settings for project
             entityFrameworkProject.GlobalSelection(settings =>
@@ -65,19 +62,15 @@ namespace CatFactory.AspNetCore.Tests
         }
 
         [Fact]
-        public void TestScaffoldingWebApiWithFluentValidationFromOnlineStoreDatabase()
+        public async Task ScaffoldingWebApiWithFluentValidationFromOnlineStoreDatabaseAsync()
         {
             // Import database
-            var database = SqlServerDatabaseFactory
-                .Import("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
+            var database = await SqlServerDatabaseFactory
+                .ImportAsync("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
-            var entityFrameworkProject = new EntityFrameworkCoreProject
-            {
-                Name = "OnlineStore.Core",
-                Database = database,
-                OutputDirectory = @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core"
-            };
+            var entityFrameworkProject = EntityFrameworkCoreProject
+                .Create("OnlineStore.Core", database, @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core");
 
             // Apply settings for project
             entityFrameworkProject.GlobalSelection(settings =>
@@ -129,19 +122,15 @@ namespace CatFactory.AspNetCore.Tests
         }
 
         [Fact]
-        public void TestScaffoldingWebApiFromNorthwindDatabase()
+        public async Task ScaffoldingWebApiFromNorthwindDatabaseAsync()
         {
             // Import database
-            var database = SqlServerDatabaseFactory
-                .Import("server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
+            var database = await SqlServerDatabaseFactory
+                .ImportAsync("server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
-            var entityFrameworkProject = new EntityFrameworkCoreProject
-            {
-                Name = "Northwind.Core",
-                Database = database,
-                OutputDirectory = @"C:\Temp\CatFactory.AspNetCore\Northwind.Core"
-            };
+            var entityFrameworkProject = EntityFrameworkCoreProject
+                .Create("Northwind.Core", database, @"C:\Temp\CatFactory.AspNetCore\Northwind.Core");
 
             // Apply settings for project
             entityFrameworkProject.GlobalSelection(settings =>
