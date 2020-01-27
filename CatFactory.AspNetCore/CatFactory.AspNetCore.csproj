@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>1.0.0-beta-sun-build50</Version>
+    <Version>1.0.0-beta-sun-build51</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
     <Description>CatFactory Package to scaffold ASP.NET Core</Description>
-    <PackageReleaseNotes>1.0.0-beta-sun-build50 Version:
+    <PackageReleaseNotes>1.0.0-beta-sun-build51 Version:
 
 * Core package update
 
@@ -20,7 +20,7 @@ Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-w
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build44" />
+    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build45" />
   </ItemGroup>
 
 </Project>
