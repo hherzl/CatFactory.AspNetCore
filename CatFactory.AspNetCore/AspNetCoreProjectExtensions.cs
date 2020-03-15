@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using CatFactory.AspNetCore.Definitions.Extensions;
-using CatFactory.Collections;
 using CatFactory.EntityFrameworkCore;
+using CatFactory.Markdown;
 using CatFactory.NetCore.ObjectOrientedProgramming;
 
 namespace CatFactory.AspNetCore
@@ -21,7 +21,7 @@ namespace CatFactory.AspNetCore
                 aspNetCoreProject.Scaffold(feature.GetControllerClassDefinition(), aspNetCoreProject.OutputDirectory, aspNetCoreProject.AspNetCoreProjectNamespaces.Controllers);
             }
 
-            aspNetCoreProject.ScaffoldReadMe();
+            aspNetCoreProject.ScaffoldMdReadMe();
 
             return aspNetCoreProject;
         }
@@ -30,6 +30,10 @@ namespace CatFactory.AspNetCore
         {
             foreach (var table in project.Database.Tables)
             {
+                var getRequestClassDefinition = project.GetGetRequestClassDefinition(table);
+
+                project.Scaffold(getRequestClassDefinition, project.OutputDirectory, project.AspNetCoreProjectNamespaces.Requests);
+
                 var postRequestClassDefinition = project.GetPostRequestClassDefinition(table);
 
                 project.Scaffold(postRequestClassDefinition, project.OutputDirectory, project.AspNetCoreProjectNamespaces.Requests);
@@ -84,54 +88,60 @@ namespace CatFactory.AspNetCore
             project.Scaffold(project.GetResponsesExtensionsClassDefinition(), project.OutputDirectory, project.AspNetCoreProjectNamespaces.Responses);
         }
 
-        internal static void ScaffoldReadMe(this AspNetCoreProject project)
+        internal static void ScaffoldMdReadMe(this AspNetCoreProject project)
         {
-            var lines = new List<string>
-            {
-                "CatFactory: Scaffolding Made Easy",
-                string.Empty,
+            var readMe = new MdDocument();
 
-                "How to use this code:",
-                string.Empty,
+            readMe.H1("CatFactory ==^^==: Scaffolding Made Easy");
 
-                "1. Install EntityFrameworkCore.SqlServer package",
-                string.Empty,
+            readMe.WriteLine("How to use this code on your ASP.NET Core Application:");
 
-                "2. Register your DbContext and repositories in ConfigureServices method (Startup class):",
-                string.Format(" services.AddDbContext<{0}>(options => options.UseSqlServer(Configuration[\"ConnectionString\"]));", project.EntityFrameworkCoreProject.GetDbContextName(project.Database)),
+            readMe.OrderedList(
+                "Install EntityFrameworkCore.SqlServer package",
+                "Register the DbContext and Repositories in ConfigureServices method (Startup class)"
+                );
 
-                " services.AddScoped<IDboRepository, DboRepository>();",
-                string.Empty,
+            readMe.H2("Install package");
 
-                "3. Register logger instance for your controllers in ConfigureServices method (Startup class):",
-                string.Format(" services.AddScoped<ILogger<DboController>, Logger<DboController>>();")
-            };
+            readMe.WriteLine("You can install the NuGet packages in Visual Studio or Windows Command Line, for more info:");
+
+            readMe.WriteLine(
+                Md.Link("Install and manage packages with the Package Manager Console in Visual Studio (PowerShell)", "https://docs.microsoft.com/en-us/nuget/consume-packages/install-use-packages-powershell")
+                );
+
+            readMe.WriteLine(
+                Md.Link(".NET Core CLI", "https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-add-package")
+                );
+
+            readMe.H2("Register DbContext and Repositories");
+
+            readMe.WriteLine("Add the following code lines in {0} method (Startup class):", Md.Bold("ConfigureServices"));
+            readMe.WriteLine("  services.AddDbContext<{0}>(options => options.UseSqlServer(\"ConnectionString\"));", project.EntityFrameworkCoreProject.GetDbContextName(project.Database));
+            readMe.WriteLine("  services.AddScope<{0}, {1}>()", "IDboRepository", "DboRepository");
+
+            readMe.H2("Register Loggers");
+
+            readMe.WriteLine("Add the following code lines in {0} method (Startup class):");
+            readMe.WriteLine("  services.AddScoped<ILogger<DboController>, Logger<DboController>>();");
 
             if (FluentValidationExtensions.Used)
             {
-                lines.AddRange(new List<string>
-                {
-                    string.Empty,
-                    "You have been enabled Fluent Validation for your project, you can read more information on:",
-                    "https://fluentvalidation.net/aspnet"
-                });
+                readMe.WriteLine("You have been enabled Fluent Validation for your project, read more information on {0}.", Md.Link("This link", "https://fluentvalidation.net/aspnet"));
             }
 
-            lines.AddRange(new List<string> {
-                string.Empty,
-                "Happy scaffolding!",
-                string.Empty,
+            readMe.WriteLine("Happy scaffolding!");
 
-                "You can check the guide for this package in:",
-                "https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory",
-                string.Empty,
-                "Also you can check source code on GitHub:",
-                "https://github.com/hherzl/CatFactory.AspNetCore",
-                string.Empty,
-                "CatFactory Development Team ==^^=="
-            });
+            var codeProjectLink = Md.Link("Scaffolding ASP.NET Core with CatFactory", "https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory");
 
-            File.WriteAllText(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.txt"), lines.ToStringBuilder().ToString());
+            readMe.WriteLine("You can check the guide for this package in: {0}", codeProjectLink);
+
+            var gitHubRepositoryLink = Md.Link("GitHub repository", "https://github.com/hherzl/CatFactory.AspNetCore");
+
+            readMe.WriteLine("Also you can check the source code on {0}", gitHubRepositoryLink);
+
+            readMe.WriteLine("CatFactory Development Team ==^^==");
+
+            File.WriteAllText(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.MD"), readMe.ToString());
         }
     }
 }

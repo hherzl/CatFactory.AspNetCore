@@ -9,6 +9,7 @@
     <PackageReleaseNotes>1.0.0-beta-sun-build51 Version:
 
 * Core package update
+* Addition of MD read me file
 
 Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory
 </PackageReleaseNotes>
@@ -20,7 +21,7 @@ Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-w
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build45" />
+    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build46" />
   </ItemGroup>
 
 </Project>

@@ -29,6 +29,9 @@ namespace CatFactory.AspNetCore
         public static string GetControllerDeleteAsyncMethodName(this AspNetCoreProject project, ITable table)
             => string.Format("{0}{1}{2}", "Delete", project.EntityFrameworkCoreProject.GetEntityName(table), "Async");
 
+        public static string GetGetRequestName(this AspNetCoreProject project, ITable table)
+            => string.Format("Get{0}Request", project.EntityFrameworkCoreProject.GetPluralName(table));
+
         public static string GetPostRequestName(this AspNetCoreProject project, ITable table)
             => string.Format("Post{0}Request", project.EntityFrameworkCoreProject.GetEntityName(table));
 

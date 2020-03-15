@@ -163,8 +163,13 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             var parameters = new List<ParameterDefinition>
             {
-                new ParameterDefinition("int?", "pageSize", "10"),
-                new ParameterDefinition("int?", "pageNumber", "1")
+                new ParameterDefinition(aspNetCoreProject.GetGetRequestName(table), "request")
+                {
+                    Attributes =
+                    {
+                        new MetadataAttribute("FromQuery")
+                    }
+                }
             };
 
             var foreignKeys = new List<string>();
@@ -180,9 +185,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     var column = (Column)table.GetColumnsFromConstraint(foreignKey).First();
 
-                    parameters.Add(new ParameterDefinition(projectFeature.Project.Database.ResolveDatabaseType(column), aspNetCoreProject.CodeNamingConvention.GetParameterName(column.Name), "null"));
-
-                    foreignKeys.Add(aspNetCoreProject.CodeNamingConvention.GetParameterName(column.Name));
+                    foreignKeys.Add(string.Format("request.{0}", aspNetCoreProject.CodeNamingConvention.GetPropertyName(column.Name)));
                 }
                 else
                 {
@@ -202,8 +205,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             if (aspNetCoreSelection.Settings.UseLogger)
             {
                 lines.Add(new CommentLine(1, " Set paging's information"));
-                lines.Add(new CodeLine(1, "response.PageSize = (int)pageSize;"));
-                lines.Add(new CodeLine(1, "response.PageNumber = (int)pageNumber;"));
+                lines.Add(new CodeLine(1, "response.PageSize = (int)request.PageSize;"));
+                lines.Add(new CodeLine(1, "response.PageNumber = (int)request.PageNumber;"));
                 lines.Add(new CodeLine(1, "response.ItemsCount = await query.CountAsync();"));
                 lines.Add(new CodeLine());
 
@@ -247,23 +250,23 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             };
         }
 
-        private static MethodDefinition GetGetAllMethod(ProjectFeature<AspNetCoreProjectSettings> projectFeature, CSharpClassDefinition definition, IView table)
+        private static MethodDefinition GetGetAllMethod(ProjectFeature<AspNetCoreProjectSettings> projectFeature, CSharpClassDefinition definition, IView view)
         {
-            if (projectFeature.Project.Database.HasDefaultSchema(table))
+            if (projectFeature.Project.Database.HasDefaultSchema(view))
                 definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetEntityLayerNamespace());
             else
-                definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetEntityLayerNamespace(table.Schema));
+                definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetEntityLayerNamespace(view.Schema));
 
             var lines = new List<ILine>();
 
             var aspNetCoreProject = projectFeature.GetAspNetCoreProject();
-            var aspNetCoreSelection = aspNetCoreProject.GetSelection(table);
+            var aspNetCoreSelection = aspNetCoreProject.GetSelection(view);
             var efCoreProject = aspNetCoreProject.EntityFrameworkCoreProject;
-            var efCoreSelection = efCoreProject.GetSelection(table);
+            var efCoreSelection = efCoreProject.GetSelection(view);
 
             if (aspNetCoreSelection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", aspNetCoreProject.GetControllerGetAllAsyncMethodName(table)));
+                lines.Add(new CodeLine("Logger?.LogDebug(\"'{{0}}' has been invoked\", nameof({0}));", aspNetCoreProject.GetControllerGetAllAsyncMethodName(view)));
                 lines.Add(new CodeLine());
             }
 
@@ -271,11 +274,11 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
             {
                 definition.Namespaces.AddUnique(projectFeature.GetAspNetCoreProject().GetDataLayerDataContractsNamespace());
 
-                lines.Add(new CodeLine("var response = new PagedResponse<{0}>();", aspNetCoreProject.EntityFrameworkCoreProject.GetDataContractName(table)));
+                lines.Add(new CodeLine("var response = new PagedResponse<{0}>();", aspNetCoreProject.EntityFrameworkCoreProject.GetDataContractName(view)));
             }
             else
             {
-                lines.Add(new CodeLine("var response = new PagedResponse<{0}>();", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table)));
+                lines.Add(new CodeLine("var response = new PagedResponse<{0}>();", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(view)));
             }
 
             lines.Add(new CodeLine());
@@ -285,7 +288,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CommentLine(1, " Get query from repository"));
 
-            lines.Add(new CodeLine(1, "var query = Repository.{0}();", aspNetCoreProject.EntityFrameworkCoreProject.GetGetAllRepositoryMethodName(table)));
+            lines.Add(new CodeLine(1, "var query = Repository.{0}();", aspNetCoreProject.EntityFrameworkCoreProject.GetGetAllRepositoryMethodName(view)));
 
             lines.Add(new CodeLine());
 
@@ -310,7 +313,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             if (aspNetCoreSelection.Settings.UseLogger)
             {
-                lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", aspNetCoreProject.GetControllerGetAllAsyncMethodName(table)));
+                lines.Add(new CodeLine(1, "response.SetError(Logger, nameof({0}), ex);", aspNetCoreProject.GetControllerGetAllAsyncMethodName(view)));
             }
             else
             {
@@ -327,11 +330,11 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 AccessModifier = AccessModifier.Public,
                 Attributes =
                 {
-                    new MetadataAttribute("HttpGet", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
+                    new MetadataAttribute("HttpGet", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(view))),
                 },
                 IsAsync = true,
                 Type = "Task<IActionResult>",
-                Name = aspNetCoreProject.GetControllerGetAllAsyncMethodName(table),
+                Name = aspNetCoreProject.GetControllerGetAllAsyncMethodName(view),
                 Parameters =
                 {
                     new ParameterDefinition("int?", "pageSize", "10"),
