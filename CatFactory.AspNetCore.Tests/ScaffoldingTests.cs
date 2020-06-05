@@ -9,7 +9,7 @@ namespace CatFactory.AspNetCore.Tests
     public class ScaffoldingTests
     {
         [Fact]
-        public async Task ScaffoldingWebApiFromOnlineStoreDatabaseAsync()
+        public async Task ScaffoldingAPIFromOnlineStoreDatabaseAsync()
         {
             // Import database
             var database = await SqlServerDatabaseFactory
@@ -17,7 +17,7 @@ namespace CatFactory.AspNetCore.Tests
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = EntityFrameworkCoreProject
-                .Create("OnlineStore.Core", database, @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core");
+                .CreateForV2x("OnlineStore.Core", database, @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core");
 
             // Apply settings for project
             entityFrameworkProject.GlobalSelection(settings =>
@@ -62,7 +62,7 @@ namespace CatFactory.AspNetCore.Tests
         }
 
         [Fact]
-        public async Task ScaffoldingWebApiWithFluentValidationFromOnlineStoreDatabaseAsync()
+        public async Task ScaffoldingAPIWithFluentValidationFromOnlineStoreDatabaseAsync()
         {
             // Import database
             var database = await SqlServerDatabaseFactory
@@ -70,7 +70,7 @@ namespace CatFactory.AspNetCore.Tests
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = EntityFrameworkCoreProject
-                .Create("OnlineStore.Core", database, @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core");
+                .CreateForV2x("OnlineStore.Core", database, @"C:\Temp\CatFactory.AspNetCore\OnlineStore.Core");
 
             // Apply settings for project
             entityFrameworkProject.GlobalSelection(settings =>
@@ -122,7 +122,7 @@ namespace CatFactory.AspNetCore.Tests
         }
 
         [Fact]
-        public async Task ScaffoldingWebApiFromNorthwindDatabaseAsync()
+        public async Task ScaffoldingAPIFromNorthwindDatabaseAsync()
         {
             // Import database
             var database = await SqlServerDatabaseFactory
@@ -130,7 +130,7 @@ namespace CatFactory.AspNetCore.Tests
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = EntityFrameworkCoreProject
-                .Create("Northwind.Core", database, @"C:\Temp\CatFactory.AspNetCore\Northwind.Core");
+                .CreateForV2x("Northwind.Core", database, @"C:\Temp\CatFactory.AspNetCore\Northwind.Core");
 
             // Apply settings for project
             entityFrameworkProject.GlobalSelection(settings =>
