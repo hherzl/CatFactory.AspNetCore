@@ -22,16 +22,17 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                         Constraint = "TModel : class"
                     }
                 },
+                BaseClass = "Response",
                 Implements =
                 {
                     "ISingleResponse<TModel>"
                 },
                 Properties =
                 {
-                    new PropertyDefinition(AccessModifier.Public, "string", "Message") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "bool", "DidError") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "string", "ErrorMessage") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "TModel", "Model") { IsAutomatic = true }
+                    new PropertyDefinition(AccessModifier.Public, "TModel", "Model")
+                    {
+                        IsAutomatic = true
+                    }
                 }
             };
     }

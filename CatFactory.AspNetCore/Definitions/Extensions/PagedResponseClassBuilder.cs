@@ -24,19 +24,29 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                         Constraint = "TModel : class"
                     }
                 },
+                BaseClass = "Response",
                 Implements =
                 {
                     "IListResponse<TModel>"
                 },
                 Properties =
                 {
-                    new PropertyDefinition(AccessModifier.Public, "string", "Message") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "bool", "DidError") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "string", "ErrorMessage") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "IEnumerable<TModel>", "Model") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "int", "PageSize") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "int", "PageNumber") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "int", "ItemsCount") { IsAutomatic = true },
+                    new PropertyDefinition(AccessModifier.Public, "IEnumerable<TModel>", "Model")
+                    {
+                        IsAutomatic = true
+                    },
+                    new PropertyDefinition(AccessModifier.Public, "int", "PageSize")
+                    {
+                        IsAutomatic = true
+                    },
+                    new PropertyDefinition(AccessModifier.Public, "int", "PageNumber")
+                    {
+                        IsAutomatic = true
+                    },
+                    new PropertyDefinition(AccessModifier.Public, "int", "ItemsCount")
+                    {
+                        IsAutomatic = true
+                    },
                     new PropertyDefinition(AccessModifier.Public, "double", "PageCount")
                     {
                         IsReadOnly = true,
