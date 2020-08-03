@@ -2,10 +2,10 @@
 
 namespace CatFactory.AspNetCore.Definitions.Extensions
 {
-    public static class ListResponseClassBuilder
+    public static class PostResponseClassBuilder
     {
-        public static ListResponseClassDefinition GetListResponseClassDefinition(this AspNetCoreProject project)
-            => new ListResponseClassDefinition
+        public static PostResponseClassDefinition GetPostResponseClassDefinition(this AspNetCoreProject project)
+            => new PostResponseClassDefinition
             {
                 Namespaces =
                 {
@@ -14,23 +14,15 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Namespace = project.GetResponsesNamespace(),
                 AccessModifier = AccessModifier.Public,
-                Name = "ListResponse",
-                GenericTypes =
-                {
-                    new GenericTypeDefinition
-                    {
-                        Name = "TModel",
-                        Constraint = "TModel : class"
-                    }
-                },
+                Name = "PostResponse",
                 BaseClass = "Response",
                 Implements =
                 {
-                    "IListResponse<TModel>"
+                    "IPostResponse"
                 },
                 Properties =
                 {
-                    new PropertyDefinition(AccessModifier.Public, "IEnumerable<TModel>", "Model")
+                    new PropertyDefinition(AccessModifier.Public, "object", "Id")
                     {
                         IsAutomatic = true
                     }

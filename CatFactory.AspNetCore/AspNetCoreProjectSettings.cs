@@ -9,7 +9,8 @@ namespace CatFactory.AspNetCore
 {
     public class AspNetCoreProjectSettings : IProjectSettings
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private List<IEntityAction> m_actions;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private List<IEntityAction> m_actions;
 
         public AspNetCoreProjectSettings()
         {

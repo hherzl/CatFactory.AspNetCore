@@ -59,9 +59,10 @@ namespace CatFactory.AspNetCore
             var interfaces = new List<CSharpInterfaceDefinition>
             {
                 project.GetResponseInterfaceDefinition(),
-                project.GetSingleResponseInterfaceDefinition(),
                 project.GetListResponseInterfaceDefinition(),
-                project.GetPagedResponseInterfaceDefinition()
+                project.GetPagedResponseInterfaceDefinition(),
+                project.GetSingleResponseInterfaceDefinition(),
+                project.GetPostResponseInterfaceDefinition()
             };
 
             foreach (var definition in interfaces)
@@ -72,9 +73,10 @@ namespace CatFactory.AspNetCore
             var classes = new List<CSharpClassDefinition>
             {
                 project.GetResponseClassDefinition(),
-                project.GetSingleResponseClassDefinition(),
                 project.GetListResponseClassDefinition(),
-                project.GetPagedResponseClassDefinition()
+                project.GetPagedResponseClassDefinition(),
+                project.GetSingleResponseClassDefinition(),
+                project.GetPostResponseClassDefinition(),
             };
 
             foreach (var definition in classes)
@@ -125,9 +127,7 @@ namespace CatFactory.AspNetCore
             readMe.WriteLine("  services.AddScoped<ILogger<DboController>, Logger<DboController>>();");
 
             if (FluentValidationExtensions.Used)
-            {
                 readMe.WriteLine("You have been enabled Fluent Validation for your project, read more information on {0}.", Md.Link("This link", "https://fluentvalidation.net/aspnet"));
-            }
 
             readMe.WriteLine("Happy scaffolding!");
 

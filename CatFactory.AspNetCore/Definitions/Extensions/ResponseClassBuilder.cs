@@ -20,9 +20,18 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Properties =
                 {
-                    new PropertyDefinition(AccessModifier.Public, "string", "Message") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "bool", "DidError") { IsAutomatic = true },
-                    new PropertyDefinition(AccessModifier.Public, "string", "ErrorMessage") { IsAutomatic = true }
+                    new PropertyDefinition(AccessModifier.Public, "string", "Message")
+                    {
+                        IsAutomatic = true
+                    },
+                    new PropertyDefinition(AccessModifier.Public, "bool", "DidError")
+                    {
+                        IsAutomatic = true
+                    },
+                    new PropertyDefinition(AccessModifier.Public, "string", "ErrorMessage")
+                    {
+                        IsAutomatic = true
+                    }
                 }
             };
     }

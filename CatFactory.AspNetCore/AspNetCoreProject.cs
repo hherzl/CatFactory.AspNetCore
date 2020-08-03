@@ -14,7 +14,8 @@ namespace CatFactory.AspNetCore
 {
     public class AspNetCoreProject : CSharpProject<AspNetCoreProjectSettings>
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private AspNetCoreProjectNamespaces m_aspNetCoreProjectNamespaces;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private AspNetCoreProjectNamespaces m_aspNetCoreProjectNamespaces;
 
         public AspNetCoreProject()
             : base()
@@ -26,7 +27,9 @@ namespace CatFactory.AspNetCore
         {
         }
 
-        public string Version { get; set; }
+        public AspNetCoreVersion Version { get; set; }
+
+        public string ApiVersion { get; set; }
 
         public EntityFrameworkCoreProject EntityFrameworkCoreProject { get; set; }
 

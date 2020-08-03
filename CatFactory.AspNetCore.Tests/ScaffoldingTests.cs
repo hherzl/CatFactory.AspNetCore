@@ -44,7 +44,7 @@ namespace CatFactory.AspNetCore.Tests
                 .ScaffoldDataLayer();
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("OnlineStore.WebAPI", @"C:\Temp\CatFactory.AspNetCore\OnlineStore.WebAPI");
+                .CreateAspNetCore2xProject("OnlineStore.WebAPI", @"C:\Temp\CatFactory.AspNetCore\OnlineStore.WebAPI");
 
             aspNetCoreProject.GlobalSelection(settings => settings.ForceOverwrite = true);
 
@@ -94,10 +94,11 @@ namespace CatFactory.AspNetCore.Tests
             // Scaffolding =^^=
             entityFrameworkProject
                 .ScaffoldEntityLayer()
-                .ScaffoldDataLayer();
+                .ScaffoldDataLayer()
+                ;
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("OnlineStoreWithFluentValidation.WebAPI", @"C:\Temp\CatFactory.AspNetCore\OnlineStoreWithFluentValidation.WebAPI");
+                .CreateAspNetCore2xProject("OnlineStoreWithFluentValidation.WebAPI", @"C:\Temp\CatFactory.AspNetCore\OnlineStoreWithFluentValidation.WebAPI");
 
             aspNetCoreProject.GlobalSelection(settings =>
             {
@@ -154,10 +155,11 @@ namespace CatFactory.AspNetCore.Tests
             // Scaffolding =^^=
             entityFrameworkProject
                 .ScaffoldEntityLayer()
-                .ScaffoldDataLayer();
+                .ScaffoldDataLayer()
+                ;
 
             var aspNetCoreProject = entityFrameworkProject
-                .CreateAspNetCoreProject("Northwind.WebAPI", @"C:\Temp\CatFactory.AspNetCore\Northwind.WebAPI");
+                .CreateAspNetCore2xProject("Northwind.WebAPI", @"C:\Temp\CatFactory.AspNetCore\Northwind.WebAPI");
 
             aspNetCoreProject.GlobalSelection(settings => settings.ForceOverwrite = true);
 
