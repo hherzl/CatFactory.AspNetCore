@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>1.0.0-beta-sun-build53</Version>
+    <Version>1.0.0-beta-sun-build54</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
-    <Description>Scaffold ASP.NET Core Controllers</Description>
-    <PackageReleaseNotes>1.0.0-beta-sun-build53 Version:
+    <Description>CatFactory package for ASP.NET Core</Description>
+    <PackageReleaseNotes>1.0.0-beta-sun-build54 Version:
 
-Add specific responses for POST HTTP verb
+ Core package update
 
 Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory
 </PackageReleaseNotes>
@@ -20,7 +20,7 @@ Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-w
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build48" />
+    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build49" />
   </ItemGroup>
 
 </Project>
