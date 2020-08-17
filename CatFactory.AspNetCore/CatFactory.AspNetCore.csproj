@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>1.0.0-beta-sun-build54</Version>
+    <Version>1.0.0-beta-sun-build55</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
     <Description>CatFactory package for ASP.NET Core</Description>
-    <PackageReleaseNotes>1.0.0-beta-sun-build54 Version:
+    <PackageReleaseNotes>1.0.0-beta-sun-build55 Version:
 
- Core package update
+Addition of metadata for controller methods
 
 Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory
 </PackageReleaseNotes>
@@ -20,7 +20,7 @@ Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-w
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build49" />
+    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build50" />
   </ItemGroup>
 
 </Project>

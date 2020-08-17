@@ -242,6 +242,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
+                    new MetadataAttribute("ProducesResponseType", string.Format("typeof(IPagedResponse<{0}>)", efCoreSelection.Settings.EntitiesWithDataContracts ? aspNetCoreProject.EntityFrameworkCoreProject.GetDataContractName(table) : aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table)), "200"),
+                    new MetadataAttribute("ProducesResponseType", "500")
                 },
                 IsAsync = true,
                 Type = "Task<IActionResult>",
@@ -332,6 +334,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(view))),
+                    new MetadataAttribute("ProducesResponseType", string.Format("typeof(IPagedResponse<{0}>)", efCoreSelection.Settings.EntitiesWithDataContracts ? aspNetCoreProject.EntityFrameworkCoreProject.GetDataContractName(view) : aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(view)), "200"),
+                    new MetadataAttribute("ProducesResponseType", "500")
                 },
                 IsAsync = true,
                 Type = "Task<IActionResult>",
@@ -464,6 +468,10 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}/{1}\"", efCoreProject.GetEntityName(table), "{id}")),
+                    new MetadataAttribute("ProducesResponseType", $"typeof(ISingleResponse<{aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table)}>)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "400"),
+                    new MetadataAttribute("ProducesResponseType", "404"),
+                    new MetadataAttribute("ProducesResponseType", "500")
                 },
                 AccessModifier = AccessModifier.Public,
                 IsAsync = true,
@@ -550,6 +558,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpPost", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
+                    new MetadataAttribute("ProducesResponseType", $"typeof(IPostResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "400"),
+                    new MetadataAttribute("ProducesResponseType", "500")
                 },
                 AccessModifier = AccessModifier.Public,
                 IsAsync = true,
@@ -693,6 +704,10 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpPut", string.Format("\"{0}/{{id}}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
+                    new MetadataAttribute("ProducesResponseType", "typeof(IResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "400"),
+                    new MetadataAttribute("ProducesResponseType", "404"),
+                    new MetadataAttribute("ProducesResponseType", "500")
                 },
                 AccessModifier = AccessModifier.Public,
                 IsAsync = true,
@@ -812,6 +827,10 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpDelete", string.Format("\"{0}/{{id}}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
+                    new MetadataAttribute("ProducesResponseType", "typeof(IResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "400"),
+                    new MetadataAttribute("ProducesResponseType", "404"),
+                    new MetadataAttribute("ProducesResponseType", "500")
                 },
                 AccessModifier = AccessModifier.Public,
                 IsAsync = true,

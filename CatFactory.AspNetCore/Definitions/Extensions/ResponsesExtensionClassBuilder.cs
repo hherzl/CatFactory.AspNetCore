@@ -37,7 +37,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 }
             });
 
-            definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResult", new ParameterDefinition("IResponse", "response"))
+            definition.Methods.Add(new MethodDefinition("IActionResult", "ToHttpResult", new ParameterDefinition("IResponse", "response"))
             {
                 AccessModifier = AccessModifier.Public,
                 IsStatic = true,
@@ -56,7 +56,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 }
             });
 
-            definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResult", new ParameterDefinition("IListResponse<TModel>", "response"))
+            definition.Methods.Add(new MethodDefinition("IActionResult", "ToHttpResult", new ParameterDefinition("IListResponse<TModel>", "response"))
             {
                 AccessModifier = AccessModifier.Public,
                 IsStatic = true,
@@ -86,7 +86,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 }
             });
 
-            definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResult", new ParameterDefinition("ISingleResponse<TModel>", "response"))
+            definition.Methods.Add(new MethodDefinition("IActionResult", "ToHttpResult", new ParameterDefinition("ISingleResponse<TModel>", "response"))
             {
                 AccessModifier = AccessModifier.Public,
                 IsStatic = true,
@@ -116,7 +116,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 }
             });
 
-            definition.Methods.Add(new MethodDefinition("IActionResult ", "ToHttpResult", new ParameterDefinition("IPostResponse", "response"))
+            definition.Methods.Add(new MethodDefinition("IActionResult", "ToHttpResult", new ParameterDefinition("IPostResponse", "response"))
             {
                 AccessModifier = AccessModifier.Public,
                 IsStatic = true,
