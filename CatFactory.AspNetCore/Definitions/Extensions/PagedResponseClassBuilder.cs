@@ -24,17 +24,13 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                         Constraint = "TModel : class"
                     }
                 },
-                BaseClass = "Response",
+                BaseClass = "ListResponse<TModel>",
                 Implements =
                 {
-                    "IListResponse<TModel>"
+                    "IPagedResponse<TModel>"
                 },
                 Properties =
                 {
-                    new PropertyDefinition(AccessModifier.Public, "IEnumerable<TModel>", "Model")
-                    {
-                        IsAutomatic = true
-                    },
                     new PropertyDefinition(AccessModifier.Public, "int", "PageSize")
                     {
                         IsAutomatic = true

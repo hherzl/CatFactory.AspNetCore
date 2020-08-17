@@ -13,7 +13,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Namespace = project.GetResponsesNamespace(),
                 AccessModifier = AccessModifier.Public,
-                Name = "PagedResponse",
+                Name = "IPagedResponse",
                 GenericTypes =
                 {
                     new GenericTypeDefinition
@@ -24,12 +24,17 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 Implements =
                 {
-                    "IListResponse"
+                    "IListResponse<TModel>"
                 },
                 Properties =
                 {
+                    new PropertyDefinition("int", "PageSize"),
+                    new PropertyDefinition("int", "PageNumber"),
                     new PropertyDefinition("int", "ItemsCount"),
                     new PropertyDefinition("double", "PageCount")
+                    {
+                        IsReadOnly = true
+                    }
                 }
             };
     }
