@@ -20,7 +20,6 @@ namespace CatFactory.AspNetCore
         public static IEnumerable<Column> GetUpdateColumns(this ProjectFeature<AspNetCoreProjectSettings> projectFeature, ITable table)
         {
             var aspNetCoreProject = projectFeature.GetAspNetCoreProject();
-
             var efCoreProjectSettings = aspNetCoreProject.EntityFrameworkCoreProject.GetSelection(table).Settings;
 
             foreach (var column in table.Columns)
