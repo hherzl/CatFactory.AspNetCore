@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>1.0.0-beta-sun-build57</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>1.0.0-beta-sun-build58</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
     <Description>CatFactory package for ASP.NET Core</Description>
-    <PackageReleaseNotes>1.0.0-beta-sun-build57 Version:
+    <PackageReleaseNotes>1.0.0-beta-sun-build58 Version:
 
- Core package update
+ Upgrade for .NET Core version
 
 Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory
 </PackageReleaseNotes>
@@ -20,7 +20,7 @@ Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-w
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build53" />
+    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build54" />
   </ItemGroup>
 
 </Project>
