@@ -13,7 +13,7 @@ namespace CatFactory.AspNetCore.Tests
         {
             // Import database
             var database = await SqlServerDatabaseFactory
-                .ImportAsync("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
+                .ImportAsync("server=(local); database=OnlineStore; integrated security=yes; TrustServerCertificate=True;", "dbo.sysdiagrams");
 
             // Create instance of Entity Framework Core Project
             var entityFrameworkProject = EntityFrameworkCoreProject
@@ -66,7 +66,7 @@ namespace CatFactory.AspNetCore.Tests
         //{
         //    // Import database
         //    var database = await SqlServerDatabaseFactory
-        //        .ImportAsync("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
+        //        .ImportAsync("server=(local); database=OnlineStore; integrated security=yes; TrustServerCertificate=True;", "dbo.sysdiagrams");
 
         //    // Create instance of Entity Framework Core Project
         //    var entityFrameworkProject = EntityFrameworkCoreProject
@@ -119,7 +119,7 @@ namespace CatFactory.AspNetCore.Tests
         //{
         //    // Import database
         //    var database = await SqlServerDatabaseFactory
-        //        .ImportAsync("server=(local);database=OnlineStore;integrated security=yes;", "dbo.sysdiagrams");
+        //        .ImportAsync("server=(local); database=OnlineStore; integrated security=yes; TrustServerCertificate=True;", "dbo.sysdiagrams");
 
         //    // Create instance of Entity Framework Core Project
         //    var entityFrameworkProject = EntityFrameworkCoreProject
@@ -180,7 +180,7 @@ namespace CatFactory.AspNetCore.Tests
         //{
         //    // Import database
         //    var database = await SqlServerDatabaseFactory
-        //        .ImportAsync("server=(local);database=Northwind;integrated security=yes;", "dbo.sysdiagrams");
+        //        .ImportAsync("server=(local); database=Northwind; integrated security=yes; TrustServerCertificate=True;", "dbo.sysdiagrams");
 
         //    // Create instance of Entity Framework Core Project
         //    var entityFrameworkProject = EntityFrameworkCoreProject
