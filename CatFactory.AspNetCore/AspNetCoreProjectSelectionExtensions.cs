@@ -64,10 +64,6 @@ namespace CatFactory.AspNetCore
             return project;
         }
 
-        [Obsolete("Use Selection method")]
-        public static AspNetCoreProject Select(this AspNetCoreProject project, string pattern, Action<AspNetCoreProjectSettings> action = null)
-            => project.Selection(pattern, action);
-
         public static ProjectSelection<AspNetCoreProjectSettings> GetSelection(this AspNetCoreProject project, IDbObject dbObject)
         {
             // Sales.OrderHeader
