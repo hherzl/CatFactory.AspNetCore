@@ -24,8 +24,11 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Name = project.GetGetRequestName(table)
             };
 
-            definition.Properties.Add(new PropertyDefinition { AccessModifier = AccessModifier.Public, Type = "int?", Name = "PageSize", IsAutomatic = true });
-            definition.Properties.Add(new PropertyDefinition { AccessModifier = AccessModifier.Public, Type = "int?", Name = "PageNumber", IsAutomatic = true });
+            //definition.Properties.Add(new PropertyDefinition { AccessModifier = AccessModifier.Public, Type = "int?", Name = "PageSize", IsAutomatic = true });
+            //definition.Properties.Add(new PropertyDefinition { AccessModifier = AccessModifier.Public, Type = "int?", Name = "PageNumber", IsAutomatic = true });
+
+            definition.Properties.Add(new PropertyDefinition(AccessModifier.Public, "int?", "PageSize") { IsAutomatic = true });
+            definition.Properties.Add(new PropertyDefinition(AccessModifier.Public, "int?", "PageNumber") { IsAutomatic = true });
 
             definition.Constructors.Add(new ClassConstructorDefinition
             {
@@ -48,13 +51,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 {
                     var column = (Column)table.GetColumnsFromConstraint(foreignKey).First();
 
-                    definition.Properties.Add(new PropertyDefinition
-                    {
-                        AccessModifier = AccessModifier.Public,
-                        Type = project.Database.ResolveDatabaseType(column),
-                        Name = project.GetPropertyName(table, column),
-                        IsAutomatic = true
-                    });
+                    definition.AddAutomaticProperty(AccessModifier.Public, project.Database.ResolveDatabaseType(column), project.GetPropertyName(table, column));
                 }
                 else
                 {
@@ -81,16 +78,21 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Name = project.GetPostRequestName(table)
             };
 
-            var efCoreSelection = project.EntityFrameworkCoreProject.GetSelection(table);
+            var selection = project.EntityFrameworkCoreProject.GetSelection(table);
 
-            var exclusions = new List<string>
+            var exclusions = new List<string>();
+
+            if (selection.Settings.HasConcurrencyToken)
+                exclusions.Add(selection.Settings.ConcurrencyToken);
+
+            if (selection.Settings.AuditEntity != null)
             {
-                efCoreSelection.Settings.ConcurrencyToken,
-                efCoreSelection.Settings.AuditEntity.CreationUserColumnName,
-                efCoreSelection.Settings.AuditEntity.CreationDateTimeColumnName,
-                efCoreSelection.Settings.AuditEntity.LastUpdateUserColumnName,
-                efCoreSelection.Settings.AuditEntity.LastUpdateDateTimeColumnName
-            };
+                var auditEntity = selection.Settings.AuditEntity;
+                exclusions.Add(auditEntity.CreationUserColumnName);
+                exclusions.Add(auditEntity.CreationDateTimeColumnName);
+                exclusions.Add(auditEntity.LastUpdateUserColumnName);
+                exclusions.Add(auditEntity.LastUpdateDateTimeColumnName);
+            }
 
             if (table.Identity != null)
                 exclusions.Add(table.Identity.Name);
@@ -99,11 +101,8 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             foreach (var column in table.Columns.Where(item => !exclusions.Contains(item.Name)).ToList())
             {
-                var property = new PropertyDefinition
+                var property = new PropertyDefinition(AccessModifier.Public, project.Database.ResolveDatabaseType(column), project.GetPropertyName(table, column))
                 {
-                    AccessModifier = AccessModifier.Public,
-                    Type = project.Database.ResolveDatabaseType(column),
-                    Name = project.GetPropertyName(table, column),
                     IsAutomatic = true
                 };
 
@@ -143,25 +142,27 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             var selection = project.EntityFrameworkCoreProject.GetSelection(table);
 
-            var exclusions = new List<string>
+            var exclusions = new List<string>();
+
+            if (selection.Settings.HasConcurrencyToken)
+                exclusions.Add(selection.Settings.ConcurrencyToken);
+
+            if (selection.Settings.AuditEntity != null)
             {
-                selection.Settings.ConcurrencyToken,
-                selection.Settings.AuditEntity.CreationUserColumnName,
-                selection.Settings.AuditEntity.CreationDateTimeColumnName,
-                selection.Settings.AuditEntity.LastUpdateUserColumnName,
-                selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
-            };
+                var auditEntity = selection.Settings.AuditEntity;
+                exclusions.Add(auditEntity.CreationUserColumnName);
+                exclusions.Add(auditEntity.CreationDateTimeColumnName);
+                exclusions.Add(auditEntity.LastUpdateUserColumnName);
+                exclusions.Add(auditEntity.LastUpdateDateTimeColumnName);
+            }
 
             if (table.Identity != null)
                 exclusions.Add(table.Identity.Name);
 
             foreach (var column in table.Columns.Where(item => !exclusions.Contains(item.Name)).ToList())
             {
-                var property = new PropertyDefinition
+                var property = new PropertyDefinition(AccessModifier.Public, project.Database.ResolveDatabaseType(column), project.GetPropertyName(table, column))
                 {
-                    AccessModifier = AccessModifier.Public,
-                    Type = project.Database.ResolveDatabaseType(column),
-                    Name = project.GetPropertyName(table, column),
                     IsAutomatic = true
                 };
 

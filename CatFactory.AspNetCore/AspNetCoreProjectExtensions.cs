@@ -154,27 +154,7 @@ namespace CatFactory.AspNetCore
             File.WriteAllText(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.MD"), readMe.ToString());
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-internal static AspNetCoreProject ScaffoldAspNetCoreUsingRepositories(this AspNetCoreProject aspNetCoreProject)
+        internal static AspNetCoreProject ScaffoldAspNetCoreUsingRepositories(this AspNetCoreProject aspNetCoreProject)
         {
             aspNetCoreProject.ScaffoldRequestsUsingRepositories();
             aspNetCoreProject.ScaffoldRequestsExtensionsUsingRepositories();

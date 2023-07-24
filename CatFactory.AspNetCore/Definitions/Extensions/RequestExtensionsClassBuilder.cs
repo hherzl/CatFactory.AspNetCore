@@ -52,14 +52,19 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 new CodeLine("{")
             };
 
-            var exclusions = new List<string>
+            var exclusions = new List<string>();
+
+            if (selection.Settings.HasConcurrencyToken)
+                exclusions.Add(selection.Settings.ConcurrencyToken);
+
+            if (selection.Settings.AuditEntity != null)
             {
-                selection.Settings.ConcurrencyToken,
-                selection.Settings.AuditEntity.CreationUserColumnName,
-                selection.Settings.AuditEntity.CreationDateTimeColumnName,
-                selection.Settings.AuditEntity.LastUpdateUserColumnName,
-                selection.Settings.AuditEntity.LastUpdateDateTimeColumnName
-            };
+                var auditEntity = selection.Settings.AuditEntity;
+                exclusions.Add(auditEntity.CreationUserColumnName);
+                exclusions.Add(auditEntity.CreationDateTimeColumnName);
+                exclusions.Add(auditEntity.LastUpdateUserColumnName);
+                exclusions.Add(auditEntity.LastUpdateDateTimeColumnName);
+            }
 
             if (table.PrimaryKey != null)
                 exclusions.Add(table.PrimaryKey.Key.First());
@@ -78,12 +83,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
 
             lines.Add(new CodeLine("};"));
 
-            return new MethodDefinition
+            return new MethodDefinition(AccessModifier.Public, efCoreProject.GetEntityName(table), "ToEntity")
             {
-                AccessModifier = AccessModifier.Public,
                 IsStatic = true,
-                Type = efCoreProject.GetEntityName(table),
-                Name = "ToEntity",
                 IsExtension = true,
                 Parameters =
                 {

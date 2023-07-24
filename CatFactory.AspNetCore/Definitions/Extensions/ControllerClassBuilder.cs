@@ -32,7 +32,6 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                     aspNetCoreProject.GetResponsesNamespace(),
                     aspNetCoreProject.GetRequestsNamespace(),
                     aspNetCoreProject.EntityFrameworkCoreProject.GetDomainModelsNamespace(),
-                    aspNetCoreProject.EntityFrameworkCoreProject.GetDomainQueryModelsNamespace()
                 },
                 Namespace = string.Format("{0}.{1}", aspNetCoreProject.Name, "Controllers"),
                 AccessModifier = AccessModifier.Public,
@@ -44,6 +43,9 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 },
                 BaseClass = "ControllerBase"
             };
+
+            if (aspNetCoreProject.EntityFrameworkCoreProject.GlobalSelection().Settings.EntitiesWithDataContracts)
+                definition.Namespaces.Add(aspNetCoreProject.EntityFrameworkCoreProject.GetDomainQueryModelsNamespace());
 
             var settings = aspNetCoreProject.GlobalSelection().Settings;
 
@@ -252,7 +254,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}\"", efCoreProject.GetEntityName(table))),
-                    new MetadataAttribute("ProducesResponseType", string.Format("typeof(IPagedResponse<{0}>)", efCoreSelection.Settings.EntitiesWithDataContracts ? efCoreProject.GetQueryModelName(table) : efCoreProject.GetEntityName(table)), "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", string.Format("Type = typeof(IPagedResponse<{0}>)", efCoreSelection.Settings.EntitiesWithDataContracts ? efCoreProject.GetQueryModelName(table) : efCoreProject.GetEntityName(table))),
                     new MetadataAttribute("ProducesResponseType", "500")
                 },
                 IsAsync = true,
@@ -344,7 +346,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}\"", efCoreProject.GetEntityName(view))),
-                    new MetadataAttribute("ProducesResponseType", string.Format("typeof(IPagedResponse<{0}>)", efCoreSelection.Settings.EntitiesWithDataContracts ? efCoreProject.GetDataContractName(view) : efCoreProject.GetEntityName(view)), "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", string.Format("Type = typeof(IPagedResponse<{0}>)", efCoreSelection.Settings.EntitiesWithDataContracts ? efCoreProject.GetDataContractName(view) : efCoreProject.GetEntityName(view))),
                     new MetadataAttribute("ProducesResponseType", "500")
                 },
                 IsAsync = true,
@@ -434,7 +436,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 lines.Add(new EmptyLine());
 
                 lines.Add(new CommentLine(1, " Retrieve entity"));
-                lines.Add(new CodeLine(1, "var entity = await _repository.{0}(new {1}({2}));", efCoreProject.GetGetRepositoryMethodName(table), efCoreProject.GetEntityName(table), exp));
+                lines.Add(new CodeLine(1, "var entity = await _dbContext.{0}(new {1}({2}));", efCoreProject.GetGetRepositoryMethodName(table), efCoreProject.GetEntityName(table), exp));
 
                 lines.Add(new EmptyLine());
 
@@ -477,7 +479,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpGet", string.Format("\"{0}/{1}\"", efCoreProject.GetEntityName(table), "{id}")),
-                    new MetadataAttribute("ProducesResponseType", $"typeof(ISingleResponse<{efCoreProject.GetEntityName(table)}>)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", $"Type = typeof(ISingleResponse<{efCoreProject.GetEntityName(table)}>)"),
                     new MetadataAttribute("ProducesResponseType", "400"),
                     new MetadataAttribute("ProducesResponseType", "404"),
                     new MetadataAttribute("ProducesResponseType", "500")
@@ -568,7 +570,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpPost", string.Format("\"{0}\"", efCoreProject.GetEntityName(table))),
-                    new MetadataAttribute("ProducesResponseType", $"typeof(IPostResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", "Type = typeof(IPostResponse)"),
                     new MetadataAttribute("ProducesResponseType", "400"),
                     new MetadataAttribute("ProducesResponseType", "500")
                 },
@@ -715,7 +717,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpPut", string.Format("\"{0}/{{id}}\"", efCoreProject.GetEntityName(table))),
-                    new MetadataAttribute("ProducesResponseType", "typeof(IResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", "Type = typeof(IResponse)"),
                     new MetadataAttribute("ProducesResponseType", "400"),
                     new MetadataAttribute("ProducesResponseType", "404"),
                     new MetadataAttribute("ProducesResponseType", "500")
@@ -1397,7 +1399,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpPost", string.Format("\"{0}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
-                    new MetadataAttribute("ProducesResponseType", $"typeof(IPostResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", "Type = typeof(IPostResponse)"),
                     new MetadataAttribute("ProducesResponseType", "400"),
                     new MetadataAttribute("ProducesResponseType", "500")
                 },
@@ -1543,7 +1545,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpPut", string.Format("\"{0}/{{id}}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
-                    new MetadataAttribute("ProducesResponseType", "typeof(IResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", "Type = typeof(IResponse)"),
                     new MetadataAttribute("ProducesResponseType", "400"),
                     new MetadataAttribute("ProducesResponseType", "404"),
                     new MetadataAttribute("ProducesResponseType", "500")
@@ -1666,7 +1668,7 @@ namespace CatFactory.AspNetCore.Definitions.Extensions
                 Attributes =
                 {
                     new MetadataAttribute("HttpDelete", string.Format("\"{0}/{{id}}\"", aspNetCoreProject.EntityFrameworkCoreProject.GetEntityName(table))),
-                    new MetadataAttribute("ProducesResponseType", "typeof(IResponse)", "200"),
+                    new MetadataAttribute("ProducesResponseType", "200", "Type = typeof(IResponse)"),
                     new MetadataAttribute("ProducesResponseType", "400"),
                     new MetadataAttribute("ProducesResponseType", "404"),
                     new MetadataAttribute("ProducesResponseType", "500")

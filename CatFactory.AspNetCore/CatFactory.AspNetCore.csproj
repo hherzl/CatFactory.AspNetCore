@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>1.0.0-beta-sun-build62</Version>
+    <Version>1.0.0-beta-sun-build63</Version>
     <Authors>H. Herzl</Authors>
     <Company>Herzl Corp.</Company>
     <Description>CatFactory package for ASP.NET Core</Description>
     <PackageReleaseNotes>
-      1.0.0-beta-sun-build62 Version:
+      1.0.0-beta-sun-build63 Version:
 
-      Core package update
+      Fix issue 9: https://github.com/hherzl/CatFactory.AspNetCore/issues/9
 
       Quick start: https://www.codeproject.com/Tips/1229909/Scaffolding-ASP-NET-Core-with-CatFactory
     </PackageReleaseNotes>
@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build59" />
+    <PackageReference Include="CatFactory.EntityFrameworkCore" Version="1.0.0-beta-sun-build61" />
   </ItemGroup>
 
 </Project>
