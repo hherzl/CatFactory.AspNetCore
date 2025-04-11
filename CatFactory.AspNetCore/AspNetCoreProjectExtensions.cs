@@ -151,7 +151,7 @@ namespace CatFactory.AspNetCore
 
             readMe.WriteLine("CatFactory Development Team ==^^==");
 
-            File.WriteAllText(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.MD"), readMe.ToString());
+            File.WriteAllText(Path.Combine(project.OutputDirectory, "README.md"), readMe.ToString());
         }
 
         internal static AspNetCoreProject ScaffoldAspNetCoreUsingRepositories(this AspNetCoreProject aspNetCoreProject)
@@ -286,7 +286,7 @@ namespace CatFactory.AspNetCore
 
             readMe.WriteLine("CatFactory Development Team ==^^==");
 
-            File.WriteAllText(Path.Combine(project.OutputDirectory, "CatFactory.AspNetCore.ReadMe.MD"), readMe.ToString());
+            File.WriteAllText(Path.Combine(project.OutputDirectory, "README.md"), readMe.ToString());
         }
     }
 }
